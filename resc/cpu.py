@@ -1,0 +1,3 @@
+
+def cpu():
+	print("cpu")

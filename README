@@ -1,0 +1,5 @@
+
+Resource checker
+---
+
+check resources(CPU,memory,disk) of target host and execute script.
