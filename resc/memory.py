@@ -1,4 +1,5 @@
 import psutil
+import re
 from enum import Enum
 from .logical import Logic
 
@@ -26,9 +27,9 @@ class MemoryDetect:
 
 		if not isinstance(mode,str):
 			raise MemoryTypeError("mode most be string type.")
-		if mode not in [x.value["name"] for x in MemoryDetectMode if x.value["name"] == mode]:
+		if len([x for x in MemoryDetectMode if re.match(rf'{x.value["name"]}',f'{mode}',flags=re.IGNORECASE) is not None]) == 0:
 			raise MemoryValueError(f"{mode} is invalid. valid value: {[x.value['name'] for x in MemoryDetectMode]}")
-		self._mode = [x for x in MemoryDetectMode if x.value["name"] == mode][0]
+		self._mode = [x for x in MemoryDetectMode if re.match(rf'{x.value["name"]}',f'{mode}',flags=re.IGNORECASE) is not None][0]
 	
 	@property
 	def mode(self):

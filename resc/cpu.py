@@ -1,4 +1,5 @@
 import psutil
+import re
 from enum import Enum
 from .logical import Logic
 
@@ -27,9 +28,9 @@ class CPUDetect:
 
 		if not isinstance(mode,str):
 			raise CPUTypeError(f"mode must be string type.({[x.value['name'] for x in CPUDetectMode]})")
-		if mode not in [x.value['name'] for x in CPUDetectMode]:
+		if len([x for x in CPUDetectMode if re.match(rf'^{x.value["name"]}$',f'{mode}',flags=re.IGNORECASE) is not None]) == 0:
 			raise CPUValueError(f"{mode} is invalid.(valid value:{[x.value['name'] for x in CPUDetectMode]})")
-		self._mode = [ x for x in CPUDetectMode if x.value['name'] == mode][0]
+		self._mode = [x for x in CPUDetectMode if re.match(rf'^{x.value["name"]}$',f'{mode}',flags=re.IGNORECASE)][0]
 
 		if not isinstance(interval,int) and not isinstance(interval,float):
 			raise CPUTypeError("interval must be int or float type.")

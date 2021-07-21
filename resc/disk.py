@@ -1,5 +1,6 @@
 import psutil
 import os
+import re
 from enum import Enum
 from .logical import Logic
 
@@ -29,9 +30,9 @@ class DiskDetect:
 
 		if not isinstance(mode,str):
 			raise DiskTypeError("mode must be string type.")
-		if mode not in [x.value["name"] for x in DiskDetectMode]:
+		if len([x for x in DiskDetectMode if re.match(rf'{x.value["name"]}',f'{mode}',flags=re.IGNORECASE) is not None]) == 0:
 			raise DiskValueError(f"{mode} is invalid value. valid value {[x.value['name'] for x in DiskDetectMode]}")
-		self._mode = [x for x in DiskDetectMode if mode == x.value["name"]][0]
+		self._mode = [x for x in DiskDetectMode if re.match(rf'{x.value["name"]}',f'{mode}',flags=re.IGNORECASE) is not None][0]
 
 	@property
 	def path(self):
