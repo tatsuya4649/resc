@@ -1,5 +1,6 @@
 import psutil
 from enum import Enum
+from .logical import Logic
 
 class CPUTypeError(TypeError):
 	pass
@@ -7,8 +8,8 @@ class CPUValueError(ValueError):
 	pass
 
 class CPUDetectMode(Enum):
-	PERCENT="percent"
-	LOADAVG="loadavg"
+	PERCENT={"name":"percent","logic":Logic.GT}
+	LOADAVG={"name":"loadavg","logic":Logic.GT}
 
 class CPUDetect:
 	"""
@@ -25,10 +26,10 @@ class CPUDetect:
 		self._threshold = threshold
 
 		if not isinstance(mode,str):
-			raise CPUTypeError(f"mode must be string type.({[x.value for x in CPUDetectMode]})")
-		if mode not in [x.value for x in CPUDetectMode]:
-			raise CPUValueError(f"{mode} is invalid.(valid value:{[x.value for x in CPUDetectMode]})")
-		self._mode = [ x for x in CPUDetectMode if x.value == mode][0]
+			raise CPUTypeError(f"mode must be string type.({[x.value['name'] for x in CPUDetectMode]})")
+		if mode not in [x.value['name'] for x in CPUDetectMode]:
+			raise CPUValueError(f"{mode} is invalid.(valid value:{[x.value['name'] for x in CPUDetectMode]})")
+		self._mode = [ x for x in CPUDetectMode if x.value['name'] == mode][0]
 
 		if not isinstance(interval,int) and not isinstance(interval,float):
 			raise CPUTypeError("interval must be int or float type.")
@@ -45,8 +46,8 @@ class CPUDetect:
 		over threshold: return False
 		within threshold: return True
 		"""
-		res = eval(f"self.{self._mode.value}({self._interval})")
-		if res < self.threshold:
+		res = eval(f"self.{self._mode.value['name']}({self._interval})")
+		if eval(f"{res} {self._mode.value['logic'].value} {self.threshold}"):
 			return True
 		else:
 			return False

@@ -1,5 +1,6 @@
 import psutil
 from enum import Enum
+from .logical import Logic
 
 class MemoryTypeError(TypeError):
 	pass
@@ -7,9 +8,9 @@ class MemoryValueError(ValueError):
 	pass
 
 class MemoryDetectMode(Enum):
-	PERCENT="percent"
-	USED="used"
-	AVAILABLE="available"
+	PERCENT={"name":"percent","logic":Logic.GT}
+	USED={"name":"used","logic":Logic.GT}
+	AVAILABLE={"name":"available","logic":Logic.LT}
 
 class MemoryDetect:
 	"""
@@ -17,7 +18,7 @@ class MemoryDetect:
 	def __init__(
 		self,
 		threshold,
-		mode=MemoryDetectMode.PERCENT.value,
+		mode=MemoryDetectMode.PERCENT.value["name"],
 	):
 		if not isinstance(threshold,int) and not isinstance(threshold,float):
 			raise MemoryTypeError("threshold must be int or float type.")
@@ -25,9 +26,9 @@ class MemoryDetect:
 
 		if not isinstance(mode,str):
 			raise MemoryTypeError("mode most be string type.")
-		if mode not in [x.value for x in MemoryDetectMode if x.value == mode]:
-			raise MemoryValueError(f"{mode} is invalid. valid value: {[x.value] for x in MemoryDetectMode}")
-		self._mode = [x for x in MemoryDetectMode if x.value == mode][0]
+		if mode not in [x.value["name"] for x in MemoryDetectMode if x.value["name"] == mode]:
+			raise MemoryValueError(f"{mode} is invalid. valid value: {[x.value['name'] for x in MemoryDetectMode]}")
+		self._mode = [x for x in MemoryDetectMode if x.value["name"] == mode][0]
 	
 	@property
 	def mode(self):
@@ -40,10 +41,10 @@ class MemoryDetect:
 		over threshold: return False
 		within threshold: return True
                 """
-		res = eval(f"self.{self._mode.value}()")
+		res = eval(f"self.{self._mode.value['name']}()")
 		if res is None:
 			raise MemoryValueError("memory value must be not None.")
-		if res < self._threshold:
+		if eval(f'{res} {self._mode.value["logic"].value} {self._threshold}'):
 			return True
 		else:
 			return False

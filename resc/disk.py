@@ -18,7 +18,7 @@ class DiskDetect:
 		self,
 		path,
 		threshold,
-		mode=DiskDetectMode.PERCENT.value,
+		mode=DiskDetectMode.PERCENT.value["name"],
 	):
 		if not isinstance(path,str):
 			raise DiskTypeError("path must be string type.")
