@@ -40,7 +40,7 @@ class Cron:
 
 		self._interval_str = interval_str
 		self._str_to_lists()
-		self._totalline = f"{self._interval_str} \"{self._command}\"\n"
+		self._totalline = f"{self._interval_str} {self._command}\n"
 
 	@property
 	def interval_str(self):

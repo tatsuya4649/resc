@@ -1,6 +1,6 @@
 import unittest
+import os
 from resc._resc import Resc
-
 
 _INTERVAL=0
 
@@ -37,10 +37,17 @@ class TestResc(unittest.TestCase):
 			memory={"threshold":80},
 			disk={"threshold":80,"path":"/"},
 		)
-		@resc.register("*/1 * * * *")
+		@resc.register("*/1 * * * *",rescdir=".")
 		def hello():
 			print("hello resc!!!")
 
-		hello()
+		os.environ["RESCPATH"] = "."	
+		os.environ["RESCOUTPUT"] = "./rescoutput.txt"	
+		@resc.register("*/10 * * * *")
+		def world():
+			print("hello world")
+
+		world()
+#		hello()
 if __name__ == "__main__":
 	unittest.main()
