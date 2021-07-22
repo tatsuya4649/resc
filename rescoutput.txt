@@ -1,4 +1,3 @@
-Traceback (most recent call last):
-  File "/home/tatsuya/Desktop/resc/rescs/rescd818287c1ef5dc299d8675780020944d.py", line 10, in <module>
-    world(1,"hello",b="resc test script")
-TypeError: world() got multiple values for argument 'b'
+hello world
+1 resc test script
+1626958561.687577
