@@ -1,1 +1,4 @@
-python: can't open file '/home/tatsuya/Desktop/resr/rescs/rescdaa1e5190b34198e955f8579b688448f.py': [Errno 2] No such file or directory
+Traceback (most recent call last):
+  File "/home/tatsuya/Desktop/resc/rescs/rescd818287c1ef5dc299d8675780020944d.py", line 10, in <module>
+    world(1,"hello",b="resc test script")
+TypeError: world() got multiple values for argument 'b'

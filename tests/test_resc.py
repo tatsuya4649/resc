@@ -43,11 +43,12 @@ class TestResc(unittest.TestCase):
 
 		os.environ["RESCPATH"] = "."	
 		os.environ["RESCOUTPUT"] = "./rescoutput.txt"	
-		@resc.register("*/10 * * * *")
-		def world():
+		@resc.register("*/1 * * * *")
+		def world(a,b):
 			print("hello world")
+			print(a,b)
 
-		world()
+		world(1,"hello",b="resc test script")
 #		hello()
 if __name__ == "__main__":
 	unittest.main()

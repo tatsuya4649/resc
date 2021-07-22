@@ -141,30 +141,38 @@ class Resc:
 			def _wrapper(*args,**kwargs):
 				call_file = inspect.stack()[1].filename
 				call_code = inspect.getsource(func.__code__)
-				filename = self._sourcefile(call_file,call_code,func.__name__)
+				func_args = dict()
+				func_args["args"] = args
+				func_args["kwargs"] = kwargs
+				filename = self._sourcefile(call_file,call_code,func.__name__,func_args)
+				print(filename)
 
 				self._crons_get(trigger,filename)
 				self._crons_register()
 
 				print(f"interval {trigger}")
-				func(*args,**kwargs)
 			return _wrapper
 		return _register
 	
-	def _sourcefile(self,file,func,funcname):
+	def _sourcefile(self,file,func,funcname,func_args):
 		resc_dir = os.getenv(self._RESCPATH_ENV)
 		if not pathlib.Path(resc_dir).is_absolute():
 			resc_dir = pathlib.Path(resc_dir).resolve()
 		i=0
 		if not os.path.isdir(f"{resc_dir}/rescs"):
 			os.makedirs(f"{resc_dir}/rescs")
+
+		if not isinstance(func_args["args"],tuple):
+			raise RescTypeError('func_args["args"] must be tuple of argument.')
+		if not isinstance(func_args["kwargs"],dict):
+			raise RescTypeError('func_args["kwargs"] must be dict of keyword argument.')
 		while True:
 			resc_path = f"{resc_dir}/rescs"
-			string = f"{resc_path}/resc{i}.py"
-			hash = hashlib.md5(string.encode('utf-8')).hexdigest()
+			resc_key = f"{resc_path}/resc{i}.py"
+			hash = hashlib.md5(resc_key.encode('utf-8')).hexdigest()
 			filename = f"{resc_path}/resc{hash}.py"
 			if not os.path.exists(filename):
-				return self._source_write(filename,func,funcname)
+				return self._source_write(filename,func,funcname,func_args)
 			i+=1
 	def _crons_get(self,trigger,triggerscript):
 		if os.getenv(self._RESCOUTPUT_ENV) is not None:
@@ -188,7 +196,7 @@ class Resc:
 		# register directive into crontable
 		for cron in self._crons:
 			cron.register()
-	def _source_write(self,filename,func,funcname):
+	def _source_write(self,filename,func,funcname,func_args):
 		iters = list()
 		for line in func.split('\n'):
 			match = re.match(r'^(?!(\s*)@).*$',line)
@@ -204,7 +212,16 @@ class Resc:
 			sf.write(self._import_resc)
 			sf.write("".join(matchs))
 			sf.write(self._if_resc)
-			sf.write(f"\t{funcname}()\n")
+			args_str = str()
+			if len(func_args["args"])>0:
+				args_str = ",".join([str(x) if not isinstance(x,str) else f"\"{x}\"" for x in func_args["args"]])
+			kwargs_str = str()
+			if len(func_args["kwargs"])>0:
+				for k,v in func_args["kwargs"].items():
+					if isinstance(v,str):
+						func_args["kwargs"][k] = f'\"{v}\"'
+				kwargs_str = ",".join(["=".join([str(k),str(v)]) for k,v in func_args["kwargs"].items()])
+			sf.write(f'\t{funcname}({args_str},{kwargs_str})\n')
 		return filename
 	
 	@property
@@ -221,7 +238,7 @@ class Resc:
 		print(pardir)
 		import_str += "import sys\n"
 		import_str += f"sys.path.append(\"{pardir}\")\n"
-		import_str += "from resr import Resc\n"
+		import_str += "from resc import Resc\n"
 		import_str += f"resc=Resc(cpu={self._cpu_dict},memory={self._memory_dict},disk={self._disk_dict})\n"
 		return import_str
 
