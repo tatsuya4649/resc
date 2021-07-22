@@ -2,6 +2,7 @@ import psutil
 import re
 from enum import Enum
 from .logical import Logic
+from .detect import DetectBase
 
 class CPUTypeError(TypeError):
 	pass
@@ -12,14 +13,15 @@ class CPUDetectMode(Enum):
 	PERCENT={"name":"percent","logic":Logic.GT}
 	LOADAVG={"name":"loadavg","logic":Logic.GT}
 
-class CPUDetect:
+class CPUDetect(DetectBase):
 	"""
 	Detect CPU threshold by percent(%) or load average.
 	"""
 	_CPU_INTERVAL_DEFAULT=10
 	def __init__(
 		self,
-		threshold,mode=CPUDetectMode.PERCENT.value,
+		threshold,
+		mode=CPUDetectMode.PERCENT.value["name"],
 		interval=_CPU_INTERVAL_DEFAULT,
 	):
 		if not isinstance(threshold,int) and not isinstance(threshold,float):
@@ -35,7 +37,9 @@ class CPUDetect:
 		if not isinstance(interval,int) and not isinstance(interval,float):
 			raise CPUTypeError("interval must be int or float type.")
 		self._interval = interval
-
+	@property
+	def resource(self):
+		return "cpu"
 	@property
 	def mode(self):
 		return self._mode
@@ -49,9 +53,9 @@ class CPUDetect:
 		"""
 		res = eval(f"self.{self._mode.value['name']}({self._interval})")
 		if eval(f"{res} {self._mode.value['logic'].value} {self.threshold}"):
-			return True
-		else:
 			return False
+		else:
+			return True
 
 	@property
 	def threshold(self):

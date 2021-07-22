@@ -3,6 +3,7 @@ import os
 import re
 from enum import Enum
 from .logical import Logic
+from .detect import DetectBase
 
 class DiskDetectMode(Enum):
 	PERCENT={"name":"percent","logic":Logic.GT}
@@ -14,7 +15,7 @@ class DiskTypeError(TypeError):
 class DiskValueError(ValueError):
 	pass
 
-class DiskDetect:
+class DiskDetect(DetectBase):
 	def __init__(
 		self,
 		path,
@@ -39,8 +40,16 @@ class DiskDetect:
 		return self._path
 
 	@property
+	def resource(self):
+		return "disk"
+
+	@property
 	def threshold(self):
 		return self._threshold
+
+	@property
+	def mode(self):
+		return self._mode
 	
 	@property
 	def check(self):
@@ -53,9 +62,9 @@ class DiskDetect:
 		if res is None:
 			raise DiskValueError("disk value must be not None.")
 		if eval(f"{res} {self._mode.value['logic'].value} {self._threshold}"):
-			return True
-		else:
 			return False
+		else:
+			return True
 
 	@staticmethod
 	def _usage(path):

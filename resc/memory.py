@@ -2,6 +2,7 @@ import psutil
 import re
 from enum import Enum
 from .logical import Logic
+from .detect import DetectBase
 
 class MemoryTypeError(TypeError):
 	pass
@@ -13,7 +14,7 @@ class MemoryDetectMode(Enum):
 	USED={"name":"used","logic":Logic.GT}
 	AVAILABLE={"name":"available","logic":Logic.LT}
 
-class MemoryDetect:
+class MemoryDetect(DetectBase):
 	"""
 	"""
 	def __init__(
@@ -30,6 +31,9 @@ class MemoryDetect:
 		if len([x for x in MemoryDetectMode if re.match(rf'{x.value["name"]}',f'{mode}',flags=re.IGNORECASE) is not None]) == 0:
 			raise MemoryValueError(f"{mode} is invalid. valid value: {[x.value['name'] for x in MemoryDetectMode]}")
 		self._mode = [x for x in MemoryDetectMode if re.match(rf'{x.value["name"]}',f'{mode}',flags=re.IGNORECASE) is not None][0]
+	@property
+	def resource(self):
+		return "memory"
 	
 	@property
 	def mode(self):
@@ -46,9 +50,9 @@ class MemoryDetect:
 		if res is None:
 			raise MemoryValueError("memory value must be not None.")
 		if eval(f'{res} {self._mode.value["logic"].value} {self._threshold}'):
-			return True
-		else:
 			return False
+		else:
+			return True
 	
 	@property
 	def threshold(self):
