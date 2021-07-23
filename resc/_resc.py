@@ -324,6 +324,8 @@ if resc.over_one_ssh(ssh):
 		status_code = int(stdout.channel.recv_exit_status())
 		ssh.close(client)
 		if status_code == 0:
+			for out in stdout:
+				print(out,end="")
 			return False
 		elif status_code == 1:
 			for err in stderr:
