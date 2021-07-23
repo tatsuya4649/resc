@@ -2,11 +2,13 @@ from resc.cpu import CPUDetect
 from resc.memory import MemoryDetect
 from resc.disk import DiskDetect
 from resc.cron import Cron
+from resc.ssh import SSH
 import inspect
 import hashlib
 import os
 import pathlib
 import re
+import sys
 
 class RescTypeError(TypeError):
 	pass
@@ -128,7 +130,17 @@ class Resc:
 	def crons(self):
 		return self._crons
 
-	def register(self,trigger,rescdir=None,outputfile=None):
+	def register(
+		self,
+		trigger,
+		rescdir=None,
+		outputfile=None,
+		ip=None,
+		username=None,
+		password=None,
+		key_path=None,
+		timeout=5,
+	):
 		if rescdir is not None and isinstance(rescdir,str):
 			os.environ[self._RESCPATH_ENV] = rescdir
 		if outputfile is not None and isinstance(outputfile,str):
@@ -144,8 +156,25 @@ class Resc:
 				func_args = dict()
 				func_args["args"] = args
 				func_args["kwargs"] = kwargs
-				filename = self._sourcefile(call_file,call_code,func.__name__,func_args)
-				print(filename)
+				if ip is not None and \
+				username is not None and \
+				(key_path is not None or password is not None):
+					ssh = SSH(
+						ip,
+						username=username,
+						password=password,
+						key_filename=key_path,
+						timeout=timeout,
+					)
+				else
+					ssh = None
+				filename = self._sourcefile(
+					file=call_file,
+					func=call_code,
+					funcname=func.__name__,
+					func_args=func_args,
+					ssh=ssh,
+				)
 
 				self._crons_get(trigger,filename)
 				self._crons_register()
@@ -154,7 +183,7 @@ class Resc:
 			return _wrapper
 		return _register
 	
-	def _sourcefile(self,file,func,funcname,func_args):
+	def _sourcefile(self,file,func,funcname,func_args,ssh=None):
 		resc_dir = os.getenv(self._RESCPATH_ENV)
 		if not pathlib.Path(resc_dir).is_absolute():
 			resc_dir = pathlib.Path(resc_dir).resolve()
@@ -172,7 +201,7 @@ class Resc:
 			hash = hashlib.md5(resc_key.encode('utf-8')).hexdigest()
 			filename = f"{resc_path}/resc{hash}.py"
 			if not os.path.exists(filename):
-				return self._source_write(filename,func,funcname,func_args)
+				return self._source_write(filename,func,funcname,func_args,ssh)
 			i+=1
 	def _crons_get(self,trigger,triggerscript):
 		if os.getenv(self._RESCOUTPUT_ENV) is not None:
@@ -196,7 +225,7 @@ class Resc:
 		# register directive into crontable
 		for cron in self._crons:
 			cron.register()
-	def _source_write(self,filename,func,funcname,func_args):
+	def _source_write(self,filename,func,funcname,func_args,ssh=None):
 		iters = list()
 		for line in func.split('\n'):
 			match = re.match(r'^(?!(\s*)@).*$',line)
@@ -204,24 +233,35 @@ class Resc:
 				iters.append(match)
 #		for iter in iters:
 #			print(iter)
-		first_tab = re.match(r'^\s+',iters[0].group())
+		first_tab = re.match(r'^(?=\s)',iters[0].group())
+		matchs = list()
 		if first_tab is not None:
 			matchs = [re.sub(f'^{first_tab.group()}','',x.group()) for x in iters]
 			matchs = [x+'\n' for x in matchs]
+		else:
+			matchs = [x.group() for x in iters]
+			matchs = [x+'\n' for x in matchs]
 		with open(filename,"w") as sf:
 			sf.write(self._import_resc)
+#			if ssh is not None:
+#				sf.write(self._import_others(ssh))
+			sf.write(self._define_resc)
 			sf.write("".join(matchs))
-			sf.write(self._if_resc)
+			if ssh is not None:
+				sf.write(self._if_ssh_resc(ssh))
+			else:
+				sf.write(self._if_resc)
 			args_str = str()
 			if len(func_args["args"])>0:
 				args_str = ",".join([str(x) if not isinstance(x,str) else f"\"{x}\"" for x in func_args["args"]])
+				args_str += ","
 			kwargs_str = str()
 			if len(func_args["kwargs"])>0:
 				for k,v in func_args["kwargs"].items():
 					if isinstance(v,str):
 						func_args["kwargs"][k] = f'\"{v}\"'
 				kwargs_str = ",".join(["=".join([str(k),str(v)]) for k,v in func_args["kwargs"].items()])
-			sf.write(f'\t{funcname}({args_str},{kwargs_str})\n')
+			sf.write(f'\t{funcname}({args_str}{kwargs_str})\n')
 		return filename
 	
 	@property
@@ -229,6 +269,25 @@ class Resc:
 		if_str = str()
 		if_str += "if resc.over_one:\n"
 		return if_str
+	@property
+	def _if_ssh_resc(self,ssh):
+		if ssh is None:
+			raise RescValueError("ssh must be not None.")
+		if_ssh_str = str()
+		if_ssh_str += f"""
+		ssh = SSH(
+			ip={ssh.ip},
+			username={ssh.username},
+			password={ssh.password},
+			key_filename={ssh.key_filename},
+			timeout={ssh.timeout},
+			)
+		if resc.over_one_ssh(ssh):
+		"""
+		return if_str
+
+	def over_one_ssh(self,ssh):
+		connect = ssh.connect
 
 	@property
 	def _import_resc(self):
@@ -239,9 +298,20 @@ class Resc:
 		import_str += "import sys\n"
 		import_str += f"sys.path.append(\"{pardir}\")\n"
 		import_str += "from resc import Resc\n"
-		import_str += f"resc=Resc(cpu={self._cpu_dict},memory={self._memory_dict},disk={self._disk_dict})\n"
+		import_str += "from resc import SSH\n"
 		return import_str
 
+	def _import_others(self,ssh):
+		if ssh is None:
+			raise RescValueError("ssh must be not None.")
+		import_str = str()
+		import_str += ssh.import
+		return import_str
+	@property
+	def _define_resc(self):
+		define_str = str()
+		define_str += f"resc=Resc(cpu={self._cpu_dict},memory={self._memory_dict},disk={self._disk_dict})\n"
+		return define_str
 
 __all__ = [
 	Resc.__name__,

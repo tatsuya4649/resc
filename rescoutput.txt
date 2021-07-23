@@ -1,3 +1,1 @@
-hello world
-1 resc test script
-1626958561.687577
+python: can't open file '/home/tatsuya/Desktop/resc/rescs/rescd818287c1ef5dc299d8675780020944d.py': [Errno 2] No such file or directory
