@@ -4,6 +4,8 @@ from resc.memory import MemoryDetect
 from resc.disk import DiskDetect
 from resc.cron import Cron
 from resc.ssh import SSH
+from resc.rescerr import *
+from resc.resclog import RescLog
 import inspect
 import hashlib
 import os
@@ -12,21 +14,11 @@ import re
 import sys
 import paramiko
 
-class RescTypeError(TypeError):
-	pass
-class RescValueError(ValueError):
-	pass
-class RescAttributeError(AttributeError):
-	pass
-class RescKeyError(KeyError):
-	pass
-class RescServerError(Exception):
-	pass
-
 class Resc:
 	"""
 	"""
 	_RESCPATH_ENV="RESCPATH"
+	_RESCPATH_DEFAULT="~/.resc"
 	_RESCOUTPUT_ENV="RESCOUTPUT"
 	_SERVER_SCRIPT="server.sh"
 	def __init__(
@@ -105,6 +97,7 @@ class Resc:
 		self._checkers.append(self._disk)
 		self._checkers = [x for x in self._checkers if x is not None]
 		self._crons = list()
+		self._resclog = None
 
 	@property
 	def thresholds(self):
@@ -150,15 +143,22 @@ class Resc:
 		key_path=None,
 		port=22,
 		timeout=5,
+		format=None,
 	):
 		if rescdir is not None and isinstance(rescdir,str):
 			os.environ[self._RESCPATH_ENV] = rescdir
+		if outputfile is not None and re.match(r'.*/.*',outputfile) is not None:
+			raise RescValueError(f"outputfile only basename of path.(directory: {RescLog.default_directory()})")
 		if outputfile is not None and isinstance(outputfile,str):
 			os.environ[self._RESCOUTPUT_ENV] = outputfile
 		if rescdir is None and os.getenv(self._RESCPATH_ENV) is None:
-			raise RescValueError(f"rescdir argument or environment variable({self._RESCPATH_ENV}) must be not None.")
+			os.environ[self._RESCPATH_ENV] = re.sub(r'~',f'{os.path.expandvars("~")}',self._RESCPATH_DEFAULT)
 		if not isinstance(trigger,str):
 			raise RescTypeError("trigger must be string type.")
+		self._resclog = RescLog(
+						logfile=outputfile,
+						format=format
+					)
 		def _register(func):
 			def _wrapper(*args,**kwargs):
 				call_file = inspect.stack()[1].filename
@@ -186,15 +186,18 @@ class Resc:
 					func_args=func_args,
 					ssh=ssh,
 				)
+				self._resclog.func=func.__name__
+				self._resclog.remo=ip
 
+				# Register crontable from trigger
 				self._crons_get(trigger,filename)
 				self._crons_register()
-
 			return _wrapper
 		return _register
 	
 	def _sourcefile(self,file,func,funcname,func_args,ssh=None):
 		resc_dir = os.getenv(self._RESCPATH_ENV)
+		# relative path to absolute path
 		if not pathlib.Path(resc_dir).is_absolute():
 			resc_dir = pathlib.Path(resc_dir).resolve()
 		i=0
@@ -236,6 +239,7 @@ class Resc:
 		for cron in self._crons:
 			cron.register()
 	def _source_write(self,filename,func,funcname,func_args,ssh=None):
+		self._resclog.file = filename
 		iters = list()
 		for line in func.split('\n'):
 			match = re.match(r'^(?!(\s*)@).*$',line)
@@ -253,9 +257,11 @@ class Resc:
 			matchs = [x+'\n' for x in matchs]
 		with open(filename,"w") as sf:
 			sf.write(self._import_resc)
+			sf.write(self._resclog._import_log)
 #			if ssh is not None:
 #				sf.write(self._import_others(ssh))
 			sf.write(self._define_resc)
+			sf.write(self._resclog._define_resclog(self._resclog))
 			matchs_str = "".join(matchs)
 			sf.write(matchs_str[re.search(r'(?=.*)def',matchs_str).start():])
 			if ssh is not None:
@@ -273,6 +279,7 @@ class Resc:
 						func_args["kwargs"][k] = f'\"{v}\"'
 				kwargs_str = ",".join(["=".join([str(k),str(v)]) for k,v in func_args["kwargs"].items()])
 			sf.write(f'\t{funcname}({args_str}{kwargs_str})\n')
+			sf.write(f'{self._resclog._write_log}')
 		return filename
 	
 	@property
@@ -311,15 +318,15 @@ if resc.over_one_ssh(ssh):
 		full_path = f"{package_path}/scripts/{self._SERVER_SCRIPT}"
 		self._send_script(ssh,client,full_path)
 		
-		stdin,stdout,stderr = client.exec_command(f"bash ./{os.path.basename(full_path)}")
+		stdin,stdout,stderr = client.exec_command(f"bash {ssh.startup_scripts}")
 		if int(stdout.channel.recv_exit_status()) != 0:
 			ssh.close(client)
 			for err in stdout:
 				print(err,end="")
 			raise RescServerError(f"server {os.path.basename(full_path)} exit status {stdout.channel.recv_exit_status()}")
 
-		print(self._resc_arg)
-		print(f"PATH=$PATH:~/.local/bin resc {self._resc_arg}")
+#		print(self._resc_arg)
+#		print(f"PATH=$PATH:~/.local/bin resc {self._resc_arg}")
 		stdin,stdout,stderr = client.exec_command(f"PATH=\"$PATH:~/.local/bin\" resc {self._resc_arg}")
 		status_code = int(stdout.channel.recv_exit_status())
 		ssh.close(client)
@@ -376,6 +383,7 @@ if resc.over_one_ssh(ssh):
 			raise RescValueError("ssh must be not None.")
 		import_str = str()
 		return import_str
+
 	@property
 	def _define_resc(self):
 		define_str = str()

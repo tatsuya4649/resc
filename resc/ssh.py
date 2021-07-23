@@ -19,6 +19,7 @@ class SSH:
 		self._password = password
 		self._key_filename = key_filename
 		self._timeout = timeout
+		self._startup_scripts = None
 	
 	@property
 	def import_str(self):
@@ -66,8 +67,13 @@ class SSH:
 		client.close()
 
 	def scpfile(self,connect,script_path):
+		self._startup_scripts = f"~/.resc/{os.path.basename(script_path)}"
 		with scp.SCPClient(connect.get_transport()) as s:
-			s.put(script_path,f"./{os.path.basename(script_path)}")
+			s.put(script_path,self._startup_scripts)
+	
+	@property
+	def startup_scripts(self):
+			return self._startup_scripts
 		
 
 __all__ = [
