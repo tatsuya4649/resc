@@ -319,9 +319,9 @@ if resc.over_one_ssh(ssh):
 			raise RescServerError(f"server {os.path.basename(full_path)} exit status {stdout.channel.recv_exit_status()}")
 
 		print(self._resc_arg)	
-		stdin,stdout,stderr = client.exec_command(f"resc {self._resc_arg}'")
-		ssh.close(client)
+		stdin,stdout,stderr = client.exec_command(f"PATH=$PATH:~/.local/bin resc {self._resc_arg}'")
 		status_code = int(stdout.channel.recv_exit_status())
+		ssh.close(client)
 		if status_code == 0:
 			return False
 		elif status_code == 1:
@@ -332,6 +332,7 @@ if resc.over_one_ssh(ssh):
 			# return 255 is over resource
 			return True
 
+	@property
 	def _resc_arg(self):
 		resc_arg = str()
 		if self._cpu_dict is not None:

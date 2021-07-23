@@ -36,6 +36,7 @@ function package_install(){
 
 function package_install_git(){
 	sudo_check
+	package_update
 	if [ -n "$YUM_CMD" ]; then
 		$SUDO yum install -y git
 	elif [ -n "$APT_CMD" ]; then
@@ -48,9 +49,22 @@ function package_install_git(){
 
 function package_install_python(){
 	sudo_check
+	package_update
 	if [ -n "$YUM_CMD" ]; then
 		$SUDO yum install -y epel-release
 		$SUDO yum install -y python3
+	elif [ -n "$APT_CMD" ]; then
+		$SUDO apt install -y python3-pip
+	else
+		echo "invalid package system."
+		exit 1
+	fi
+}
+function package_install_pip(){
+	sudo_check
+	package_update
+	if [ -n "$YUM_CMD" ]; then
+		echo ""
 	elif [ -n "$APT_CMD" ]; then
 		$SUDO apt install -y python3-pip
 	else
@@ -81,6 +95,9 @@ if [ -z "$PYTHON_CMD" ]; then
 	package_install_git
 fi
 
+if [ -z "$PIP_CMD" ]; then
+	package_install_pip
+fi
 if [ -z "$PIP_CMD" ]; then
 	echo "pip3 not found..."
 	exit 1
