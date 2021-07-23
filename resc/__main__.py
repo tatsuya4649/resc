@@ -49,6 +49,7 @@ def main():
 		disk=disk,
 	)
 	print(resc._resc_arg)
+	print(f"PATH=\"$PATH:~/.local/bin\" resc {resc._resc_arg}")
 	if resc.over_one:
 		print("over threshold.")
 		sys.exit(255)
