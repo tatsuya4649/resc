@@ -166,7 +166,7 @@ class Resc:
 						key_filename=key_path,
 						timeout=timeout,
 					)
-				else
+				else:
 					ssh = None
 				filename = self._sourcefile(
 					file=call_file,
