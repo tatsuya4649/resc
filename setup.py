@@ -6,7 +6,4 @@ def _requires_from_file(filename):
 
 setup(
 	install_requires=_requires_from_file("requirements.txt"),
-	package_data={
-		"": ["scripts/*"],
-	}
 )
