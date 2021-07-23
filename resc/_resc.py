@@ -319,7 +319,7 @@ if resc.over_one_ssh(ssh):
 			raise RescServerError(f"server {os.path.basename(full_path)} exit status {stdout.channel.recv_exit_status()}")
 
 		print(self._resc_arg)	
-		stdin,stdout,stderr = client.exec_command(f"PATH=$PATH:~/.local/bin resc {self._resc_arg}'")
+		stdin,stdout,stderr = client.exec_command(f"PATH=$PATH:~/.local/bin resc {self._resc_arg}")
 		status_code = int(stdout.channel.recv_exit_status())
 		ssh.close(client)
 		if status_code == 0:
