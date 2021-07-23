@@ -336,19 +336,19 @@ if resc.over_one_ssh(ssh):
 	def _resc_arg(self):
 		resc_arg = str()
 		if self._cpu_dict is not None:
-			resc_arg += f'--cpu_t {self._cpu_dict["threshold"]}'
+			resc_arg += f'--cpu_t {self._cpu_dict["threshold"]} '
 			if "mode" in self._cpu_dict.keys():
-				resc_arg += f'--cpu_mode {self._cpu_dict["mode"]}'
+				resc_arg += f'--cpu_mode {self._cpu_dict["mode"]} '
 			if "interval" in self._cpu_dict.keys():
-				resc_arg += f'--cpu_interval {self._cpu_dict["interval"]}'
+				resc_arg += f'--cpu_interval {self._cpu_dict["interval"]} '
 		if self._memory_dict is not None:
-			resc_arg += f'--mem_t {self._memory_dict["threshold"]}'
+			resc_arg += f'--mem_t {self._memory_dict["threshold"]} '
 			if "mode" in self._memory_dict.keys():
-				resc_arg += f'--mem_mode {self._mem_dict["mode"]}'
+				resc_arg += f'--mem_mode {self._mem_dict["mode"]} '
 		if self._disk_dict is not None:
-			resc_arg += f'--disk_t {self._disk_dict["threshold"]}'
+			resc_arg += f'--disk_t {self._disk_dict["threshold"]} '
 			if "mode" in self._disk_dict.keys():
-				resc_arg += f'--disk_mode {self._disk_dict["mode"]}'
+				resc_arg += f'--disk_mode {self._disk_dict["mode"]} '
 		
 		return resc_arg
 
