@@ -26,7 +26,7 @@ def main():
 	else:
 		cpu = None
 	if args.mem_t is not None:
-		memory["threshold"] = args.memory_t
+		memory["threshold"] = args.mem_t
 		if args.mem_mode is not None:
 			memory["mode"] = args.mem_mode
 	else:
@@ -48,6 +48,7 @@ def main():
 		memory=memory,
 		disk=disk,
 	)
+	print(resc._resc_arg)
 	if resc.over_one:
 		print("over threshold.")
 		sys.exit(255)

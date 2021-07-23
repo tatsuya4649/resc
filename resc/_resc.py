@@ -319,7 +319,7 @@ if resc.over_one_ssh(ssh):
 			raise RescServerError(f"server {os.path.basename(full_path)} exit status {stdout.channel.recv_exit_status()}")
 
 		print(self._resc_arg)	
-		stdin,stdout,stderr = client.exec_command(f"PATH=$PATH:~/.local/bin resc {self._resc_arg}")
+		stdin,stdout,stderr = client.exec_command(f"PATH=$PATH:~/.local/bin resc {self._resc_arg}'")
 		status_code = int(stdout.channel.recv_exit_status())
 		ssh.close(client)
 		if status_code == 0:
@@ -334,23 +334,23 @@ if resc.over_one_ssh(ssh):
 
 	@property
 	def _resc_arg(self):
-		resc_arg = str()
+		resc_arg = list()
 		if self._cpu_dict is not None:
-			resc_arg += f'--cpu_t {self._cpu_dict["threshold"]} '
+			resc_arg.append(f'--cpu_t {self._cpu_dict["threshold"]}')
 			if "mode" in self._cpu_dict.keys():
-				resc_arg += f'--cpu_mode {self._cpu_dict["mode"]} '
+				resc_arg.append(f'--cpu_mode {self._cpu_dict["mode"]}')
 			if "interval" in self._cpu_dict.keys():
-				resc_arg += f'--cpu_interval {self._cpu_dict["interval"]} '
+				resc_arg.append(f'--cpu_interval {self._cpu_dict["interval"]}')
 		if self._memory_dict is not None:
-			resc_arg += f'--mem_t {self._memory_dict["threshold"]} '
+			resc_arg.append(f'--mem_t {self._memory_dict["threshold"]}')
 			if "mode" in self._memory_dict.keys():
-				resc_arg += f'--mem_mode {self._mem_dict["mode"]} '
+				resc_arg.append(f'--mem_mode {self._mem_dict["mode"]}')
 		if self._disk_dict is not None:
-			resc_arg += f'--disk_t {self._disk_dict["threshold"]} '
+			resc_arg.append(f'--disk_t {self._disk_dict["threshold"]}')
 			if "mode" in self._disk_dict.keys():
-				resc_arg += f'--disk_mode {self._disk_dict["mode"]} '
+				resc_arg.append(f'--disk_mode {self._disk_dict["mode"]}')
 		
-		return resc_arg
+		return " ".join(resc_arg)
 
 	def _send_script(self,ssh,connect,script_path):
 		ssh.scpfile(connect,script_path)
