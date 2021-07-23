@@ -1,5 +1,6 @@
 import paramiko
 import scp
+import os
 
 class SSH:
 	_FORDEST="/var/resc/"
@@ -10,8 +11,10 @@ class SSH:
 		password=None,
 		key_filename=None,
 		timeout=5,
+		port=22,
 	):
 		self._ip = ip
+		self._port = port
 		self._username = username
 		self._password = password
 		self._key_filename = key_filename
@@ -46,24 +49,27 @@ class SSH:
 	@property
 	def timeout(self):	
 		return self._timeout
-	
-	@property
+	@property	
 	def connect(self):
 		client = paramiko.SSHClient()
-		client.set_missing_host_key_policy(policy.WarningPolocy())
+		client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 		client.connect(
-			{self._ip},
-			username={self._username},
-			key_filename={self._key_filename},
-			timeout={self._timeout},
+			hostname=self._ip,
+			port=self._port,
+			username=self._username,
+			password=self._password,
+			key_filename=self._key_filename,
+			timeout=self._timeout,
 		)
 		return client
+	def close(self,client):
+		client.close()
 
-	def send_bashfile(self,file,connect):
-		with scp.SCPClient(connect.get_transport()) as scp:
-			scp.put(file,self._FORDEST)
+	def scpfile(self,connect,script_path):
+		with scp.SCPClient(connect.get_transport()) as s:
+			s.put(script_path,f"./{os.path.basename(script_path)}")
 		
 
 __all__ = [
-	SSH
+	SSH.__name__,
 ]

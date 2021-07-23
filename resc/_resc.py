@@ -1,3 +1,4 @@
+import resc
 from resc.cpu import CPUDetect
 from resc.memory import MemoryDetect
 from resc.disk import DiskDetect
@@ -9,6 +10,7 @@ import os
 import pathlib
 import re
 import sys
+import paramiko
 
 class RescTypeError(TypeError):
 	pass
@@ -18,18 +20,25 @@ class RescAttributeError(AttributeError):
 	pass
 class RescKeyError(KeyError):
 	pass
+class RescServerError(Exception):
+	pass
 
 class Resc:
 	"""
 	"""
 	_RESCPATH_ENV="RESCPATH"
 	_RESCOUTPUT_ENV="RESCOUTPUT"
+	_SERVER_SCRIPT="server.sh"
 	def __init__(
 		self,
 		cpu=None,
 		memory=None,
 		disk=None,
 	):
+		cpu = cpu if cpu else None
+		memory = memory if memory else None
+		disk = disk if disk else None
+
 		self._cpu_dict=cpu
 		self._memory_dict=memory
 		self._disk_dict=disk
@@ -139,6 +148,7 @@ class Resc:
 		username=None,
 		password=None,
 		key_path=None,
+		port=22,
 		timeout=5,
 	):
 		if rescdir is not None and isinstance(rescdir,str):
@@ -161,9 +171,10 @@ class Resc:
 				(key_path is not None or password is not None):
 					ssh = SSH(
 						ip,
+						port=port,
 						username=username,
 						password=password,
-						key_filename=key_path,
+						key_filename=re.sub(r'~',f"{os.path.expanduser('~')}",key_path),
 						timeout=timeout,
 					)
 				else:
@@ -179,7 +190,6 @@ class Resc:
 				self._crons_get(trigger,filename)
 				self._crons_register()
 
-				print(f"interval {trigger}")
 			return _wrapper
 		return _register
 	
@@ -246,7 +256,8 @@ class Resc:
 #			if ssh is not None:
 #				sf.write(self._import_others(ssh))
 			sf.write(self._define_resc)
-			sf.write("".join(matchs))
+			matchs_str = "".join(matchs)
+			sf.write(matchs_str[re.search(r'(?=.*)def',matchs_str).start():])
 			if ssh is not None:
 				sf.write(self._if_ssh_resc(ssh))
 			else:
@@ -269,32 +280,85 @@ class Resc:
 		if_str = str()
 		if_str += "if resc.over_one:\n"
 		return if_str
-	@property
+
 	def _if_ssh_resc(self,ssh):
 		if ssh is None:
 			raise RescValueError("ssh must be not None.")
 		if_ssh_str = str()
+		if ssh.password is not None:
+			autho_str = f"password=\"{ssh.password}\""
+		else:
+			autho_str = f"key_filename=\"{ssh.key_filename}\""
+			
 		if_ssh_str += f"""
-		ssh = SSH(
-			ip={ssh.ip},
-			username={ssh.username},
-			password={ssh.password},
-			key_filename={ssh.key_filename},
-			timeout={ssh.timeout},
-			)
-		if resc.over_one_ssh(ssh):
-		"""
-		return if_str
+ssh = SSH(
+	ip=\"{ssh.ip}\",
+	username=\"{ssh.username}\",
+	{autho_str},
+	timeout={ssh.timeout},
+	)
+if resc.over_one_ssh(ssh):
+"""
+		return if_ssh_str
 
 	def over_one_ssh(self,ssh):
-		connect = ssh.connect
+		client = ssh.connect
+		if resc.__path__ is None or not isinstance(resc.__path__,list):
+			raise RescValueError("resc package path is invalid.")
+		if len(resc.__path__) != 1:
+			raise RescValueError("resc path list is invalid.")
+		package_path = resc.__path__[0]
+		full_path = f"{package_path}/scripts/{self._SERVER_SCRIPT}"
+		self._send_script(ssh,client,full_path)
+		
+		stdin,stdout,stderr = client.exec_command(f"bash ./{os.path.basename(full_path)}")
+		if int(stdout.channel.recv_exit_status()) != 0:
+			ssh.close(client)
+			for err in stdout:
+				print(err,end="")
+			raise RescServerError(f"server {os.path.basename(full_path)} exit status {stdout.channel.recv_exit_status()}")
+
+		print(self._resc_arg)	
+		stdin,stdout,stderr = client.exec_command(f"resc {self._resc_arg}'")
+		ssh.close(client)
+		status_code = int(stdout.channel.recv_exit_status())
+		if status_code == 0:
+			return False
+		elif status_code == 1:
+			for err in stderr:
+				print(err,end="")
+			return False
+		else:
+			# return 255 is over resource
+			return True
+
+	def _resc_arg(self):
+		resc_arg = str()
+		if self._cpu_dict is not None:
+			resc_arg += f'--cpu_t {self._cpu_dict["threshold"]}'
+			if "mode" in self._cpu_dict.keys():
+				resc_arg += f'--cpu_mode {self._cpu_dict["mode"]}'
+			if "interval" in self._cpu_dict.keys():
+				resc_arg += f'--cpu_interval {self._cpu_dict["interval"]}'
+		if self._memory_dict is not None:
+			resc_arg += f'--mem_t {self._memory_dict["threshold"]}'
+			if "mode" in self._memory_dict.keys():
+				resc_arg += f'--mem_mode {self._mem_dict["mode"]}'
+		if self._disk_dict is not None:
+			resc_arg += f'--disk_t {self._disk_dict["threshold"]}'
+			if "mode" in self._disk_dict.keys():
+				resc_arg += f'--disk_mode {self._disk_dict["mode"]}'
+		
+		return resc_arg
+
+	def _send_script(self,ssh,connect,script_path):
+		ssh.scpfile(connect,script_path)
 
 	@property
 	def _import_resc(self):
 		import_str = str()
 		dir = os.path.dirname(__file__)
 		pardir = pathlib.Path(dir).resolve().parents[0]
-		print(pardir)
 		import_str += "import sys\n"
 		import_str += f"sys.path.append(\"{pardir}\")\n"
 		import_str += "from resc import Resc\n"
@@ -305,12 +369,11 @@ class Resc:
 		if ssh is None:
 			raise RescValueError("ssh must be not None.")
 		import_str = str()
-		import_str += ssh.import
 		return import_str
 	@property
 	def _define_resc(self):
 		define_str = str()
-		define_str += f"resc=Resc(cpu={self._cpu_dict},memory={self._memory_dict},disk={self._disk_dict})\n"
+		define_str += f"\nresc=Resc(cpu={self._cpu_dict},memory={self._memory_dict},disk={self._disk_dict})\n"
 		return define_str
 
 __all__ = [
