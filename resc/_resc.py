@@ -332,6 +332,8 @@ if resc.over_one_ssh(ssh):
 				print(err,end="")
 			return False
 		else:
+			for out in stdout:
+				print(out,end="")
 			# return 255 is over resource
 			return True
 
