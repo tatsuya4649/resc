@@ -1,8 +1,7 @@
 import unittest
 import os
-from unittest.case import TestCase
-from resc._resc import Resc
 
+from resc._resc import Resc
 _INTERVAL=0
 
 class TestResc(unittest.TestCase):
@@ -66,7 +65,7 @@ class TestRemote(unittest.TestCase):
 			trigger="* * * * *",
 			rescdir="rescs",
 			outputfile="output",
-			ip="13.113.231.81",
+			ip="13.231.122.182",
 			username="ubuntu",
 			key_path="~/.aws/TestKeyPair.pem",
 		)

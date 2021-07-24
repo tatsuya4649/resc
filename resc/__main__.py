@@ -1,4 +1,5 @@
-from resc import Resc
+from ._resc import Resc
+from .resclog import RescLogAnalyze
 import sys
 import argparse
 
@@ -12,8 +13,16 @@ def main():
 	parser.add_argument("-d","--disk_t",help="Disk threshold value",type=float)
 	parser.add_argument("-p","--disk_path",help="Disk path",type=str)
 	parser.add_argument("--disk_mode",help="Disk mode",type=str)
+	parser.add_argument("--log",help="Analize log file.receive path.",type=str)
+	parser.add_argument("-q",help="Quiet output",action="store_true")
 
 	args = parser.parse_args()
+
+	if args.log is not None:
+		analyzer=RescLogAnalyze(path=args.log)
+		analyzer=analyze()
+		sys.exit(0)
+
 	cpu = dict()
 	memory = dict()
 	disk = dict()
@@ -48,13 +57,13 @@ def main():
 		memory=memory,
 		disk=disk,
 	)
-#	print(resc._resc_arg)
-#	print(f"PATH=\"$PATH:~/.local/bin\" resc {resc._resc_arg}")
 	if resc.over_one:
-		print("over threshold.")
+		if not args.q:
+			print("over threshold.")
 		sys.exit(255)
 	else:
-		print("no resource over threshold.")
+		if not args.q:
+			print("over threshold.")
 		sys.exit(0)
 
 

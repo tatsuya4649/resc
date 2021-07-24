@@ -183,6 +183,8 @@ class Resc:
 					)
 				else:
 					ssh = None
+				self._resclog.func=func.__name__
+				self._resclog.remo=ip
 				filename = self._sourcefile(
 					file=call_file,
 					func=call_code,
@@ -190,8 +192,6 @@ class Resc:
 					func_args=func_args,
 					ssh=ssh,
 				)
-				self._resclog.func=func.__name__
-				self._resclog.remo=ip
 
 				# Register crontable from trigger
 				self._crons_get(trigger,filename)
@@ -231,7 +231,7 @@ class Resc:
 				output_path = f"{pathlib.Path(os.getenv(self._RESCOUTPUT_ENV)).resolve()}"
 			else:
 				output_path = f"{os.getenv(self._RESCOUTPUT_ENV)}"
-			output = f' >{output_path} 2>&1'
+			output = f' >>{output_path} 2>&1'
 		else:
 			output = str()
 		cron = Cron(f"python {triggerscript} {output}",trigger)
@@ -264,6 +264,8 @@ class Resc:
 		else:
 			matchs = [x.group() for x in iters]
 			matchs = [x+'\n' for x in matchs]
+		matchs_str = "".join(matchs)
+		self._resclog.sour = matchs_str[re.search(r'(?=.*)def',matchs_str).start():].encode("utf-8")
 		with open(filename,"w") as sf:
 			sf.write(self._import_resc)
 			sf.write(self._resclog._import_log)
@@ -315,11 +317,11 @@ ssh = SSH(
 	{autho_str},
 	timeout={ssh.timeout},
 	)
-if resc.over_one_ssh(ssh):
+if resc.over_one_ssh(ssh,resclog):
 """
 		return if_ssh_str
 
-	def over_one_ssh(self,ssh):
+	def over_one_ssh(self,ssh,resclog):
 		client = ssh.connect
 		if resc.__path__ is None or not isinstance(resc.__path__,list):
 			raise RescValueError("resc package path is invalid.")
@@ -327,30 +329,31 @@ if resc.over_one_ssh(ssh):
 			raise RescValueError("resc path list is invalid.")
 		package_path = resc.__path__[0]
 		full_path = f"{package_path}/scripts/{self._SERVER_SCRIPT}"
-		self._send_script(ssh,client,full_path)
+		self._send_script(ssh,client,full_path,resclog)
 		
 		stdin,stdout,stderr = client.exec_command(f"bash {ssh.startup_scripts}")
 		if int(stdout.channel.recv_exit_status()) != 0:
 			ssh.close(client)
 			for err in stdout:
 				print(err,end="")
+				resclog.output.append(err)
 			raise RescServerError(f"server {os.path.basename(full_path)} exit status {stdout.channel.recv_exit_status()}")
-
-#		print(self._resc_arg)
-#		print(f"PATH=$PATH:~/.local/bin resc {self._resc_arg}")
-		stdin,stdout,stderr = client.exec_command(f"PATH=\"$PATH:~/.local/bin\" resc {self._resc_arg}")
+		stdin,stdout,stderr = client.exec_command(f"PATH=\"$PATH:~/.local/bin\" resc -q {self._resc_arg}")
 		status_code = int(stdout.channel.recv_exit_status())
 		ssh.close(client)
 		if status_code == 0:
 			for out in stdout:
+				resclog.output.append(out)
 				print(out,end="")
 			return False
 		elif status_code == 1:
 			for err in stderr:
+				resclog.output.append(err)
 				print(err,end="")
 			return False
 		else:
 			for out in stdout:
+				resclog.output.append(out)
 				print(out,end="")
 			# return 255 is over resource
 			return True
@@ -375,8 +378,8 @@ if resc.over_one_ssh(ssh):
 		
 		return " ".join(resc_arg)
 
-	def _send_script(self,ssh,connect,script_path):
-		ssh.scpfile(connect,script_path)
+	def _send_script(self,ssh,connect,script_path,resclog):
+		ssh.scpfile(connect,script_path,resclog)
 
 	@property
 	def _import_resc(self):

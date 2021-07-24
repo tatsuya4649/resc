@@ -69,9 +69,13 @@ class SSH:
 	def close(self,client):
 		client.close()
 
-	def scpfile(self,connect,script_path):
+	def scpfile(self,connect,script_path,resclog):
 		self._startup_scripts = f"~/.resc/{os.path.basename(script_path)}"
 		stdin,stdout,stderr = connect.exec_command(f"cd ~;mkdir -p .resc")
+		for line in stdout:
+			resclog.output.append(line)
+		for line in stderr:
+			resclog.output.append(line)
 		if int(stdout.channel.recv_exit_status()) != 0:
 			raise SSHError(f"server exit status {stdout.channel.recv_exit_status()}")
 		with scp.SCPClient(connect.get_transport()) as s:
