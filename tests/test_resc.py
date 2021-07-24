@@ -1,5 +1,6 @@
 import unittest
 import os
+from unittest.case import TestCase
 from resc._resc import Resc
 
 _INTERVAL=0
@@ -31,6 +32,8 @@ class TestResc(unittest.TestCase):
 		self.assertIsInstance(res,list)
 		print(f'RESC OVERS {res}')
 
+
+class TestRegister(unittest.TestCase):
 	def test_register(self):
 		resc = Resc(
 			cpu={"threshold":80,"interval":_INTERVAL},
@@ -51,6 +54,25 @@ class TestResc(unittest.TestCase):
 			print(time.time())
 
 		world(1,b="resc test script")
-#		hello()
+	
+class TestRemote(unittest.TestCase):
+	def test_remote(self):
+		resc = Resc(
+			cpu={"threshold":0.0,"interval":_INTERVAL},
+			memory={"threshold":80},
+			disk={"threshold":80,"path":"/"},
+		)
+		@resc.register(
+			trigger="* * * * *",
+			rescdir="rescs",
+			outputfile="output",
+			ip="13.113.231.81",
+			username="ubuntu",
+			key_path="~/.aws/TestKeyPair.pem",
+		)
+		def hello():
+			print("hello resc!!!")
+		hello()
+
 if __name__ == "__main__":
 	unittest.main()

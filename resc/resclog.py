@@ -1,8 +1,11 @@
 import enum
 from enum import Enum
+from logging import log
 import time
 import datetime
 import re
+import sys
+import os
 
 @enum.unique
 class RescLogFormat(Enum):
@@ -36,7 +39,17 @@ class RescLog:
             logfile=None,
             format=None,
     ):
-        self.logfile=logfile
+        if logfile is not None:
+            self.logfile=self._LOGPATH_DEFAULT + re.sub(r'^/','',logfile)
+            self.logfile=re.sub(r'^~',f'{os.path.expanduser("~")}',self.logfile)
+        else:
+            self.logfile = None
+        log_pathlist = list()
+        for path in os.path.dirname(self.logfile).split('/'):
+            log_pathlist.append(path)
+            path = "/".join(log_pathlist)
+            if len(path) > 0 and not os.path.isdir(path):
+                os.mkdir(path)
         self.format=self._default_format(format)
         self._date = str(datetime.datetime.now())
         self._over = "over"
@@ -47,7 +60,7 @@ class RescLog:
 
     @property
     def log(self):
-            return self._logfile is not None
+            return self.logfile is not None
     @staticmethod
     def default_directory():
         return RescLog._LOGPATH_DEFAULT
@@ -134,32 +147,53 @@ class RescLog:
     @file.setter
     def file(self,file):
         self._file = file
+
+    def _header(self):
+        pass
     
-    
-    def write(self):
-        for f in self._format:
-            if not hasattr(self,f"{f.value}") or eval(f'self._{f.value}') is None:
-                    raise RescLogValueError(f"threre is \"{f.value}\" in format,but not define.")
-        with open(self._logfile,"a") as f:
-            f.write(f"{self.format_str}\n")
+    def write(self,over):
+        if self.log:
+            self.over = over
+            for f in self.format:
+                if not hasattr(self,f"{f.value}") or eval(f'self._{f.value}') is None:
+                        raise RescLogValueError(f"threre is \"{f.value}\" in format,but not define.")
+            if not os.path.isfile(self.logfile):
+                with open(self.logfile,"w") as f:
+                    f.write(f"{self._header}")
+            with open(self.logfile,"a") as f:
+                f.write(f"{self.format_str}\n")
     @property
     def _import_log(self):
-        return "from resc import RescLog\n"
+        return "from resc import RescLog,RescLogFormat\n"
     def _define_resclog(self,resclog):
         lists=list()
         for k,v in vars(self).items():
-            lists.append(f"resclog.{re.sub(r'^_','',k)}={v}")
+            value = v if not isinstance(v,str) else f'\"{v}\"'
+            if re.match('^_',k) is not None:
+                lists.append(f"resclog.{re.sub(r'^_','',k)}={value}")
         res = str()
         res += "resclog=RescLog(\n"
         res += f"logfile=\"{resclog.logfile}\",\n"
-        res += f"format={resclog.format},\n"
+        res += f"format={self.format_meta(resclog)},\n"
         res += ")\n"
         res += "%s"%('\n'.join(lists))
+        res += "\n"
         return res
+    def format_meta(self,resclog):
+        meta_list = list()
+        for format in resclog.format:
+            meta_list.append(format.__class__.__name__ + '.' + format.name)
+        return re.sub(r"'",'',str(meta_list))
+    @property
+    def _noover_log(self):
+        return f"else:\n\t{self._write_log_noover}"
 
     @property
-    def _write_log(self):
-        return "\tresclog.Write()\n"
+    def _write_log_over(self):
+        return "\tresclog.write(True)\n"
+    @property
+    def _write_log_noover(self):
+        return "resclog.write(False)\n"
 
 
 __all__ = [

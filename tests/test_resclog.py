@@ -22,9 +22,28 @@ class TestRescLog(unittest.TestCase):
         self.assertIsNotNone(res)
         self.assertIsInstance(res,str)
         print(res)
+
+    def test_import(self):
+        resclog = RescLog(logfile="resclog")
+        res = resclog._import_log
+        self.assertIsNotNone(res)
+        self.assertIsInstance(res,str)
+        print(res)
     def test_define(self):
         resclog = RescLog(logfile="resclog")
         res = resclog._define_resclog(resclog)
+        self.assertIsNotNone(res)
+        self.assertIsInstance(res,str)
+        print(res)
+    def test_over(self):
+        resclog = RescLog(logfile="resclog")
+        res = resclog._write_log_over
+        self.assertIsNotNone(res)
+        self.assertIsInstance(res,str)
+        print(res)
+    def test_noover(self):
+        resclog = RescLog(logfile="resclog")
+        res = resclog._noover_log
         self.assertIsNotNone(res)
         self.assertIsInstance(res,str)
         print(res)

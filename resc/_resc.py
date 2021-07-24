@@ -18,7 +18,7 @@ class Resc:
 	"""
 	"""
 	_RESCPATH_ENV="RESCPATH"
-	_RESCPATH_DEFAULT="~/.resc"
+	_RESCPATH_DEFAULT="~/.resc/"
 	_RESCOUTPUT_ENV="RESCOUTPUT"
 	_SERVER_SCRIPT="server.sh"
 	def __init__(
@@ -144,21 +144,25 @@ class Resc:
 		port=22,
 		timeout=5,
 		format=None,
+		call_first=False,
 	):
 		if rescdir is not None and isinstance(rescdir,str):
 			os.environ[self._RESCPATH_ENV] = rescdir
-		if outputfile is not None and re.match(r'.*/.*',outputfile) is not None:
-			raise RescValueError(f"outputfile only basename of path.(directory: {RescLog.default_directory()})")
 		if outputfile is not None and isinstance(outputfile,str):
 			os.environ[self._RESCOUTPUT_ENV] = outputfile
-		if rescdir is None and os.getenv(self._RESCPATH_ENV) is None:
-			os.environ[self._RESCPATH_ENV] = re.sub(r'~',f'{os.path.expandvars("~")}',self._RESCPATH_DEFAULT)
+		if os.getenv(self._RESCPATH_ENV) is None:
+			os.environ[self._RESCPATH_ENV] = re.sub(r'^~',f'{os.path.expanduser("~")}',self._RESCPATH_DEFAULT+"resc")
+		else:
+			os.environ[self._RESCPATH_ENV] = re.sub(r'^~',f'{os.path.expanduser("~")}',self._resc_dir(str(rescdir)))
+
 		if not isinstance(trigger,str):
 			raise RescTypeError("trigger must be string type.")
 		self._resclog = RescLog(
 						logfile=outputfile,
 						format=format
 					)
+		if self._resclog.logfile is not None:
+			os.environ[self._RESCOUTPUT_ENV] = self._resclog.logfile
 		def _register(func):
 			def _wrapper(*args,**kwargs):
 				call_file = inspect.stack()[1].filename
@@ -192,8 +196,13 @@ class Resc:
 				# Register crontable from trigger
 				self._crons_get(trigger,filename)
 				self._crons_register()
+
+				if call_first:
+					func(*args,**kwargs)
 			return _wrapper
 		return _register
+	def _resc_dir(self,dir):
+		return self._RESCPATH_DEFAULT + re.sub(r'^/','',dir)
 	
 	def _sourcefile(self,file,func,funcname,func_args,ssh=None):
 		resc_dir = os.getenv(self._RESCPATH_ENV)
@@ -201,15 +210,15 @@ class Resc:
 		if not pathlib.Path(resc_dir).is_absolute():
 			resc_dir = pathlib.Path(resc_dir).resolve()
 		i=0
-		if not os.path.isdir(f"{resc_dir}/rescs"):
-			os.makedirs(f"{resc_dir}/rescs")
+		if not os.path.isdir(f"{resc_dir}"):
+			os.makedirs(f"{resc_dir}")
 
 		if not isinstance(func_args["args"],tuple):
 			raise RescTypeError('func_args["args"] must be tuple of argument.')
 		if not isinstance(func_args["kwargs"],dict):
 			raise RescTypeError('func_args["kwargs"] must be dict of keyword argument.')
 		while True:
-			resc_path = f"{resc_dir}/rescs"
+			resc_path = f"{resc_dir}"
 			resc_key = f"{resc_path}/resc{i}.py"
 			hash = hashlib.md5(resc_key.encode('utf-8')).hexdigest()
 			filename = f"{resc_path}/resc{hash}.py"
@@ -241,15 +250,15 @@ class Resc:
 	def _source_write(self,filename,func,funcname,func_args,ssh=None):
 		self._resclog.file = filename
 		iters = list()
+		# delete until def keyword
+		func = func[re.search(r'(?=.*)\t*def',func).start():]
 		for line in func.split('\n'):
 			match = re.match(r'^(?!(\s*)@).*$',line)
 			if match is not None:
 				iters.append(match)
-#		for iter in iters:
-#			print(iter)
-		first_tab = re.match(r'^(?=\s)',iters[0].group())
+		first_tab = re.match(r'^\s*',iters[0].group())
 		matchs = list()
-		if first_tab is not None:
+		if first_tab is not None and len(first_tab.group())>0:
 			matchs = [re.sub(f'^{first_tab.group()}','',x.group()) for x in iters]
 			matchs = [x+'\n' for x in matchs]
 		else:
@@ -258,8 +267,6 @@ class Resc:
 		with open(filename,"w") as sf:
 			sf.write(self._import_resc)
 			sf.write(self._resclog._import_log)
-#			if ssh is not None:
-#				sf.write(self._import_others(ssh))
 			sf.write(self._define_resc)
 			sf.write(self._resclog._define_resclog(self._resclog))
 			matchs_str = "".join(matchs)
@@ -279,7 +286,11 @@ class Resc:
 						func_args["kwargs"][k] = f'\"{v}\"'
 				kwargs_str = ",".join(["=".join([str(k),str(v)]) for k,v in func_args["kwargs"].items()])
 			sf.write(f'\t{funcname}({args_str}{kwargs_str})\n')
-			sf.write(f'{self._resclog._write_log}')
+			sf.write(f'{self._resclog._write_log_over}')
+			sf.write(f'{self._resclog._noover_log}')
+		print("Output of compile:\t %s"%(filename))
+		if self._resclog.log:
+			print("Output of log:\t %s"%(self._resclog.logfile))
 		return filename
 	
 	@property
