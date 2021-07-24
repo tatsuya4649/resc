@@ -198,4 +198,5 @@ class RescLog:
 
 __all__ = [
     RescLog.__name__,
+    RescLogFormat.__name__,
 ]

@@ -2,6 +2,9 @@ import paramiko
 import scp
 import os
 
+class SSHError(Exception):
+	pass
+
 class SSH:
 	_FORDEST="/var/resc/"
 	def __init__(
@@ -68,6 +71,9 @@ class SSH:
 
 	def scpfile(self,connect,script_path):
 		self._startup_scripts = f"~/.resc/{os.path.basename(script_path)}"
+		stdin,stdout,stderr = connect.exec_command(f"cd ~;mkdir -p .resc")
+		if int(stdout.channel.recv_exit_status()) != 0:
+			raise SSHError(f"server exit status {stdout.channel.recv_exit_status()}")
 		with scp.SCPClient(connect.get_transport()) as s:
 			s.put(script_path,self._startup_scripts)
 	
