@@ -39,20 +39,23 @@ class TestRegister(unittest.TestCase):
 			memory={"threshold":80},
 			disk={"threshold":80,"path":"/"},
 		)
-		@resc.register("*/1 * * * *",rescdir=".")
+		@resc.register(
+			trigger="*/1 * * * *",
+			rescdir="rescs"
+		)
 		def hello():
 			print("hello resc!!!")
-
-		os.environ["RESCPATH"] = "."	
-		os.environ["RESCOUTPUT"] = "./rescoutput.txt"	
-		@resc.register("*/1 * * * *")
-		def world(a,b):
-			print("hello world")
-			import time
-			print(a,b)
-			print(time.time())
-
-		world(1,b="resc test script")
+		hello()
+#		os.environ["RESCPATH"] = "."	
+#		os.environ["RESCOUTPUT"] = "./rescoutput.txt"	
+#		@resc.register("*/1 * * * *")
+#		def world(a,b):
+#			print("hello world")
+#			import time
+#			print(a,b)
+#			print(time.time())
+#
+#		world(1,b="resc test script")
 	
 class TestRemote(unittest.TestCase):
 	def test_remote(self):
@@ -67,7 +70,9 @@ class TestRemote(unittest.TestCase):
 			outputfile="output",
 			ip="13.231.122.182",
 			username="ubuntu",
-			key_path="~/.aws/TestKeyPair.pem",
+			password="taadfdafd",
+			call_first=True,
+			#key_path="~/.aws/TestKeyPair.pem",
 		)
 		def hello():
 			print("hello resc!!!")

@@ -2,6 +2,7 @@ from ctypes import *
 import io
 from enum import Enum
 import re
+from sys import flags
 
 #from resclog import RescLog
 from .rformat import RescLogFormat
@@ -17,10 +18,56 @@ class RescLogFlag(Enum):
 class RescLogHeaderTypeError(TypeError):
 	pass
 
+class RescLogSFlag(Enum):
+	# General Error
+	ERR=1<<0
+	# Emergency Header
+	EME=1<<1
+	# Defination Error
+	DEF=1<<2
+	# RescLog Error
+	ROG=1<<3
+	# SSH Error
+	SSH=1<<4
+	# Remote Host Error
+	REM=1<<5
+	# Local Host Error
+	LOC=1<<6
+	# Module Not Found Error
+	MNF=1<<7
+	# Import Error
+	IMP=1<<8
+	# Function Error
+	FUN=1<<9
+	# Indent Error
+	IND=1<<10
+	# Not Found Script File
+	NFS=1<<11
+
+class RescLogEmergeHeader(LittleEndianStructure):
+	_IDENTIFY_DEFAULT="resc"
+	_fields_ = (
+	('identify',c_char*4),
+	('sflag',c_uint32),
+	('errlen',c_int32),
+	)
+	def __init__(
+		self,
+		sflag,
+		errlen,
+	):
+		self._identify = self._IDENTIFY_DEFAULT.encode("utf-8")
+		super().__init__(
+			identify=self._identify,
+			sflag=sflag,
+			errlen=errlen,
+		)
+
 class RescLogHeader(LittleEndianStructure):
 	_IDENTIFY_DEFAULT="resc"
 	_fields_ = (
 		('identify',c_char*4),
+		('sflag',c_uint32),
 		('headlen',c_uint16),
 		('bodylen',c_uint32),
 		('stdoutlen',c_uint32),
@@ -35,15 +82,17 @@ class RescLogHeader(LittleEndianStructure):
 	
 	def __init__(
 		self,
+		sflag,
 		bodylen,
 		stdoutlen,
 		stderrlen,
 		flaglist,
 		lendict,
 	):
-		self._identify = self._IDENTIFY_DEFAULT.encode()
+		self._identify = self._IDENTIFY_DEFAULT.encode("utf-8")
 		super().__init__(
 			identify=self._identify,
+			sflag=sflag,
 			headlen=RescLogHeader.length(),
 			bodylen=bodylen,
 			stdoutlen=stdoutlen,
@@ -89,4 +138,6 @@ class RescLogHeader(LittleEndianStructure):
 __all__ = [
 		RescLogFlag.__name__,
 		RescLogHeader.__name__,
+		RescLogEmergeHeader.__name__,
+		RescLogSFlag.__name__,
 ]

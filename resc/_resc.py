@@ -3,6 +3,7 @@ from resc.cpu import CPUDetect
 from resc.memory import MemoryDetect
 from resc.disk import DiskDetect
 from resc.cron import Cron
+from resc.resclog.header import RescLogEmergeHeader, RescLogSFlag
 from resc.ssh import SSH
 from resc.rescerr import *
 from resc.resclog import RescLog
@@ -13,6 +14,8 @@ import pathlib
 import re
 import sys
 import paramiko
+import subprocess
+from jinja2 import Environment,FileSystemLoader,Template
 
 class Resc:
 	"""
@@ -146,6 +149,7 @@ class Resc:
 		format=None,
 		call_first=False,
 	):
+		self._call_first = call_first if isinstance(call_first,bool) else False
 		if rescdir is not None and isinstance(rescdir,str):
 			os.environ[self._RESCPATH_ENV] = rescdir
 		if outputfile is not None and isinstance(outputfile,str):
@@ -178,7 +182,7 @@ class Resc:
 						port=port,
 						username=username,
 						password=password,
-						key_filename=re.sub(r'~',f"{os.path.expanduser('~')}",key_path),
+						key_filename=re.sub(r'~',f"{os.path.expanduser('~')}",key_path) if key_path is not None else None,
 						timeout=timeout,
 					)
 				else:
@@ -197,7 +201,7 @@ class Resc:
 				self._crons_get(trigger,filename)
 				self._crons_register()
 
-				if call_first:
+				if self._call_first:
 					func(*args,**kwargs)
 			return _wrapper
 		return _register
@@ -234,8 +238,20 @@ class Resc:
 			output = f' >>{output_path} 2>&1'
 		else:
 			output = str()
-		cron = Cron(f"python {triggerscript} {output}",trigger)
-		self._crons.append(cron)
+		cp = subprocess.run(["which","resc"],encoding="utf-8",stdout=subprocess.PIPE)
+		which_resc = re.sub(r'\s*$','',cp.stdout)
+		if len(which_resc)>0:
+			totalline = f'if ! [ -f {triggerscript} ]; then {which_resc} --not_found \'{output_path}\'; else python3 {triggerscript} {output}; fi'
+			cron = Cron(totalline,trigger)
+			if self._call_first:
+				with open(output_path,"wb") as fp:
+					subprocess.run(["python3",triggerscript],stdout=fp,stderr=fp)
+			self._crons.append(cron)
+		else:
+			print("resc command not found. required in crontab.",file=sys.stderr)
+			if os.path.isfile(triggerscript):
+				os.remove(triggerscript)
+			sys.exit(1)
 	def _crons_register(self):
 		if not hasattr(self,"_crons"):
 			raise RescAttributeError("_crons not found.")
@@ -266,76 +282,72 @@ class Resc:
 			matchs = [x+'\n' for x in matchs]
 		matchs_str = "".join(matchs)
 		self._resclog.sour = matchs_str[re.search(r'(?=.*)def',matchs_str).start():].encode("utf-8")
+
+		args_str = str()
+		if len(func_args["args"])>0:
+			args_str = ",".join([str(x) if not isinstance(x,str) else f"\"{x}\"" for x in func_args["args"]])
+			args_str += ","
+		kwargs_str = str()
+		if len(func_args["kwargs"])>0:
+			for k,v in func_args["kwargs"].items():
+				if isinstance(v,str):
+					func_args["kwargs"][k] = f'\"{v}\"'
+			kwargs_str = ",".join(["=".join([str(k),str(v)]) for k,v in func_args["kwargs"].items()])
+
+		i=0
+		while True:
+			resc_key = f"def{i}.py"
+			hash = hashlib.md5(resc_key.encode('utf-8')).hexdigest()
+			sourcefile = f"{os.path.dirname(filename)}/def_{hash}.py"
+			if not os.path.exists(sourcefile):
+				break
+			i+=1
+		renparams = dict()
+		renparams["sourcefile"] = sourcefile
+		renparams["source"] = matchs_str[re.search(r'(?=.*)def',matchs_str).start():]
+		renparams["sourcebyte"] = bytes(matchs_str[re.search(r'(?=.*)def',matchs_str).start():].encode("utf-8"))
+		renparams["rescsflag"] = inspect.getsource(RescLogSFlag)
+		renparams["syspath"] = self._par_resc
+		renparams["resc_cpu"] = self._cpu_dict
+		renparams["resc_mem"] = self._memory_dict
+		renparams["resc_disk"] = self._disk_dict
+		renparams["logfile"] = f"\"{self._resclog.pure_log}\"" if self._resclog.pure_log is not None else None
+		renparams["logformat"] = self._resclog.format_meta(self._resclog)
+		renparams["logvars"] = self._resclog.define_resclog(self._resclog) 
+		renparams["ssh"] = ssh
+
+		renparams["func"] = f"{funcname}({args_str}{kwargs_str})"
+		renparams["defname"] = funcname
+		env = Environment(loader=FileSystemLoader(f'{self._package_path}/templates',encoding="utf-8"))
+		tmpl = env.get_template('resc.j2')
+		render = tmpl.render(renparams)
+		
 		with open(filename,"w") as sf:
-			sf.write(self._import_resc)
-			sf.write(self._resclog._import_log)
-			sf.write(self._define_resc)
-			sf.write(self._resclog._define_resclog(self._resclog))
-			matchs_str = "".join(matchs)
-			sf.write(matchs_str[re.search(r'(?=.*)def',matchs_str).start():])
-			if ssh is not None:
-				sf.write(self._if_ssh_resc(ssh))
-			else:
-				sf.write(self._if_resc)
-			args_str = str()
-			if len(func_args["args"])>0:
-				args_str = ",".join([str(x) if not isinstance(x,str) else f"\"{x}\"" for x in func_args["args"]])
-				args_str += ","
-			kwargs_str = str()
-			if len(func_args["kwargs"])>0:
-				for k,v in func_args["kwargs"].items():
-					if isinstance(v,str):
-						func_args["kwargs"][k] = f'\"{v}\"'
-				kwargs_str = ",".join(["=".join([str(k),str(v)]) for k,v in func_args["kwargs"].items()])
-			sf.write(f'\t{funcname}({args_str}{kwargs_str})\n')
-			sf.write(f'{self._resclog._write_log_over}')
-			sf.write(f'{self._resclog._noover_log}')
+			sf.write(render)
+		
 		print("Output of compile:\t %s"%(filename))
 		if self._resclog.log:
 			print("Output of log:\t %s"%(self._resclog.logfile))
 		return filename
 	
 	@property
-	def _if_resc(self):
-		if_str = str()
-		if_str += "if resc.over_one:\n"
-		return if_str
-
-	def _if_ssh_resc(self,ssh):
-		if ssh is None:
-			raise RescValueError("ssh must be not None.")
-		if_ssh_str = str()
-		if ssh.password is not None:
-			autho_str = f"password=\"{ssh.password}\""
-		else:
-			autho_str = f"key_filename=\"{ssh.key_filename}\""
-			
-		if_ssh_str += f"""
-ssh = SSH(
-	ip=\"{ssh.ip}\",
-	username=\"{ssh.username}\",
-	{autho_str},
-	timeout={ssh.timeout},
-	)
-if resc.over_one_ssh(ssh,resclog):
-"""
-		return if_ssh_str
-
-	def over_one_ssh(self,ssh,resclog):
-		client = ssh.connect
+	def _package_path(self):
 		if resc.__path__ is None or not isinstance(resc.__path__,list):
 			raise RescValueError("resc package path is invalid.")
 		if len(resc.__path__) != 1:
 			raise RescValueError("resc path list is invalid.")
 		package_path = resc.__path__[0]
+		return package_path
+
+	def over_one_ssh(self,ssh,resclog):
+		client = ssh.connect
+		package_path = self._package_path
 		full_path = f"{package_path}/scripts/{self._SERVER_SCRIPT}"
 		self._send_script(ssh,client,full_path,resclog)
-		
 		stdin,stdout,stderr = client.exec_command(f"bash {ssh.startup_scripts}")
 		if int(stdout.channel.recv_exit_status()) != 0:
 			ssh.close(client)
 			for err in stdout:
-				print(err,end="")
 				resclog.output.append(err)
 			raise RescServerError(f"server {os.path.basename(full_path)} exit status {stdout.channel.recv_exit_status()}")
 		stdin,stdout,stderr = client.exec_command(f"PATH=\"$PATH:~/.local/bin\" resc -q {self._resc_arg}")
@@ -344,17 +356,14 @@ if resc.over_one_ssh(ssh,resclog):
 		if status_code == 0:
 			for out in stdout:
 				resclog.output.append(out)
-				print(out,end="")
 			return False
 		elif status_code == 1:
 			for err in stderr:
 				resclog.output.append(err)
-				print(err,end="")
 			return False
 		else:
 			for out in stdout:
 				resclog.output.append(out)
-				print(out,end="")
 			# return 255 is over resource
 			return True
 
@@ -382,27 +391,10 @@ if resc.over_one_ssh(ssh,resclog):
 		ssh.scpfile(connect,script_path,resclog)
 
 	@property
-	def _import_resc(self):
-		import_str = str()
+	def _par_resc(self):
 		dir = os.path.dirname(__file__)
 		pardir = pathlib.Path(dir).resolve().parents[0]
-		import_str += "import sys\n"
-		import_str += f"sys.path.append(\"{pardir}\")\n"
-		import_str += "from resc import Resc\n"
-		import_str += "from resc import SSH\n"
-		return import_str
-
-	def _import_others(self,ssh):
-		if ssh is None:
-			raise RescValueError("ssh must be not None.")
-		import_str = str()
-		return import_str
-
-	@property
-	def _define_resc(self):
-		define_str = str()
-		define_str += f"\nresc=Resc(cpu={self._cpu_dict},memory={self._memory_dict},disk={self._disk_dict})\n"
-		return define_str
+		return pardir
 
 __all__ = [
 	Resc.__name__,

@@ -1,5 +1,5 @@
 from ._resc import Resc
-from .resclog import RescLogAnalyze
+from .resclog import RescLogAnalyze,RescLog
 import sys
 import argparse
 
@@ -15,12 +15,16 @@ def main():
 	parser.add_argument("--disk_mode",help="Disk mode",type=str)
 	parser.add_argument("--log",help="Analize log file.receive path.",type=str)
 	parser.add_argument("-q",help="Quiet output",action="store_true")
+	parser.add_argument("--not_found",help="for crontab. If not found script, write to log",type=str)
 
 	args = parser.parse_args()
 
 	if args.log is not None:
 		analyzer=RescLogAnalyze(path=args.log)
 		analyzer=analyze()
+		sys.exit(0)
+	elif args.not_found is not None:
+		RescLog._not_found(args.not_found)
 		sys.exit(0)
 
 	cpu = dict()

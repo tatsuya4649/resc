@@ -1,3 +1,4 @@
 psutil==5.8.0
 paramiko==2.7.2
 scp==0.13.6
+Jinja2==2.10.1

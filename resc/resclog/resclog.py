@@ -7,7 +7,7 @@ import datetime
 import re
 import sys
 import os
-from .header import RescLogHeader
+from .header import RescLogHeader,RescLogSFlag,RescLogEmergeHeader
 from .rformat import RescLogFormat,RescLogOver
 
 from paramiko.util import log_to_file
@@ -45,12 +45,14 @@ class RescLog:
         else:
             self.pure_log = None
             self.logfile = None
-        log_pathlist = list()
-        for path in os.path.dirname(self.logfile).split('/'):
-            log_pathlist.append(path)
-            path = "/".join(log_pathlist)
-            if len(path) > 0 and not os.path.isdir(path):
-                os.mkdir(path)
+
+        if self.logfile is not None:
+            log_pathlist = list()
+            for path in os.path.dirname(self.logfile).split('/'):
+                log_pathlist.append(path)
+                path = "/".join(log_pathlist)
+                if len(path) > 0 and not os.path.isdir(path):
+                    os.mkdir(path)
         self.format=self._default_format(format)
         self._date = str(datetime.datetime.now())
         self._over = RescLogOver.FALSE
@@ -112,12 +114,17 @@ class RescLog:
         pass
     @date.getter
     def date(self):
+        if self._date is None:
+            return None
         return str(self._date).encode("utf-8")
     @date.setter
     def date(self,date):
-        if not isinstance(date,datetime.datetime) and not isinstance(date,str):
-            raise RescLogTypeError(f"date must be datetime or str.now {type(date)}")
-        self._date = str(date)
+        if date is None:
+            self._date = None
+        else:
+            if not isinstance(date,datetime.datetime) and not isinstance(date,str):
+                raise RescLogTypeError(f"date must be datetime or str.now {type(date)}")
+            self._date = str(date)
     @property
     def over(self):
         pass
@@ -135,45 +142,65 @@ class RescLog:
         pass
     @func.getter
     def func(self):
+        if self._func is None:
+            return None
         return self._func.encode("utf-8")
     @func.setter
     def func(self,func):
-        if not isinstance(func,str):
-            raise RescLogTypeError(f"func must be str. now {type(func)}")
-        self._func = func
+        if func is None:
+            self._func = None
+        else:
+            if not isinstance(func,str):
+                raise RescLogTypeError(f"func must be str. now {type(func)}")
+            self._func = func
     @property
     def remo(self):
         pass
     @remo.getter
     def remo(self):
+        if self._remo is None:
+            return None
         return self._remo.encode("utf-8")
     @remo.setter
     def remo(self,remo):
-        if not isinstance(remo,str):
-            raise RescLogTypeError(f"remo must be str. now {type(remo)}")
-        self._remo = remo
+        if remo is None:
+            self._remo = None
+        else:
+            if not isinstance(remo,str):
+                raise RescLogTypeError(f"remo must be str. now {type(remo)}")
+            self._remo = remo
     @property
     def sour(self):
         pass
     @sour.getter
     def sour(self):
+        if self._sour is None:
+            return None
         return self._sour
     @sour.setter
     def sour(self,sour):
-        if not isinstance(sour,bytes):
-            raise RescLogTypeError(f"sour must be bytes. now {type(sour)}")
-        self._sour = sour
+        if sour is None:
+            self._sour = None
+        else:
+            if not isinstance(sour,bytes):
+                raise RescLogTypeError(f"sour must be bytes. now {type(sour)}")
+            self._sour = sour
     @property
     def file(self):
         pass
     @file.getter
     def file(self):
+        if self._file is None:
+            return None
         return self._file.encode("utf-8")
     @file.setter
     def file(self,file):
-        if not isinstance(file,str):
-            raise RescLogTypeError(f"file must be str. now {type(file)}")
-        self._file = file
+        if file is None:
+            self._file = None
+        else:
+            if not isinstance(file,str):
+                raise RescLogTypeError(f"file must be str. now {type(file)}")
+            self._file = file
     
     @property
     def stdout(self):
@@ -188,11 +215,15 @@ class RescLog:
         return res
     @stdout.setter
     def stdout(self,out):
-        if not isinstance(out,list):
-            raise RescLogTypeError("output must be list type.")
+        if not isinstance(out,list) and not isinstance(out,bytes):
+            raise RescLogTypeError("output must be list or byte type.")
         if not hasattr(self,"_stdout"):
             self._stdout = list()
-        self._stdout += out
+        if isinstance(out,list):
+            self._stdout += out
+        else:
+            self._stdout.append(out)
+
     @property
     def stderr(self):
         pass
@@ -206,11 +237,15 @@ class RescLog:
         return res
     @stderr.setter
     def stderr(self,out):
-        if not isinstance(out,list):
-            raise RescLogTypeError("output must be list type.")
+        if not isinstance(out,list) and not isinstance(out,bytes):
+            raise RescLogTypeError("output must be list or byte type.")
         if not hasattr(self,"_stderr"):
             self._stderr = list()
-        self._stderr += out
+        
+        if isinstance(out,list):
+            self._stderr += out
+        else:
+            self._stderr.append(out)
     
     @property
     def body(self):
@@ -222,17 +257,18 @@ class RescLog:
                 elif isinstance(eval(f'self.{f.value}'),bytes):
                     res += eval(f'self.{f.value}')
                 else:
-                    res += eval(f'str(self.{f.value}).encode("utf-8")')
+                    res += eval(f'self.{f.value}.encode("utf-8")')
         return res
-    def header(self):
+    def header(self,sflag=0):
         lendict = dict()
         for f in RescLogFormat:
             if f in self.format:
                 value = eval(f'self.{f.value}')
-                if not isinstance(value,bytes):
+                if not isinstance(value,bytes) and not value is None:
                     raise RescLogTypeError(f"{value}({f}) must be str type.")
-                lendict[f.value] = len(value)
+                lendict[f.value] = len(value) if value is not None else 0
         self._header = RescLogHeader(
+            sflag=sflag,
             bodylen=len(self.body),
             stdoutlen=len(self.stdout),
             stderrlen=len(self.stderr),
@@ -240,54 +276,40 @@ class RescLog:
             lendict=lendict,
         )
         return self._header.bytes
-    def write(self,over):
+    def write(self,over,sflag):
         if self.log:
             self.over = over
             for f in self.format:
-                if not hasattr(self,f"{f.value}") or eval(f'self.{f.value}') is None:
+                if not hasattr(self,f"{f.value}"):
                         raise RescLogValueError(f"threre is \"{f.value}\" in format,but not define.")
-            with open(self.logfile,"a") as f:
-                f.write(f"{self.header()}")
-                f.write(f"{self.body}")
-                f.write(f"{self.stdout}")
-                f.write(f"{self.stderr}")
-    @property
-    def _import_log(self):
-        log_str = str()
-        log_str += "from resc import RescLog,RescLogFormat,RescLogOver\n"
-        log_str += "import re\n"
-        return log_str
-    def _define_resclog(self,resclog):
+            with open(self.logfile,"ab") as f:
+                f.write(self.header(sflag))
+                f.write(self.body)
+                f.write(self.stdout)
+                f.write(self.stderr)
+
+    def define_resclog(self,resclog):
         lists=list()
         for k,v in vars(self).items():
             value = v if not isinstance(v,str) else f'\"{v}\"'
             if re.match('^_',k) is not None:
                 lists.append(f"resclog.{re.sub(r'^_','',k)}={value}")
-        res = str()
-        res += "resclog=RescLog(\n"
-        if resclog.logfile is not None:
-            res += f"logfile=\"{resclog.pure_log}\",\n"
-        res += f"format={self.format_meta(resclog)},\n"
-        res += ")\n"
-        res += "%s"%('\n'.join(lists))
-        res += "\n"
-        return res
+        return lists
     def format_meta(self,resclog):
         meta_list = list()
         for format in resclog.format:
             meta_list.append(format.__class__.__name__ + '.' + format.name)
         return re.sub(r"'",'',str(meta_list))
-    @property
-    def _noover_log(self):
-        return f"else:\n\t{self._write_log_noover}"
-
-    @property
-    def _write_log_over(self):
-        return "\tresclog.write(RescLogOver.TRUE)\n"
-    @property
-    def _write_log_noover(self):
-        return "resclog.write(RescLogOver.FALSE)\n"
     
+    @classmethod
+    def _not_found(self,log_path):
+        try:
+            sflag = (RescLogSFlag.ERR.value|RescLogSFlag.LOC.value|RescLogSFlag.NFS.value)
+            eheader = RescLogEmergeHeader(sflag=sflag,errlen=0)
+            with open(log_path,"ab") as lf:
+                lf.write(bytes(eheader))
+        except Exception as e:
+            sys.exit(1)
 
 __all__ = [
     RescLog.__name__,
