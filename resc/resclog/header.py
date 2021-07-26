@@ -3,6 +3,7 @@ import io
 from enum import Enum
 import re
 from sys import flags
+from .cons import COMMONMAGIC
 
 #from resclog import RescLog
 from .rformat import RescLogFormat
@@ -20,54 +21,41 @@ class RescLogHeaderTypeError(TypeError):
 
 class RescLogSFlag(Enum):
 	# General Error
-	ERR=1<<0
+	ERR={"flag":1<<0,"explain":"General Error."}
 	# Emergency Header
-	EME=1<<1
+	EME={"flag":1<<1,"explain":"Emergency Header."}
 	# Defination Error
-	DEF=1<<2
+	DEF={"flag":1<<2,"explain":"Defination Error."}
 	# RescLog Error
-	ROG=1<<3
+	ROG={"flag":1<<3,"explain":"RescLog Error."}
 	# SSH Error
-	SSH=1<<4
+	SSH={"flag":1<<4,"explain":"SSH Error."}
 	# Remote Host Error
-	REM=1<<5
+	REM={"flag":1<<5,"explain":"Remote Host Error."}
 	# Local Host Error
-	LOC=1<<6
+	LOC={"flag":1<<6,"explain":"Local Host Error."}
 	# Module Not Found Error
-	MNF=1<<7
+	MNF={"flag":1<<7,"explain":"Module Not Found Error."}
 	# Import Error
-	IMP=1<<8
+	IMP={"flag":1<<8,"explain":"Import Error."}
 	# Function Error
-	FUN=1<<9
+	FUN={"flag":1<<9,"explain":"Trigger Function Error."}
 	# Indent Error
-	IND=1<<10
+	IND={"flag":1<<10,"explain":"Indent Error."}
 	# Not Found Script File
-	NFS=1<<11
+	NFS={"flag":1<<11,"explain":"Not Found Script File Error."}
 
 class RescLogEmergeHeader(LittleEndianStructure):
-	_IDENTIFY_DEFAULT="resc"
 	_fields_ = (
-	('identify',c_char*4),
-	('sflag',c_uint32),
-	('errlen',c_int32),
+            (COMMONMAGIC.IDENTIFY_NAME,COMMONMAGIC.IDENTIFY_TYPE),
+            (COMMONMAGIC.COMMONFLAG_NAME,COMMONMAGIC.COMMONFLAG_TYPE),
+			('errlen',c_int32),
 	)
-	def __init__(
-		self,
-		sflag,
-		errlen,
-	):
-		self._identify = self._IDENTIFY_DEFAULT.encode("utf-8")
-		super().__init__(
-			identify=self._identify,
-			sflag=sflag,
-			errlen=errlen,
-		)
 
 class RescLogHeader(LittleEndianStructure):
-	_IDENTIFY_DEFAULT="resc"
 	_fields_ = (
-		('identify',c_char*4),
-		('sflag',c_uint32),
+		(COMMONMAGIC.IDENTIFY_NAME,COMMONMAGIC.IDENTIFY_TYPE),
+		(COMMONMAGIC.COMMONFLAG_NAME,COMMONMAGIC.COMMONFLAG_TYPE),
 		('headlen',c_uint16),
 		('bodylen',c_uint32),
 		('stdoutlen',c_uint32),
@@ -75,37 +63,13 @@ class RescLogHeader(LittleEndianStructure):
 		(f'{RescLogFormat.DATE.value}len',c_uint16),
 		(f'{RescLogFormat.OVER.value}len',c_uint16),
 		(f'{RescLogFormat.FUNC.value}len',c_uint16),
+		(f'{RescLogFormat.FILE.value}len',c_uint16),
 		(f'{RescLogFormat.REMO.value}len',c_uint16),
 		(f'{RescLogFormat.SOUR.value}len',c_uint16),
 		('flag',c_uint32),
 	)
 	
-	def __init__(
-		self,
-		sflag,
-		bodylen,
-		stdoutlen,
-		stderrlen,
-		flaglist,
-		lendict,
-	):
-		self._identify = self._IDENTIFY_DEFAULT.encode("utf-8")
-		super().__init__(
-			identify=self._identify,
-			sflag=sflag,
-			headlen=RescLogHeader.length(),
-			bodylen=bodylen,
-			stdoutlen=stdoutlen,
-			stderrlen=stderrlen,
-			datelen=lendict["date"],
-			overlen=lendict["over"],
-			funclen=lendict["date"],
-			filelen=lendict["file"],
-			remolen=lendict["remo"],
-			sourlen=lendict["sour"],
-			flags=self._flag(flaglist),
-		)
-
+	@classmethod
 	def _flag(self,flaglist):
 		if not isinstance(flaglist,list):
 			raise RescLogHeaderTypeError("flagslist must be list type.")

@@ -17,7 +17,7 @@ try:
 		('errlen',c_int32),
 		)
 	def emergelog(header,err):
-		with open({{ logfile }},"wb") as ef:
+		with open({{ logfile }},"ab") as ef:
 			ef.write(bytes(header),err)
 		sys.exit(1)
 
@@ -34,22 +34,22 @@ try:
 	from resc import RescLog,RescLogFormat,RescLogOver
 	from resc import RescLogSFlag
 except ModuleNotFoundError as e:
-	sflag |= (RescLogFlag.ERR.value|RescLogFlag.LOC.value|RescLogSFlag.MNF.value)
+	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.MNF.value["flag"])
 	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)))
 	emergelog(header,str(e))
 except ImportError as e:
-	sflag |= (RescLogFlag.ERR.value|RescLogFlag.LOC.value|RescLogSFlag.IMP.value)
+	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.IMP.value["flag"])
 	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)))
 	emergelog(header,str(e))
 except Exception as e:
-	sflag |= (RescLogFlag.ERR.value|RescLogFlag.LOC.value)
+	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"])
 	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)))
 	emergelog(header,str(e))
 
 try:
 	resc=Resc(cpu={{ resc_cpu }},memory={{ resc_mem }},disk={{ resc_disk }})
 except Exception as e:
-	sflag |= (RescLogFlag.ERR.value|RescLogFlag.LOC.value|RescLogFlag.DEF.value)
+	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.DEF.value["flag"])
 	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)))
 	emergelog(header,str(e))
 
@@ -66,7 +66,7 @@ try:
 	{{ var }}
 	{% endfor %}
 except Exception as e:
-	sflag |= (RescLogFlag.ERR.value|RescLogFlag.LOC.value|RescLogFlag.DEF.value)
+	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.DEF.value["flag"])
 	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)))
 	emergelog(header,str(e))
 
@@ -75,11 +75,11 @@ try:
 		sf.write({{sourcebyte}})
 	exec(f'from { os.path.basename("{{ sourcefile }}").split(".")[0] } import {{ defname }}')
 except IndentationError as e:
-	sflag |= (RescLogFlag.ERR.value|RescLogFlag.LOC.value|RescLogFlag.IMP.value|RescLogFlag.FUN.value|RescLOgFlag.IND.value)
+	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.valul["flag"]|RescLogSFlag.IMP.value["flag"]|RescLogSFlag.FUN.value["flag"]|RescLogSFlag.IND.value["flag"])
 	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)))
 	emergelog(header,str(e))
 except Exception as e:
-	sflag |= (RescLogFlag.ERR.value|RescLogFlag.LOC.value|RescLogFlag.IMP.value|RescLogFlag.FUN.value)
+	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.IMP.value["flag"]|RescLogSFlag.FUN.value["flag"])
 	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)))
 	emergelog(header,str(e))
 
@@ -97,7 +97,7 @@ try:
 		)
 {% endif %}
 except Exception as e:
-	sflag |= (RescLogSFlag.ERR.value|RescLogSFlag.REM.value|RescLogFlag.SSH.value)
+	sflag |= (RescLogSFlag.ERR.value["flag"]|RescLogSFlag.REM.value["flag"]|RescLogSFlag.SSH.value["flag"])
 	resclog.stderr = str(e).encode("utf-8")
 	resclog.write(RescLogOver.FALSE,sflag)
 
@@ -118,7 +118,7 @@ def call_definedfunc(resclog):
 		resclog.stderr = [sys.stderr.getvalue().encode("utf-8")]
 	except RescFuncError as e:
 		resclog.stderr = str(e).encode("utf-8")
-		err |= RescLogSFlag.FUN.value
+		err |= RescLogSFlag.FUN.value["flag"]
 	finally:
 		sys.stdout = old_stdout
 		sys.stderr = old_stderr
@@ -132,7 +132,7 @@ try:
 	else:
 		resclog.write(RescLogOver.FALSE,sflag)
 except Exception as e:
-	sflag |= (RescLogSFlag.ERR.value|RescLogSFlag.REM.value)
+	sflag |= (RescLogSFlag.ERR.value["flag"]|RescLogSFlag.REM.value["flag"])
 	resclog.stderr = str(e).encode("utf-8")
 	resclog.write(RescLogOver.FALSE,sflag)
 {% else %}
@@ -143,7 +143,7 @@ try:
 	else:
 		resclog.write(RescLogOver.FALSE,sflag)
 except Exception as e:
-	sflag |= (RescLogSFlag.ERR.value|RescLogSFlag.LOC.value)
+	sflag |= (RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"])
 	resclog.stderr = str(e).encode("utf-8")
 	resclog.write(RescLogOver.FALSE,sflag)
 {%- endif %}

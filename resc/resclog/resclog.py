@@ -8,6 +8,7 @@ import re
 import sys
 import os
 from .header import RescLogHeader,RescLogSFlag,RescLogEmergeHeader
+from .cons import COMMONMAGIC
 from .rformat import RescLogFormat,RescLogOver
 
 from paramiko.util import log_to_file
@@ -268,12 +269,18 @@ class RescLog:
                     raise RescLogTypeError(f"{value}({f}) must be str type.")
                 lendict[f.value] = len(value) if value is not None else 0
         self._header = RescLogHeader(
+            identify=COMMONMAGIC.IDENTIFY,
             sflag=sflag,
             bodylen=len(self.body),
             stdoutlen=len(self.stdout),
             stderrlen=len(self.stderr),
-            flaglist=RescLogHeader.convert(self.format),
-            lendict=lendict,
+			datelen=lendict["date"],
+			overlen=lendict["over"],
+			funclen=lendict["func"],
+			filelen=lendict["file"],
+			remolen=lendict["remo"],
+			sourlen=lendict["sour"],
+            flags=RescLogHeader._flag(RescLogHeader.convert(self.format)),
         )
         return self._header.bytes
     def write(self,over,sflag):
@@ -304,8 +311,8 @@ class RescLog:
     @classmethod
     def _not_found(self,log_path):
         try:
-            sflag = (RescLogSFlag.ERR.value|RescLogSFlag.LOC.value|RescLogSFlag.NFS.value)
-            eheader = RescLogEmergeHeader(sflag=sflag,errlen=0)
+            sflag = (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.NFS.value["flag"])
+            eheader = RescLogEmergeHeader(identify=COMMONMAGIC.IDENTIFY,sflag=sflag,errlen=0)
             with open(log_path,"ab") as lf:
                 lf.write(bytes(eheader))
         except Exception as e:

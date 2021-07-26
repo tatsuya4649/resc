@@ -1,5 +1,5 @@
 from ._resc import Resc
-from .resclog import RescLogAnalyze,RescLog
+from .resclog import *
 import sys
 import argparse
 
@@ -20,9 +20,18 @@ def main():
 	args = parser.parse_args()
 
 	if args.log is not None:
-		analyzer=RescLogAnalyze(path=args.log)
-		analyzer=analyze()
-		sys.exit(0)
+		try:
+			analyzer=RescLogAnalyze(path=args.log)
+			analyzer.analyze()
+			sys.exit(0)
+		except RescLogPathError as e:
+			print(e)
+		except RescLogUnMatchError as e:
+			print(e)
+		except Exception as e:
+			print(e)
+		finally:
+			sys.exit(1)
 	elif args.not_found is not None:
 		RescLog._not_found(args.not_found)
 		sys.exit(0)
