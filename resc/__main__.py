@@ -14,6 +14,7 @@ def main():
 	parser.add_argument("-p","--disk_path",help="Disk path",type=str)
 	parser.add_argument("--disk_mode",help="Disk mode",type=str)
 	parser.add_argument("--log",help="Analize log file.receive path.",type=str)
+	parser.add_argument("-s","--log_server",help="Analize log file on GUI.",action="store_true")
 	parser.add_argument("-q",help="Quiet output",action="store_true")
 	parser.add_argument("--not_found",help="for crontab. If not found script, write to log",type=str)
 
@@ -32,6 +33,8 @@ def main():
 			print(e)
 		finally:
 			sys.exit(1)
+	elif args.log_server is not None:
+		start_server()
 	elif args.not_found is not None:
 		RescLog._not_found(args.not_found)
 		sys.exit(0)

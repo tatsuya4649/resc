@@ -1,5 +1,8 @@
 .*.swp
 __pycache__
+node_modules
 rescs
+build
+dist
 *.egg
 *.egg-info/
