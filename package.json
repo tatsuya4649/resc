@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-cli serve --mode development"
+    "start": "webpack-cli serve --mode development",
+    "build": "webpack --devtool inline-source-map",
+    "release": "webpack -p"
   },
   "repository": {
     "type": "git",
@@ -27,13 +29,21 @@
     "@babel/preset-react": "^7.14.5",
     "@babel/register": "^7.14.5",
     "babel-loader": "^8.2.2",
+    "babel-plugin-react-html-attrs": "^3.0.5",
     "html-webpack-plugin": "^5.3.2",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
+    "redux": "^4.1.0",
+    "redux-logger": "^3.0.6",
     "webpack": "^5.46.0",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "@babel/plugin-proposal-decorators": "^7.14.5",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "redux-thunk": "^2.3.0"
   }
 }

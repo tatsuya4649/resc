@@ -23,7 +23,11 @@ def main():
 	if args.log is not None:
 		try:
 			analyzer=RescLogAnalyze(path=args.log)
-			analyzer.analyze()
+			log = analyzer.getlog()
+			anares = analyzer.analyze(log)
+
+			for ana in anares:
+				print(ana)
 			sys.exit(0)
 		except RescLogPathError as e:
 			print(e)

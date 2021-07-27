@@ -1,1 +1,2 @@
 include resc/scripts/*
+graft resc/resclog/logserver/*

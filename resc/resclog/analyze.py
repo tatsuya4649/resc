@@ -3,11 +3,12 @@ import re
 import io
 import pathlib
 from ctypes import *
+from resc.resclog.cons import header
 
 from resc.resclog.rformat import RescLogFormat
 from .cons import COMMONMAGIC
 from .header import RescLogSFlag,RescLogEmergeHeader,RescLogHeader
-from .dump import RescDump
+from .dump import RescDump, RescDumpTypeError
 from .anaerr import *
 
 class RescLogCommonHeader(LittleEndianStructure):
@@ -26,6 +27,7 @@ class RescLogAnalyze:
     def path(self):
         return re.sub(r'^~',os.path.expanduser('~'),self._path)
 
+    @classmethod
     def _emerge(self,sflag):
         if (RescLogSFlag.EME.value["flag"] & sflag) != 0 and (RescLogSFlag.ERR.value["flag"] & sflag) != 0:
             return True
@@ -45,13 +47,14 @@ class RescLogAnalyze:
             print("--------------------------------------------------------------")
             return result
         return _wrapper
-
-    @_analyze_deco
-    def _analyze(
+    
+    @classmethod
+    def _analyze_dict(
         self,
         log,
         **kwargs,
     ):
+        resdict = dict()
         if not isinstance(log,bytes):
             raise RescLogTypeError("log must be bytes type.")
         common_header = RescLogCommonHeader()
@@ -68,15 +71,16 @@ class RescLogAnalyze:
             if flag.value["flag"] & sflag:
                 flag_set.add(flag)
         # Emergency Headr
-        if self._emerge(sflag):
+        if RescLogAnalyze._emerge(sflag):
             _buffer.seek(_now_seek)
             emergeheader = RescLogEmergeHeader()
             _buffer.readinto(emergeheader)
             error_length = emergeheader.errlen
-            print(f'ERROR LENGTH: {error_length}')
             err = _buffer.read(error_length)
-            print(f'ERROR CONTENT: {err}')
-            print(f'ERROR BINARY: {RescDump.bindump(err)}')
+            resdict["sflag"] = sflag
+            resdict["error_length"] = error_length
+            resdict["error_content"] = err
+            resdict["error_binary"] = RescDump.bindump(err)
         # Nornal Header
         else:
             _buffer.seek(_now_seek)
@@ -92,18 +96,20 @@ class RescLogAnalyze:
             sour_length = logheader.sourlen
             stdout_length = logheader.stdoutlen
             stderr_length = logheader.stderrlen
-            print(f'HEAEDR LENGTH: {header_length}')
-            print(f'BODY LENGTH: {body_length}')
-            print(f'\tDATE LENGTH: {date_length}')
-            print(f'\tOVER LENGTH: {over_length}')
-            print(f'\tFUNC LENGTH: {func_length}')
-            print(f'\tFILE LENGTH: {file_length}')
-            print(f'\tREMO LENGTH: {remo_length}')
-            print(f'\tSOUR LENGTH: {sour_length}')
+            
+            resdict["sflag"] = sflag
+            resdict["header_length"] = header_length
+            resdict["body_length"] = body_length
+            resdict["date_length"] = date_length
+            resdict["over_length"] = over_length
+            resdict["func_length"] = func_length
+            resdict["file_length"] = file_length
+            resdict["remo_length"] = remo_length
+            resdict["sour_length"] = sour_length
             if body_length != (date_length+over_length+func_length+file_length+remo_length+sour_length):
                 raise RescLogUnMatchError("unmatch total body length and individual length.")
-            print(f'STDOUT LENGTH: {stdout_length}')
-            print(f'STDERR LENGTH: {stderr_length}')
+            resdict["stdout_length"] = stdout_length
+            resdict["stderr_length"] = stderr_length
             body = _buffer.read(body_length)
             body_buffer = io.BytesIO(body)
             date = body_buffer.read(date_length)
@@ -114,23 +120,23 @@ class RescLogAnalyze:
             sour = body_buffer.read(sour_length)
             stdout = _buffer.read(stdout_length)
             stderr = _buffer.read(stderr_length)
-            print(f'BODY CONTENT: {body}')
-            print(f'BODY BINARY: {RescDump.bindump(body)}')
-            print(f'\tDATE: {date}')
-            print(f'\tDATE BINARY: {RescDump.bindump(date)}')
-            print(f'\tOVER: {over}')
-            print(f'\tOVER BINARY: {RescDump.bindump(over)}')
-            print(f'\tFUNC: {func}')
-            print(f'\tFUNC BINARY: {RescDump.bindump(func)}')
-            print(f'\tREMO: {remo}')
-            print(f'\tREMO BINARY: {RescDump.bindump(remo)}')
-            print(f'\tSOUR: {sour}')
-            print(f'\tSOUR BINARY: {RescDump.bindump(sour)}')
-            print(f'STDOUT CONTENT: {stdout}')
-            print(f'STDERR CONTENT: {stderr}')
-        if len(flag_set)>0:
-            self._errinfo(flag_set)
-        return True,log[_buffer.tell():]
+            resdict["body_content"] = body
+            resdict["body_binary"] = RescDump.bindump(body)
+            resdict["date_content"] = date
+            resdict["date_binary"] = RescDump.bindump(date)
+            resdict["over_content"] = over
+            resdict["over_binary"] = RescDump.bindump(over)
+            resdict["func_content"] = func
+            resdict["func_binary"] = RescDump.bindump(func)
+            resdict["file_content"] = file
+            resdict["file_binary"] = RescDump.bindump(file)
+            resdict["remo_content"] = remo
+            resdict["remo_binary"] = RescDump.bindump(remo)
+            resdict["sour_content"] = sour
+            resdict["sour_binary"] = RescDump.bindump(sour)
+            resdict["stdout_content"] = stdout
+            resdict["stderr_content"] = stderr
+        return True,log[_buffer.tell():],resdict
 
     def getlog(self):
         if not pathlib.Path(self.path).is_absolute():
@@ -140,14 +146,16 @@ class RescLogAnalyze:
         with open(self.path,"rb") as f:
             alllog = f.read()
         return alllog
-    def analyze(self):
-        alllog = self.getlog()
-        counter = 0
+    @classmethod
+    def analyze(self,logbytes):
+        results = list()
+        alllog = logbytes
         while True:
-            result,alllog = self._analyze(alllog,counter=counter)
-            counter += 1
+            result,alllog,logdict = RescLogAnalyze._analyze_dict(alllog)
+            results.append(logdict)
             if not result or len(alllog)==0:
                 break
+        return results
 
 __all__ = [
     RescLogAnalyze.__name__,
