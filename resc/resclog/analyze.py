@@ -65,7 +65,7 @@ class RescLogAnalyze:
         identify = common_header.identify
         sflag = common_header.sflag
         if common_header.identify != COMMONMAGIC.IDENTIFY:
-            return False,None
+            return False,None,None
         flag_set = set()
         for flag in RescLogSFlag:
             if flag.value["flag"] & sflag:
@@ -76,11 +76,15 @@ class RescLogAnalyze:
             emergeheader = RescLogEmergeHeader()
             _buffer.readinto(emergeheader)
             error_length = emergeheader.errlen
+            date_length = emergeheader.datelen
             err = _buffer.read(error_length)
+            date = _buffer.read(date_length)
             resdict["sflag"] = sflag
             resdict["error_length"] = error_length
+            resdict["date_length"] = date_length
             resdict["error_content"] = err
             resdict["error_binary"] = RescDump.bindump(err)
+            resdict["date_content"] = date
         # Nornal Header
         else:
             _buffer.seek(_now_seek)
@@ -152,7 +156,8 @@ class RescLogAnalyze:
         alllog = logbytes
         while True:
             result,alllog,logdict = RescLogAnalyze._analyze_dict(alllog)
-            results.append(logdict)
+            if logdict is not None:
+                results.append(logdict)
             if not result or len(alllog)==0:
                 break
         return results
