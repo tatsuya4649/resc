@@ -6,7 +6,7 @@ import { analyzeFile } from "../../actions/UploadFile";
 	return {
 	analyzing: store.uploadFile.analyzing,
 	analyzed: store.uploadFile.analyzed,
-	error: store.uploadFile.error
+	error: store.uploadFile.error,
 	};
 })
 export default class UploadFile extends React.Component{
@@ -24,6 +24,10 @@ export default class UploadFile extends React.Component{
 		}else if (this.props.analyzed == true){
 			result = (
 			<p>Result of analyzed RescLog.</p>
+			);
+		}else if (this.props.error == true){
+			result = (
+			<p>Occured error.Please retry.</p>
 			);
 		}else{
 			result = (

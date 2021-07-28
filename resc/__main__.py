@@ -37,7 +37,7 @@ def main():
 			print(e)
 		finally:
 			sys.exit(1)
-	elif args.log_server is not None:
+	elif args.log_server:
 		start_server()
 	elif args.not_found is not None:
 		RescLog._not_found(args.not_found)
