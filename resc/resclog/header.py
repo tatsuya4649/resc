@@ -50,6 +50,7 @@ class RescLogEmergeHeader(LittleEndianStructure):
             (COMMONMAGIC.IDENTIFY_NAME,COMMONMAGIC.IDENTIFY_TYPE),
             (COMMONMAGIC.COMMONFLAG_NAME,COMMONMAGIC.COMMONFLAG_TYPE),
 			('errlen',c_int32),
+			('datelen',c_int32),
 	)
 
 class RescLogHeader(LittleEndianStructure):

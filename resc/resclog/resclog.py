@@ -312,9 +312,11 @@ class RescLog:
     def _not_found(self,log_path):
         try:
             sflag = (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.NFS.value["flag"])
-            eheader = RescLogEmergeHeader(identify=COMMONMAGIC.IDENTIFY,sflag=sflag,errlen=0)
+            date = str(datetime.datetime.now())
+            eheader = RescLogEmergeHeader(identify=COMMONMAGIC.IDENTIFY,sflag=sflag,errlen=0,datelen=len(date))
             with open(log_path,"ab") as lf:
                 lf.write(bytes(eheader))
+                lf.write(bytes(date.encode("utf-8")))
         except Exception as e:
             sys.exit(1)
 
