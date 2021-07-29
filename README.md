@@ -35,9 +35,13 @@ hello()
 # Term
 
 **threshold**(cpu):  threshold that is system-wide CPU utilization as a percentage.int or float type.
+
 **interval**(cpu): interval is check interval time(s).int or float type.
+
 **threshold**(memory): threshold that is system memory utilization as a percentage.int or float type.
+
 **path**(disk): check the capacity of the partition according to the given path.
+
 **threshold**(disk): threshold that is partition utilization which containes given path.
 
 
