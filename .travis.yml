@@ -8,4 +8,5 @@ python:
   - "3.9-dev"
 install:
   - pip install -r requirements.txt
-script: python3 -m unittest tests
+script:
+  - python3 -m unittest tests
