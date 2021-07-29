@@ -18,7 +18,7 @@ export default class Eme extends React.Component{
 		const explains = SFlag.getflag_exlist(this.props.analyze.sflag);
 		return (
 		<div className="emrgency_box">
-		<Link to={{pathname:"/detail",state:{analyze: this.props.analyze,index: this.props.index}}}><h3 className="eme_h3">emergency</h3></Link>
+		<Link to={{pathname:"/detail",state:{analyze: this.props.analyze,index: this.props.index}}}><h3 className="eme_h3">{SFlag.getresult(this.props.analyze.sflag)}</h3></Link>
 			
 			<Date date={this.props.analyze.date_content} />
 			<div className="ul_box">

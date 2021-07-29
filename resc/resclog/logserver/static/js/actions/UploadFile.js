@@ -7,8 +7,7 @@ export function analyzeFile(file){
 		dispatch({'type':UploadFileType.ANALYZING});
 		const formdata = new FormData();
 		formdata.append("logfile",file)
-		//axios.post(`${location.origin}`,formdata)
-		axios.post('http://localhost:11111',formdata)
+		axios.post(`${location.origin}/analyze`,formdata)
 		.then(response => {
 			const data = response.data;
 			const result = data.result;
