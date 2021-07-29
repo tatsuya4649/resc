@@ -37,3 +37,11 @@ export function getflag_exlist(sflag){
 	}
 	return explains;
 }
+
+export function getresult(sflag){
+	if ((sflag & ERR.flag) != 0){
+		return "Failure";
+	}else{
+		return "Success";
+	}
+}

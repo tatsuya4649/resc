@@ -16,7 +16,7 @@ export default class Normal extends React.Component{
 		const explains = SFlag.getflag_exlist(this.props.analyze.sflag);
 		return (
 		<div className="normal_box">
-		<Link to={{pathname:"/detail",state:{analyze: this.props.analyze,index: this.props.index}}}><h3 className="normal_h3">normal</h3></Link>
+		<Link to={{pathname:"/detail",state:{analyze: this.props.analyze,index: this.props.index}}}><h3 className="normal_h3">{SFlag.getresult(this.props.analyze.sflag)}</h3></Link>
 		<div className="ul_box">
 		<ul className="ana_ul">
 		{
