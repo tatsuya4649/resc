@@ -1,7 +1,6 @@
 
 # Resource checker
 
-
 Resc check resources(CPU,memory,disk) of target host(local or remote) and execute script.
 
 # Usage
