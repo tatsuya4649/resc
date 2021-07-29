@@ -2,11 +2,6 @@ from ctypes import *
 import io
 from enum import Enum
 
-__all__ = [
-	RescLogFlag.__name__,
-	RescLogHeader.__name__,
-]
-
 class RescLogFlag(Enum):
     DATE=1<<0
     OVER=1<<1
@@ -61,3 +56,8 @@ class RescLogHeader(LittleEndianStructure):
 		buffer = io.BytesIO()
 		buffer.write(self)
 		return buffer.getvalue()
+
+__all__ = [
+	RescLogFlag.__name__,
+	RescLogHeader.__name__,
+]

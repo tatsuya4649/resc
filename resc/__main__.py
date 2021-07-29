@@ -1,7 +1,11 @@
-from ._resc import Resc
-from .resclog import *
 import sys
+import os
+sys.path.append(os.path.dirname(__file__))
+from _resc import Resc
+from resclog import *
 import argparse
+import re
+import subprocess
 
 def main():
 	parser = argparse.ArgumentParser(description="Resouce Checker.")
@@ -17,6 +21,7 @@ def main():
 	parser.add_argument("-s","--log_server",help="Analize log file on GUI.",action="store_true")
 	parser.add_argument("-q",help="Quiet output",action="store_true")
 	parser.add_argument("--not_found",help="for crontab. If not found script, write to log",type=str)
+	parser.add_argument("-r","--delete_register",help="Delete crontab of register script",action="store_true")
 
 	args = parser.parse_args()
 
@@ -40,8 +45,36 @@ def main():
 	elif args.log_server:
 		start_server()
 	elif args.not_found is not None:
-		RescLog._not_found(args.not_found)
-		sys.exit(0)
+		if len(args.not_found) == 0:
+			sys.exit(0)
+		else:
+			RescLog._not_found(args.not_found)
+			sys.exit(0)
+	elif args.delete_register:
+			REGISTER_FILE=f"{os.path.expanduser('~')}/.resc/register"
+			result = subprocess.Popen(["crontab","-l"],encoding="utf-8",stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+			comm = result.communicate()
+			errout = comm[1]
+			stdout = comm[0]
+			if re.match(r'^no crontab',errout) is not None:
+				sys.exit(0)
+			iter = re.finditer(r'.*\n',stdout)
+			cronlists = [x.group() for x in iter]
+			# delete duplication
+			cronlists = list(set(cronlists))
+			with open(REGISTER_FILE,"r") as rf:
+				for line in rf.readlines():
+					if line not in cronlists:
+						continue
+					cronlists.remove(line)
+			if len(cronlists) == 0:
+				subprocess.run(["crontab","-r"])
+			else:
+				input = "".join(list(set(cronlists)))	
+				subprocess.run(["crontab"],input=input,encoding='utf-8')
+			with open(REGISTER_FILE,"w") as rf:
+				rf.truncate(0)
+			sys.exit(0)
 
 	cpu = dict()
 	memory = dict()
@@ -85,7 +118,6 @@ def main():
 		if not args.q:
 			print("over threshold.")
 		sys.exit(0)
-
 
 if __name__ == "__main__":
 	main()

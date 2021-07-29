@@ -31,19 +31,6 @@ def hello():
 hello()
 ```
 
-# Term
-
-**threshold**(cpu):  threshold that is system-wide CPU utilization as a percentage.int or float type.
-
-**interval**(cpu): interval is check interval time(s).int or float type.
-
-**threshold**(memory): threshold that is system memory utilization as a percentage.int or float type.
-
-**path**(disk): check the capacity of the partition according to the given path.
-
-**threshold**(disk): threshold that is partition utilization which containes given path.
-
-
 # How does that work?
 
 1. Register decorator is a decorator to prepare for resource check using given threshold of resources,host information,etc.
@@ -82,10 +69,65 @@ def good():
 	math.floor(10.9)
 ```
 
+# Command Line
+
+```
+
+CPU or Memory or Disk must be not empty.
+usage: resc [-h] [-c CPU_T] [--cpu_mode CPU_MODE] [-i CPU_INTERVAL] [-m MEM_T] [--mem_mode MEM_MODE] [-d DISK_T] [-p DISK_PATH]
+            [--disk_mode DISK_MODE] [--log LOG] [-s] [-q] [--not_found NOT_FOUND]
+
+Resouce Checker.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CPU_T, --cpu_t CPU_T
+                        CPU threshold value
+  --cpu_mode CPU_MODE   CPU mode
+  -i CPU_INTERVAL, --cpu_interval CPU_INTERVAL
+                        Time to confirm CPU threshold
+  -m MEM_T, --mem_t MEM_T
+                        Memory threshold value
+  --mem_mode MEM_MODE   Memory mode
+  -d DISK_T, --disk_t DISK_T
+                        Disk threshold value
+  -p DISK_PATH, --disk_path DISK_PATH
+                        Disk path
+  --disk_mode DISK_MODE
+                        Disk mode
+  --log LOG             Analize log file.receive path.
+  -s, --log_server      Analize log file on GUI.
+  -q                    Quiet output
+  --not_found NOT_FOUND
+                        for crontab. If not found script, write to log
+
+```
+
+# How to end resource check
+
+# Term
+
+**threshold**(cpu):  threshold that is system-wide CPU utilization as a percentage.int or float type.
+
+**interval**(cpu): interval is check interval time(s).int or float type.
+
+**threshold**(memory): threshold that is system memory utilization as a percentage.int or float type.
+
+**path**(disk): check the capacity of the partition according to the given path.
+
+**threshold**(disk): threshold that is partition utilization which containes given path.
+
+
+
 # Crontab
 
 Crontab is a important element of this library.So, show 'man crontab or crontab -e' for detail of crontab
 
 # Required
 
-Python3,Crontab,and python library in requirements.txt.
+Python3(>=3.6),Crontab,and python library in requirements.txt.
+
+# LICENCE
+
+This project is licensed under the terms of the MIT license.
+

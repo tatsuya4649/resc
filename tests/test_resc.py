@@ -46,16 +46,15 @@ class TestRegister(unittest.TestCase):
 		def hello():
 			print("hello resc!!!")
 		hello()
-#		os.environ["RESCPATH"] = "."	
-#		os.environ["RESCOUTPUT"] = "./rescoutput.txt"	
-#		@resc.register("*/1 * * * *")
-#		def world(a,b):
-#			print("hello world")
-#			import time
-#			print(a,b)
-#			print(time.time())
-#
-#		world(1,b="resc test script")
+
+		os.environ["RESCPATH"] = "rescs"	
+		os.environ["RESCOUTPUT"] = "rescoutput.txt"	
+		@resc.register("*/1 * * * *")
+		def world(a,b):
+			import time
+			print(time.time())
+
+		world(1,b="resc test script")
 	
 class TestRemote(unittest.TestCase):
 	def test_remote(self):

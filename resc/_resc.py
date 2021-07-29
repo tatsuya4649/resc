@@ -1,3 +1,4 @@
+from posix import environ
 import resc
 from resc.cpu import CPUDetect
 from resc.memory import MemoryDetect
@@ -154,15 +155,19 @@ class Resc:
 			os.environ[self._RESCPATH_ENV] = rescdir
 		if outputfile is not None and isinstance(outputfile,str):
 			os.environ[self._RESCOUTPUT_ENV] = outputfile
+
 		if os.getenv(self._RESCPATH_ENV) is None:
 			os.environ[self._RESCPATH_ENV] = re.sub(r'^~',f'{os.path.expanduser("~")}',self._RESCPATH_DEFAULT+"resc")
 		else:
-			os.environ[self._RESCPATH_ENV] = re.sub(r'^~',f'{os.path.expanduser("~")}',self._resc_dir(str(rescdir)))
-
+			if rescdir is not None:
+				os.environ[self._RESCPATH_ENV] = re.sub(r'^~',f'{os.path.expanduser("~")}',self._resc_dir(rescdir))
+			else:
+				os.environ[self._RESCPATH_ENV] = re.sub(r'^~',f'{os.path.expanduser("~")}',self._RESCPATH_DEFAULT+os.environ[self._RESCPATH_ENV])
+		
 		if not isinstance(trigger,str):
 			raise RescTypeError("trigger must be string type.")
 		self._resclog = RescLog(
-						logfile=outputfile,
+						logfile=os.getenv(self._RESCOUTPUT_ENV),
 						format=format
 					)
 		if self._resclog.logfile is not None:
@@ -205,8 +210,8 @@ class Resc:
 					func(*args,**kwargs)
 			return _wrapper
 		return _register
-	def _resc_dir(self,dir):
-		return self._RESCPATH_DEFAULT + re.sub(r'^/','',dir)
+	def _resc_dir(self,dire):
+		return self._RESCPATH_DEFAULT + re.sub(r'^/','',str(dire))
 	
 	def _sourcefile(self,file,func,funcname,func_args,ssh=None):
 		resc_dir = os.getenv(self._RESCPATH_ENV)
@@ -238,11 +243,13 @@ class Resc:
 			output = f' >>{output_path} 2>&1'
 		else:
 			output = str()
+			output_path = str()
 		cp = subprocess.run(["which","resc"],encoding="utf-8",stdout=subprocess.PIPE)
 		which_resc = re.sub(r'\s*$','',cp.stdout)
 		if len(which_resc)>0:
 			totalline = f'if ! [ -f {triggerscript} ]; then {which_resc} --not_found \'{output_path}\'; else python3 {triggerscript} {output}; fi'
-			cron = Cron(totalline,trigger)
+			cron = Cron(totalline,trigger, \
+				re.sub(r'^~',f'{os.path.expanduser("~")}',self._RESCPATH_DEFAULT+"register"))
 			if self._call_first:
 				with open(output_path,"wb") as fp:
 					subprocess.run(["python3",triggerscript],stdout=fp,stderr=fp)
@@ -328,6 +335,7 @@ class Resc:
 		print("Output of compile:\t %s"%(filename))
 		if self._resclog.log:
 			print("Output of log:\t %s"%(self._resclog.logfile))
+		print("Output of register:\t %s"%(re.sub(r'^~',f'{os.path.expanduser("~")}',self._RESCPATH_DEFAULT+"register")))
 		return filename
 	
 	@property
