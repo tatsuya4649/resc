@@ -1,14 +1,14 @@
 
-Resource checker
----
+# Resource checker
+
 
 Resc check resources(CPU,memory,disk) of target host(local or remote) and execute script.
 
-Usage
----
+# Usage
 
 example Python code.
 
+```
 from resc import Resc
 
 resc = Resc(
@@ -30,9 +30,9 @@ def hello():
 	print("OVER RESOURCE!!!")
 
 hello()
+```
 
-How does that work?
----
+# How does that work?
 
 1. Register decorator is a decorator to prepare for resource check using given threshold of resources,host information,etc.
 2. Decorated function(above def hello()) is called function when resource threshold is exceeded.
@@ -43,8 +43,9 @@ If call_first argument is False(default False), decorated function is not called
 
 WARNING: Because decorated function will be compiled, it must be coded as an independent scope.
 
-bad example. 
-------
+## bad example. 
+
+```
 import math
 class Bad:
 	@classmethod
@@ -55,9 +56,11 @@ def bad():
 	# NameError: name 'math' is not defined
 	math.floor(10.9)
 	Bad.example()
+```
 
-good example.
-------
+## good example.
+
+```
 def good():
 	import math
 	class Bad:
@@ -65,14 +68,13 @@ def good():
 		def example(self):
 			return "hello world"
 	math.floor(10.9)
+```
 
-Crontab
----
+# Crontab
 
 Crontab is a important element of this library.So, show 'man crontab or crontab -e' for detail of crontab
 
-Term
----
+# Term
 
 threshold(cpu):  threshold that is system-wide CPU utilization as a percentage.int or float type.
 interval(cpu): interval is check interval time(s).int or float type.
