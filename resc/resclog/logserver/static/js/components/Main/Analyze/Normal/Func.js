@@ -5,7 +5,7 @@ export default class Func extends React.Component{
 		if (this.props.content.length>0){
 			return (
 			<div className="normal_func">
-			<h4 className="normal_element">func</h4>
+			<h4 className="normal_element">trigger function name</h4>
 			<p>{this.props.content}</p>
 			<p>{this.props.binary}</p>
 			</div>

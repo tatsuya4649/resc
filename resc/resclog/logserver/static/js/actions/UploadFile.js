@@ -1,4 +1,5 @@
 import * as UploadFileType from "../types/UploadFile";
+import * as DeleteType from "../types/Delete";
 import axios from "axios";
 
 export function analyzeFile(file){
@@ -12,7 +13,9 @@ export function analyzeFile(file){
 			const data = response.data;
 			const result = data.result;
 			if (result == "success"){
-				dispatch({'type':UploadFileType.ANALYZED,'payload': data.analyze});
+				// delete previous log data
+				dispatch({'type':DeleteType.DELETEALL});
+				dispatch({'type':UploadFileType.ANALYZED,'payload': data.analyze,'logfile':file.name});
 			}else{
 				throw new Error("result is failure.");
 			}

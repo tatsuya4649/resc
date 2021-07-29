@@ -4,15 +4,14 @@ import { analyzeFile } from "../../actions/UploadFile";
 
 @connect((store)=>{
 	return {
-	analyzing: store.uploadFile.analyzing,
-	analyzed: store.uploadFile.analyzed,
-	error: store.uploadFile.error,
+	analyzing: store.uploadFileReducer.analyzing,
+	analyzed: store.uploadFileReducer.analyzed,
+	error: store.uploadFileReducer.error,
 	};
 })
 export default class UploadFile extends React.Component{
 	analyze(e){
 		const file = e.target.files[0];
-		console.log(file);
 		this.props.dispatch(analyzeFile(file));
 	}
 	analyzing_text(){
