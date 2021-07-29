@@ -12,6 +12,10 @@ export default class Analyze extends React.Component{
 		}
 	}
 	render(){
-		return this.emeornot();
+		return (
+		<div className="analyze_box">
+		{this.emeornot()}
+		</div>
+		);
 	}
 }
