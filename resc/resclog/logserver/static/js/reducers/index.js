@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 
-import uploadFile from "./UploadFile";
+import uploadFileReducer from "./UploadFile";
 
 export default combineReducers({
-	uploadFile
+	uploadFileReducer
 })

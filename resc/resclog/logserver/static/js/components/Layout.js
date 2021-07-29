@@ -7,16 +7,20 @@ import Footer from "./Footer";
 
 @connect((store) => {
 	return {
-		uploadFile: store.uploadFile.logfiles,
-		analyzing: store.uploadFile.analyzing,
-		analyzed: store.uploadFile.analyzed
+		uploadFile: store.uploadFileReducer.logfiles,
+		analyzing: store.uploadFileReducer.analyzing,
+		analyzed: store.uploadFileReducer.analyzed
 	};
 })
 class Layout extends React.Component{
+	constructor(){
+		super();
+		this.title = "Resc Log Analyzer";
+	}
         render(){
                 return (
 		<div>
-		<Header title={"Hello"} />
+		<Header title={this.title} />
 		<Main />
 		<Footer />
 		</div>

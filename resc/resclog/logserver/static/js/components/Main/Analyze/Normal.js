@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import * as SFlag from "../../../analyze/sflag";
 import Date from "./Normal/Date";
 import Over from "./Normal/Over";
@@ -12,11 +13,10 @@ import Stderr from "./Normal/Stderr";
 export default class Normal extends React.Component{
 
 	render(){
-		console.log();
 		const explains = SFlag.getflag_exlist(this.props.analyze.sflag);
 		return (
 		<div className="normal_box">
-		<h2 className="normal_h3">normal</h2>
+		<Link to={{pathname:"/detail",state:{analyze: this.props.analyze,index: this.props.index}}}><h3 className="normal_h3">normal</h3></Link>
 		<div className="ul_box">
 		<ul className="ana_ul">
 		{

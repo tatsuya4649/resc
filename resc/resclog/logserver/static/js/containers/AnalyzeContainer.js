@@ -5,7 +5,7 @@ import Analyze from "../components/Main/Analyze/Analyze";
 
 @connect((store) => {
 	return {
-		anaresults: store.uploadFile.results
+		anaresults: store.uploadFileReducer.results
 	};
 })
 export default class AnalyzeContainer extends React.Component{
@@ -23,7 +23,7 @@ export default class AnalyzeContainer extends React.Component{
 		<div className="analyze_container">
 		{this.length()}
 		{this.props.anaresults.map((analyze,index)=>{
-			return <Analyze key={index} analyze={analyze} />
+			return <Analyze key={index} analyze={analyze} index={index} />
 		})}
 		</div>
 		);
