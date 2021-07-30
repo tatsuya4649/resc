@@ -24,7 +24,7 @@ def request():
 	try:
 		response = requests.get(_IP)
 		return response
-	except Except as e:
+	except Exception as e:
 		print(e)
 		raise e
 
