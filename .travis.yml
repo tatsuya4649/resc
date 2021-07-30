@@ -9,4 +9,4 @@ install:
   - pip install -r requirements.txt
   - pip install git+https://github.com/tatsuya4649/resc
 script:
-  - python3 -m unittest discover -s tests -p 'test_*.py'
+  - ./test.sh
