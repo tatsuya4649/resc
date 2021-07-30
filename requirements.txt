@@ -11,3 +11,5 @@ requests==2.22.0
 pytest==6.2.4
 pytest-cov==2.12.1
 cryptography==2.8
+pyflakes==2.3.1
+flake8==3.9.2

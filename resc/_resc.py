@@ -150,6 +150,10 @@ class Resc:
 		format=None,
 		call_first=False,
 	):
+		if not Cron.available():
+			raise RescCrontError("not found crontab command. you must have crontab command.")
+		if subprocess.run(["command"],shell=True).returncode != 0:
+			raise RescCrontError("not found command builtin command. you must have builtin command.")
 		self._call_first = call_first if isinstance(call_first,bool) else False
 		if rescdir is not None and isinstance(rescdir,str):
 			os.environ[self._RESCPATH_ENV] = rescdir

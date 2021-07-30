@@ -52,7 +52,7 @@ def main():
 			sys.exit(0)
 	elif args.delete_register:
 			REGISTER_FILE=f"{os.path.expanduser('~')}/.resc/register"
-			result = subprocess.Popen(["crontab","-l"],encoding="utf-8",stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+			result = subprocess.Popen(["command","crontab","-l"],encoding="utf-8",stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
 			comm = result.communicate()
 			errout = comm[1]
 			stdout = comm[0]
@@ -68,10 +68,10 @@ def main():
 						continue
 					cronlists.remove(line)
 			if len(cronlists) == 0:
-				subprocess.run(["crontab","-r"])
+				subprocess.run(["command","crontab","-r"],shell=True)
 			else:
 				input = "".join(list(set(cronlists)))	
-				subprocess.run(["crontab"],input=input,encoding='utf-8')
+				subprocess.run(["command","crontab"],input=input,encoding='utf-8',shell=True)
 			with open(REGISTER_FILE,"w") as rf:
 				rf.truncate(0)
 			sys.exit(0)
