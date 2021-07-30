@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pytest -v --cov-config=.coveragerc --cov=resc
+pytest -s -v --cov-config=.coveragerc --cov=resc
