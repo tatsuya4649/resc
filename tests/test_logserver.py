@@ -5,7 +5,7 @@ import requests
 import pytest
 import asyncio
 
-_IP="http://localhost:55555"
+_IP="https://google.com"
 class TestServer:
 	async def setup_server(self):
 		self.process = Process(target=start_server,daemon=True)
@@ -22,7 +22,7 @@ async def setup_server():
 	await server.terminate_server()
 
 def request():
-	response = requests.get(_IP)
+	response = requests.get(_IP,timeout=30)
 	return response
 
 def test_index(setup_server):
