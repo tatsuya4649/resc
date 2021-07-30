@@ -1,9 +1,10 @@
+import os
 import unittest
 from resc import RescLogAnalyze
 from resc.resclog.dump import RescDump
 
 class TestAnalyze(unittest.TestCase):
-    LOGPATH="~/.resc/log/output"
+    LOGPATH=os.path.normpath(f"{__file__}/../test_data/output")
     def test_analyze(self):
         ana = RescLogAnalyze(self.LOGPATH)
         log = ana.getlog()

@@ -1,7 +1,6 @@
 import unittest
 from resc.resclog.logserver.server import start_server
 from multiprocessing import Process
-import requests
 import time
 
 class TestLogServer(unittest.TestCase):
