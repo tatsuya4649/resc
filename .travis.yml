@@ -5,8 +5,11 @@ python:
   - "3.8"
   - "3.9"
   - "3.9-dev"
+before_install:
+  - sudo apt -y update && sudo apt install lsof
 install:
   - pip install -r requirements.txt
   - pip install git+https://github.com/tatsuya4649/resc
 script:
+  - lsof -i:55555
   - ./test.sh
