@@ -17,14 +17,22 @@ class TestServer:
 async def setup_server():
 	server = TestServer()
 	await server.setup_server()
-	await asyncio.sleep(5.0)
 	yield
 	await server.terminate_server()
 
+def request():
+	try:
+		response = requests.get(_IP)
+		return response
+	except NewConnectionError as e:
+		print(e)
+		return request()
+	except Except as e:
+		raise e
+
 def test_index(setup_server):
-	pass
-#	response = requests.get(_IP)
-#	assert response.status_code == 200
-#	assert isinstance(response.content,bytes)
-#
-#	print(response.content)
+	response = request()
+	assert response.status_code == 200
+	assert isinstance(response.content,bytes)
+
+	print(response.content)
