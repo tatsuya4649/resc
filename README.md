@@ -1,5 +1,6 @@
 
 ![travis](https://www.travis-ci.com/tatsuya4649/resc.svg?branch=master)
+![issues](https://img.shields.io/github/issues/tatsuya4649/resc)
 
 # Resource checker
 
