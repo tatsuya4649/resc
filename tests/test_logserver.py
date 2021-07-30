@@ -24,9 +24,6 @@ def request():
 	try:
 		response = requests.get(_IP)
 		return response
-	except NewConnectionError as e:
-		print(e)
-		return request()
 	except Except as e:
 		print(e)
 		raise e
