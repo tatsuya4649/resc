@@ -17,7 +17,7 @@ class TestServer:
 async def setup_server():
 	server = TestServer()
 	await server.setup_server()
-	await asyncio.sleep(10)
+	time.sleep(10)
 	yield
 	await server.terminate_server()
 
