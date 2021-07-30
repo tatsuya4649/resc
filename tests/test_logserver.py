@@ -5,20 +5,19 @@ import requests
 import pytest
 import asyncio
 
-_PORT=5555
-_IP=f"http://localhost:{_PORT}"
+_IP="http://localhost:55555"
 class TestServer:
 	def setup_server(self):
 		self.process = Process(target=start_server,daemon=False)
 		self.process.start()
 	def terminate_server(self):
-		self.process.terminate()
+		self.process.kill()
 
 @pytest.fixture(scope="module",autouse=True)
 def setup_server():
 	server = TestServer()
 	server.setup_server()
-	time.sleep(10)
+	time.sleep(5)
 	yield server
 	server.terminate_server()
 

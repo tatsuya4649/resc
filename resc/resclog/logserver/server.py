@@ -21,12 +21,6 @@ def _port():
 	else:
 		return _default_port()
 
-_PROC = None
-def termhandler(sig):
-	print(sig)
-	print("hello world")
-	if _PROC is not None:
-		os.kill(_PROC.pid,signal.SIGKILL)
 def start_server():
 	uvicorn.run(
 		"resc.resclog.logserver.log:app",

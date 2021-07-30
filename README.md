@@ -1,4 +1,6 @@
 
+![travis](https://www.travis-ci.com/tatsuya4649/resc.svg?branch=master)
+
 # Resource checker
 
 Resc check resources(CPU,memory,disk) of target host(local or remote) and execute script.
