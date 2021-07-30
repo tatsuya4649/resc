@@ -2,7 +2,6 @@ language: python
 os:
   - linux
   - freebsd
-  - osx
 python: 
   - "3.6"
   - "3.7"
