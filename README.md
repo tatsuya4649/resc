@@ -4,6 +4,7 @@
 ![forks](https://img.shields.io/github/forks/tatsuya4649/resc)
 ![starts](https://img.shields.io/github/stars/tatsuya4649/resc)
 ![license](https://img.shields.io/github/license/tatsuya4649/resc)
+![python](https://img.shields.io/badge/python-3.6%7C3.7%7C3.8%7C3.9-blue)
 
 # Resource checker
 
