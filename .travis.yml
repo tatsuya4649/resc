@@ -12,4 +12,4 @@ install:
   - pip install -r requirements.txt
   - pip install git+https://github.com/tatsuya4649/resc
 script:
-  - ./test.sh
+  - bash ./test.sh
