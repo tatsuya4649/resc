@@ -6,6 +6,7 @@
 ![license](https://img.shields.io/github/license/tatsuya4649/resc)
 ![python](https://img.shields.io/badge/python-3.6%7C3.7%7C3.8%7C3.9-blue)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/tatsuya4649/resc.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tatsuya4649/resc/context:javascript)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/tatsuya4649/resc.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tatsuya4649/resc/context:python)
 
 # Resource checker
 
