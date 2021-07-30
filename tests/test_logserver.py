@@ -2,6 +2,7 @@ import unittest
 from resc.resclog.logserver.server import start_server
 from multiprocessing import Process
 import time
+import requests
 
 class TestLogServer(unittest.TestCase):
 	_IP="http://localhost:55555"
