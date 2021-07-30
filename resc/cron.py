@@ -110,7 +110,7 @@ class Cron:
 			with open(self._register_file,"a") as rf:
 				rf.write(self._totalline)
 	def register(self):
-		if self._list is None:
+		if self._list is None or len(self.list)==0:
 			input = self._totalline
 			self._register_append()
 		else:
