@@ -17,12 +17,16 @@ class TestServer:
 async def setup_server():
 	server = TestServer()
 	await server.setup_server()
-	await asyncio.sleep(10)
 	yield
 	await server.terminate_server()
 
 def request():
-	response = requests.get(_IP,timeout=30)
+	while True:
+		try:
+			response = requests.get(_IP,timeout=30)
+			break
+		except Exception as e:
+			continue
 	return response
 
 def test_index(setup_server):
