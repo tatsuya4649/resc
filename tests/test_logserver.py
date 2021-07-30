@@ -5,7 +5,7 @@ import requests
 import pytest
 import asyncio
 
-_IP="http://localhost:55555"
+_IP="http://localhost:55523"
 class TestServer:
 	async def setup_server(self):
 		self.process = Process(target=start_server,daemon=True)
@@ -17,6 +17,7 @@ class TestServer:
 async def setup_server():
 	server = TestServer()
 	await server.setup_server()
+	await asyncio.sleep(10)
 	yield
 	await server.terminate_server()
 
