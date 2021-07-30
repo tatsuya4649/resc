@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python3 -m unittest discover -s tests -p 'test_*.py'
+pytest -v --cov-config=.coveragerc --cov=resc

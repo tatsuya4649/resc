@@ -1,23 +1,28 @@
-import unittest
 from resc.resclog.logserver.server import start_server
 from multiprocessing import Process
 import time
 import requests
+import pytest
+import asyncio
 
-class TestLogServer(unittest.TestCase):
-	_IP="http://localhost:55555"
-	def request(self):
-		response = requests.get(self._IP)
-		return response.status_code
-	def test_server(self):
-		process = Process(target=start_server,daemon=False)
-		process.start()
-		time.sleep(5)
-		status_code = self.request()
-		process.kill()
+_IP="http://localhost:55555"
+class TestServer:
+	async def setup_server(self):
+		self.process = Process(target=start_server,daemon=True)
+		self.process.start()
+	async def terminate_server(self):
+		self.process.terminate()
 
-		self.assertIsNotNone(status_code)
-		self.assertEqual(200,status_code)
+@pytest.fixture(scope="module",autouse=True)
+async def setup_server():
+	server = TestServer()
+	await server.setup_server()
+	yield
+	await server.terminate_server()
 
-if __name__ == "__main__":
-	unittest.main()
+def test_index(setup_server):
+	response = requests.get(_IP)
+	assert response.status_code == 200
+	assert isinstance(response.content,bytes)
+
+	print(response.content)

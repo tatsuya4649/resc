@@ -1,35 +1,29 @@
-import unittest
 from resc.memory import *
 
-class TestMemory(unittest.TestCase):
-	def test_memory(self):
-		memory = MemoryDetect(80)
-		res = memory.percent()
-		self.assertIsNotNone(res)
-		self.assertIsInstance(res,float)
-		self.assertGreaterEqual(res,0.0)
+def test_memory():
+	memory = MemoryDetect(80)
+	res = memory.percent()
+	assert res is not None
+	assert isinstance(res,float)
+	assert res >= 0.0
 
-		print(f'MEMORY USAGE PERCENT {res}% ({type(res)})')
+	print(f'MEMORY USAGE PERCENT {res}% ({type(res)})')
 
-		res = memory.used()
-		self.assertIsNotNone(res)
-		self.assertIsInstance(res,int)
-		self.assertGreaterEqual(res,0)
+	res = memory.used()
+	assert res is not None
+	assert isinstance(res,int)
+	assert res >= 0
 
-		print(f'MEMORY USED {res}bytes [ {round(res/(1024*1024),1)}MB , {round(res/(1024*1024*1024),1)}GB ] ({type(res)})')
+	print(f'MEMORY USED {res}bytes [ {round(res/(1024*1024),1)}MB , {round(res/(1024*1024*1024),1)}GB ] ({type(res)})')
 
-		res = memory.available()
-		self.assertIsNotNone(res)
-		self.assertIsInstance(res,int)
-		self.assertGreaterEqual(res,0)
+	res = memory.available()
+	assert res is not None
+	assert isinstance(res,int)
+	assert res >= 0
 
-		print(f'MEMORY AVAILABLE {res}bytes [ {round(res/(1024*1024),1)}MB , {round(res/(1024*1024*1024),1)}GB ] ({type(res)})')
+	print(f'MEMORY AVAILABLE {res}bytes [ {round(res/(1024*1024),1)}MB , {round(res/(1024*1024*1024),1)}GB ] ({type(res)})')
 
-		res = memory.check
-		self.assertIsNotNone(res)
-		self.assertIsInstance(res,bool)
-		print(f'MEMORY CHECK {res} (type(res))')
-
-
-if __name__ == "__main__":
-	unittest.main()
+	res = memory.check
+	assert res is not None
+	assert isinstance(res,bool)
+	print(f'MEMORY CHECK {res} (type(res))')
