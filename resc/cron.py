@@ -119,11 +119,7 @@ class Cron:
     @property
     def _list(self):
         result = subprocess.Popen(
-            [
-                "command",
-                "crontab",
-                "-l"
-            ],
+            "command crontab -l",
             encoding="utf-8",
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -156,7 +152,7 @@ class Cron:
                 cronlists.append(self._totalline)
             input = "".join(list(set(cronlists)))
         res = subprocess.run(
-            ["command", "crontab"],
+            "command crontab",
             input=input,
             encoding='utf-8',
             shell=True
@@ -192,14 +188,14 @@ class Cron:
                 cronlists.remove(self._totalline)
             if len(cronlists) == 0:
                 res = subprocess.run(
-                    ["command", "crontab", "-r"],
+                    "command crontab -r",
                     shell=True
                 )
                 return res.returncode
             else:
                 input = "".join(list(set(cronlists)))
                 res = subprocess.run(
-                    ["command", "crontab"],
+                    "command crontab",
                     input=input,
                     encoding='utf-8',
                     shell=True
@@ -209,7 +205,7 @@ class Cron:
     @classmethod
     def available(self):
         exists = subprocess.run(
-            ["command", "which", "crontab"],
+            "command which crontab",
             shell=True
         )
         if exists.returncode == 0:

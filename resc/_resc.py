@@ -180,7 +180,7 @@ class Resc:
             raise RescCronError(
                 "not found crontab command. you must have crontab command."
             )
-        if subprocess.run(["command"], shell=True).returncode != 0:
+        if subprocess.run("command", shell=True).returncode != 0:
             raise RescCronError(
                 "not found command builtin command. \
                     you must have builtin command."
@@ -310,15 +310,18 @@ class Resc:
             output = str()
             output_path = str()
         cp = subprocess.run(
-            ["which", "resc"],
+            "command which resc",
             encoding="utf-8",
-            stdout=subprocess.PIPE
+            stdout=subprocess.PIPE,
+            shell=True,
         )
         which_resc = re.sub(r'\s*$', '', cp.stdout)
         if len(which_resc) > 0:
-            totalline = f'''if ! [ -f {triggerscript} ];
-                    then {which_resc} --not_found \'{output_path}\';
-                    else python3 {triggerscript} {output}; fi'''
+            totalline = (
+                f'if ! [ -f {triggerscript} ]; '
+                f'then {which_resc} --not_found \'{output_path}\'; '
+                f'else command python3 {triggerscript} {output}; fi'
+            )
             cron = Cron(
                 totalline,
                 trigger,
@@ -331,14 +334,18 @@ class Resc:
             if self._call_first:
                 with open(output_path, "wb") as fp:
                     subprocess.run(
-                        ["python3", triggerscript],
+                        f"command python3 {triggerscript}",
                         stdout=fp,
-                        stderr=fp
+                        stderr=fp,
+                        shell=True,
                     )
             self._crons.append(cron)
         else:
-            print("resc command not found. \
-                required in crontab.", file=sys.stderr)
+            print(
+                (
+                    "resc command not found. "
+                    "required in crontab."
+                ), file=sys.stderr)
             if os.path.isfile(triggerscript):
                 os.remove(triggerscript)
             sys.exit(1)

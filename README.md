@@ -12,6 +12,13 @@
 
 Resc check resources(CPU,memory,disk) of target host(local or remote) and execute script.
 
+# Install
+
+```
+pip install git+https://github.com/tatsuya4649/resc
+
+```
+
 # Usage
 
 example Python code.
@@ -41,6 +48,8 @@ hello()
 ```
 
 # How does that work?
+
+![overview](docs/assets/resc_overview.png)
 
 1. Register decorator is a decorator to prepare for resource check using given threshold of resources,host information,etc.
 2. Decorated function(above def hello()) is called function when resource threshold is exceeded.
@@ -112,8 +121,6 @@ optional arguments:
 
 ```
 
-# How to end resource check
-
 # Term
 
 **threshold**(cpu):  threshold that is system-wide CPU utilization as a percentage.int or float type.
@@ -131,9 +138,59 @@ optional arguments:
 
 You can use the server to analyze the RescLog file.
 
-```
+**in python code**
 
 ```
+from resc import start_server
+
+# log server must be in main module.
+if __name__ == "__main__":
+    start_server()
+```
+
+**command line**
+
+```
+resc --log-serkver
+```
+
+Defualt bind host is 127.0.0.1, bind port is 55555.
+
+If you want to change them, set environment variebales. host is RESCLOGSERVER_IP, port is RESCLOGSERVER_PORT.
+
+**command line(custom port version)**
+
+```
+RESCLOGSERVER_PORT=44444 resc --log-serkver
+```
+
+Then, start log server to analyze your Resc log file.
+
+```
+INFO:     Uvicorn running on http://127.0.0.1:55555 (Press CTRL+C to quit)
+INFO:     Started reloader process [262092] using statreload
+INFO:     Started server process [262094]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+```
+
+![loganalyzer](docs/asserts/loganalyzer.png)
+
+If you accessed this url with web browser, display like this image.
+
+Select log file, display result of analyzing.
+
+![logresult](docs/asserts/logresult.png)
+
+* Failure/Success: Whether a error has occured or not.
+* date: Logggine date. the date when the registered function was called.
+* over: Whether the threshold of the registered resource has been exceeded or not.
+* script file: Called python script(compiled script).
+* trigger function name: Registered function name.
+* remote host: Remote host that registered resources are checked.
+* source: 'trigger' function code.
+* stdout: Stdout of trigger function.
+* stderr: Stderr of trigger function.
 
 # Crontab
 

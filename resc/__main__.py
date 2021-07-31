@@ -113,7 +113,7 @@ def main():
     elif args.delete_register:
         REGISTER_FILE = f"{os.path.expanduser('~')}/.resc/register"
         result = subprocess.Popen(
-            ["command", "crontab", "-l"],
+            "command crontab -l",
             encoding="utf-8",
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -135,13 +135,13 @@ def main():
                 cronlists.remove(line)
         if len(cronlists) == 0:
             subprocess.run(
-                ["command", "crontab", "-r"],
+                "command crontab -r",
                 shell=True
             )
         else:
             input = "".join(list(set(cronlists)))
             subprocess.run(
-                ["command", "crontab"],
+                "command crontab",
                 input=input,
                 encoding='utf-8',
                 shell=True
