@@ -1,5 +1,6 @@
-from .server import __all__ as sall
+from .server import start_server
 
 
-__all__ = list()
-__all__ += sall
+__all__ = [
+    start_server.__name__,
+]

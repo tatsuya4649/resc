@@ -105,11 +105,3 @@ class RescLogHeader(LittleEndianStructure):
         buffer = io.BytesIO()
         buffer.write(self)
         return buffer.getvalue()
-
-
-__all__ = [
-    RescLogFlag.__name__,
-    RescLogHeader.__name__,
-    RescLogEmergeHeader.__name__,
-    RescLogSFlag.__name__,
-]

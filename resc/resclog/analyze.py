@@ -174,8 +174,3 @@ class RescLogAnalyze:
             if not result or len(alllog) == 0:
                 break
         return results
-
-
-__all__ = [
-    RescLogAnalyze.__name__,
-]

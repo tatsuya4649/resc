@@ -31,8 +31,3 @@ def start_server():
         port=_port(),
         reload=True,
     )
-
-
-__all__ = [
-    start_server.__name__,
-]

@@ -1,6 +1,6 @@
 import os
 
-from resc._resc import Resc
+from resc import Resc
 _INTERVAL=0
 
 def test_resc():

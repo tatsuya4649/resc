@@ -86,8 +86,3 @@ class SSH:
     @property
     def startup_scripts(self):
         return self._startup_scripts
-
-
-__all__ = [
-    SSH.__name__,
-]

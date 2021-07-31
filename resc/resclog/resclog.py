@@ -365,9 +365,3 @@ class RescLog:
                 lf.write(bytes(date.encode("utf-8")))
         except Exception:
             sys.exit(1)
-
-
-__all__ = [
-    RescLog.__name__,
-    RescLogFormat.__name__,
-]

@@ -1,12 +1,12 @@
-from resc.cpu import CPUDetect
-from resc.memory import MemoryDetect
-from resc.disk import DiskDetect
-from resc.cron import Cron
-from resc.resclog.header import RescLogSFlag
-from resc.ssh import SSH
-from resc.rescerr import RescTypeError, RescKeyError, RescCronError, \
+from .cpu import CPUDetect
+from .memory import MemoryDetect
+from .disk import DiskDetect
+from .cron import Cron
+from .resclog.header import RescLogSFlag
+from .ssh import SSH
+from .rescerr import RescTypeError, RescKeyError, RescCronError, \
     RescValueError, RescAttributeError, RescServerError
-from resc.resclog import RescLog
+from .resclog import RescLog
 import resc
 import inspect
 import hashlib
@@ -521,8 +521,3 @@ class Resc:
         dir = os.path.dirname(__file__)
         pardir = pathlib.Path(dir).resolve().parents[0]
         return pardir
-
-
-__all__ = [
-    Resc.__name__,
-]

@@ -16,9 +16,3 @@ class RescLogFormat(Enum):
 class RescLogOver(Enum):
     TRUE = "True"
     FALSE = "False"
-
-
-__all__ = [
-    RescLogFormat.__name__,
-    RescLogOver.__name__,
-]
