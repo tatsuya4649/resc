@@ -1,10 +1,18 @@
 class RescTypeError(TypeError):
-	pass
+    pass
+
+
 class RescValueError(ValueError):
-	pass
+    pass
+
+
 class RescAttributeError(AttributeError):
-	pass
+    pass
+
+
 class RescKeyError(KeyError):
-	pass
+    pass
+
+
 class RescServerError(Exception):
-	pass
+    pass

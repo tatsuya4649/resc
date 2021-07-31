@@ -2,9 +2,8 @@ from enum import Enum
 
 
 class Logic(Enum):
-	GT=">"
-	GE=">="
-	EQ="=="
-	LT="<"
-	LE="<="
-
+    GT = ">"
+    GE = ">="
+    EQ = "=="
+    LT = "<"
+    LE = "<="
