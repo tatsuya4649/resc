@@ -2,9 +2,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(__file__))
 
-from _resc import Resc
-from resclog import RescLog, RescLogAnalyze, start_server, \
-    RescLogPathError, RescLogUnMatchError
+from resc import Resc,RescLog, RescLogAnalyze, \
+    start_server, RescLogPathError, RescLogUnMatchError
 import argparse
 import re
 import subprocess

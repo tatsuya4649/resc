@@ -51,7 +51,7 @@ If call_first argument is False(default False), decorated function is not called
 
 WARNING: Because decorated function will be compiled, it must be coded as an independent scope.
 
-## bad example. 
+## bad example.
 
 ```
 import math
@@ -127,6 +127,13 @@ optional arguments:
 **threshold**(disk): threshold that is partition utilization which containes given path.
 
 
+# Log Analyze Server
+
+You can use the server to analyze the RescLog file.
+
+```
+
+```
 
 # Crontab
 
