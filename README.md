@@ -56,7 +56,7 @@ hello()
 3. Make new python script for crontab.(~/.resc/ + rescdir)
 4. Register crontab with 3.python script and interval info(trigger argument of register decorator).
 
-If call_first argument is False(default False), decorated function is not called until resources are exceeded.
+If call_first argument is False(default False), decorated function is not called until resource threshold are exceeded.
 
 WARNING: Because decorated function will be compiled, it must be coded as an independent scope.
 
