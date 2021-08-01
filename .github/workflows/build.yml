@@ -33,4 +33,5 @@ jobs:
         shell: bash
       - name: Codecov test
         uses: codecov/codecov-action@v2
+        files: .coverage
         if: success()
