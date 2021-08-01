@@ -240,6 +240,9 @@ class Cron:
         if len(stdout) == 0:
             raise CronCommandError("not found crontab command.")
 
-        # /usr/bin/crontab
-        return stdout.decode()
+        # "/usr/bin/crontab\n"
+        path = stdout.decode()
+        delete_empty = re.sub(r'(\n|\s)+$','',path)
+
+        return delete_empty
 
