@@ -1,8 +1,8 @@
-language: python 
+language: python
 os:
   - linux
   - freebsd
-python: 
+python:
   - "3.6"
   - "3.7"
   - "3.8"
@@ -13,3 +13,5 @@ install:
   - pip install git+https://github.com/tatsuya4649/resc
 script:
   - bash ./test.sh
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

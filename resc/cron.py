@@ -241,5 +241,5 @@ class Cron:
             raise CronCommandError("not found crontab command.")
 
         # /usr/bin/crontab
-        return str(stdout)
+        return stdout.decode()
 
