@@ -155,7 +155,7 @@ class Cron:
             "command crontab",
             input=input,
             encoding='utf-8',
-            shell=True
+            shell=True,
         )
         return res.returncode
 
