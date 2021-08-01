@@ -1,4 +1,4 @@
-
+[![build](https://github.com/tatsuya4649/resc/actions/workflows/build.yml/badge.svg)](https://github.com/tatsuya4649/resc/actions/workflows/build.yml)
 ![issues](https://img.shields.io/github/issues/tatsuya4649/resc)
 ![forks](https://img.shields.io/github/forks/tatsuya4649/resc)
 ![starts](https://img.shields.io/github/stars/tatsuya4649/resc)
