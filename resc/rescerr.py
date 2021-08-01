@@ -17,5 +17,6 @@ class RescKeyError(KeyError):
 class RescServerError(Exception):
     pass
 
+
 class RescCronError(Exception):
     pass

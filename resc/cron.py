@@ -31,8 +31,10 @@ class CronValueError(ValueError):
 class CronRegularExpressionError(ValueError):
     pass
 
+
 class CronCommandError(Exception):
     pass
+
 
 class Cron:
     """
@@ -67,7 +69,7 @@ class Cron:
         self._register_file = register_file
 
         if not Cron.available():
-            raise RescCronError(
+            raise CronCommandError(
                 "not found crontab command. you must have crontab command."
             )
         self._crontab_path = f"command {self._path}"
@@ -242,7 +244,6 @@ class Cron:
 
         # "/usr/bin/crontab\n"
         path = stdout.decode()
-        delete_empty = re.sub(r'(\n|\s)+$','',path)
+        delete_empty = re.sub(r'(\n|\s)+$', '', path)
 
         return delete_empty
-

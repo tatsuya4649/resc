@@ -1,7 +1,7 @@
 from .cpu import CPUDetect
 from .memory import MemoryDetect
 from .disk import DiskDetect
-from .cron import Cron
+from .cron import Cron, CronCommandError
 from .resclog.header import RescLogSFlag
 from .ssh import SSH
 from .rescerr import RescTypeError, RescKeyError, RescCronError, \
@@ -177,7 +177,7 @@ class Resc:
         call_first=False,
     ):
         if not Cron.available():
-            raise RescCronError(
+            raise CronCommandError(
                 "not found crontab command. you must have crontab command."
             )
         if subprocess.run("command", shell=True).returncode != 0:
