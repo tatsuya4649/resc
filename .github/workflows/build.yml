@@ -31,3 +31,6 @@ jobs:
       - name: Test Resc
         run: bash ./test.sh
         shell: bash
+      - name: Codecov test
+        uses: codecov/codecov-action@v2
+        if: success()
