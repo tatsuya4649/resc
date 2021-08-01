@@ -31,6 +31,8 @@ class CronValueError(ValueError):
 class CronRegularExpressionError(ValueError):
     pass
 
+class CronCommandError(Exception):
+    pass
 
 class Cron:
     """
@@ -40,6 +42,8 @@ class Cron:
         r'|((,?[0-6]?[0-9])+)'
         r'|(\*))(/[0-6]?[0-9])?'
     )
+
+    _CRON_WHICH = "command which crontab"
 
     def __init__(
         self,
@@ -61,6 +65,12 @@ class Cron:
         self._str_to_lists()
         self._totalline = f"{self._interval_str} {self._command}\n"
         self._register_file = register_file
+
+        if not Cron.available():
+            raise RescCronError(
+                "not found crontab command. you must have crontab command."
+            )
+        self._crontab_path = f"command {self._path}"
 
     @property
     def interval_str(self):
@@ -152,7 +162,7 @@ class Cron:
                 cronlists.append(self._totalline)
             input = "".join(list(set(cronlists)))
         res = subprocess.run(
-            "command crontab",
+            self._crontab_path,
             input=input,
             encoding='utf-8',
             shell=True,
@@ -188,14 +198,14 @@ class Cron:
                 cronlists.remove(self._totalline)
             if len(cronlists) == 0:
                 res = subprocess.run(
-                    "command crontab -r",
+                    f"{self._crontab_path} -r",
                     shell=True
                 )
                 return res.returncode
             else:
                 input = "".join(list(set(cronlists)))
                 res = subprocess.run(
-                    "command crontab",
+                    self._crontab_path,
                     input=input,
                     encoding='utf-8',
                     shell=True
@@ -205,10 +215,31 @@ class Cron:
     @classmethod
     def available(self):
         exists = subprocess.run(
-            "command which crontab",
+            self._CRON_WHICH,
             shell=True
         )
         if exists.returncode == 0:
             return True
         else:
             return False
+
+    @property
+    def _path(self):
+        result = subprocess.Popen(
+            self._CRON_WHICH,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        stderr = result.stderr.read()
+        if len(stderr) > 0:
+            raise CronCommandError(
+                "An error occurred in \"command which crontab\"."
+            )
+        stdout = result.stdout.read()
+        if len(stdout) == 0:
+            raise CronCommandError("not found crontab command.")
+
+        # /usr/bin/crontab
+        return str(stdout)
+
