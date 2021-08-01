@@ -1,5 +1,4 @@
 
-![travis](https://www.travis-ci.com/tatsuya4649/resc.svg?branch=master)
 ![issues](https://img.shields.io/github/issues/tatsuya4649/resc)
 ![forks](https://img.shields.io/github/forks/tatsuya4649/resc)
 ![starts](https://img.shields.io/github/stars/tatsuya4649/resc)
