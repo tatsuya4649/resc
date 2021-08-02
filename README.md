@@ -15,7 +15,7 @@ Resc check resources(CPU,memory,disk) of target host(local or remote) and execut
 # Install
 
 ```
-pip install git+https://github.com/tatsuya4649/resc
+pip install resc
 
 ```
 
