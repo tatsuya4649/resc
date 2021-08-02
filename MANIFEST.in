@@ -1,2 +1,3 @@
 include resc/scripts/*
+include requirements.txt
 graft resc/resclog/logserver/*

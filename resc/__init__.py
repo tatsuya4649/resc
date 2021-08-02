@@ -25,3 +25,5 @@ __all__ = [
     RescLogUnMatchError.__name__,
     start_server.__name__,
 ]
+
+__version__ = "0.1.0"
