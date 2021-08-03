@@ -212,7 +212,11 @@ class Resc:
         if not isinstance(timeout,int):
             raise RescTypeError("timeout must by int type.")
         return timeout
-
+    def _relative_to_absolute(self,path):
+        repath = path
+        if not pathlib.Path(path).is_absolute():
+            repath = f"{pathlib.Path(path).resolve()}"
+        return repath
 
 
     def register(
@@ -269,6 +273,12 @@ class Resc:
                     f'{os.path.expanduser("~")}',
                     self._RESCPATH_DEFAULT + os.environ[self._RESCPATH_ENV]
                 )
+        os.environ[self._RESCPATH_ENV] = \
+            self._relative_to_absolute(os.environ[self._RESCPATH_ENV])
+        if os.getenv(self._RESCOUTPUT_ENV) is not None:
+            os.environ[self._RESCOUTPUT_ENV] = \
+                self._relative_to_absolute(os.environ[self._RESCOUTPUT_ENV])
+
         if not isinstance(trigger, str):
             raise RescTypeError("trigger must be string type.")
         self._resclog = RescLog(
@@ -324,20 +334,17 @@ class Resc:
 
     def _sourcefile(self, file, func, funcname, func_args, ssh=None):
         resc_dir = os.getenv(self._RESCPATH_ENV)
-        # relative path to absolute path
-        if not pathlib.Path(resc_dir).is_absolute():
-            resc_dir = pathlib.Path(resc_dir).resolve()
         i = 0
         if not os.path.isdir(f"{resc_dir}"):
             os.makedirs(f"{resc_dir}")
-        if not isinstance(func_args["args"], tuple):
-            raise RescTypeError(
-                'func_args["args"] must be tuple of argument.'
-            )
-        if not isinstance(func_args["kwargs"], dict):
-            raise RescTypeError(
-                'func_args["kwargs"] must be dict of keyword argument.'
-            )
+#        if not isinstance(func_args["args"], tuple):
+#            raise RescTypeError(
+#                'func_args["args"] must be tuple of argument.'
+#            )
+#        if not isinstance(func_args["kwargs"], dict):
+#            raise RescTypeError(
+#                'func_args["kwargs"] must be dict of keyword argument.'
+#            )
         while True:
             resc_path = f"{resc_dir}"
             resc_key = f"{resc_path}/resc{i}.py"
@@ -353,25 +360,25 @@ class Resc:
                 )
             i += 1
 
-    def _crons_get(self, trigger, triggerscript):
-        if os.getenv(self._RESCOUTPUT_ENV) is not None:
-            if not pathlib.Path(os.getenv(self._RESCOUTPUT_ENV)).is_absolute():
-                output_path = f"""{pathlib.Path(
-                    os.getenv(self._RESCOUTPUT_ENV)
-                    ).resolve()}"""
-            else:
-                output_path = f"{os.getenv(self._RESCOUTPUT_ENV)}"
-            output = f' >>{output_path} 2>&1'
-        else:
-            output = str()
-            output_path = str()
+    def _which_resc(self):
         cp = subprocess.run(
             "command which resc",
             encoding="utf-8",
             stdout=subprocess.PIPE,
             shell=True,
         )
-        which_resc = re.sub(r'\s*$', '', cp.stdout)
+        return cp.stdout
+
+    def _crons_get(self, trigger, triggerscript):
+        if os.getenv(self._RESCOUTPUT_ENV) is not None:
+            output_path = f"{os.getenv(self._RESCOUTPUT_ENV)}"
+            output = f' >>{output_path} 2>&1'
+        else:
+            output_path = str()
+            output = str()
+
+        stdout = self._which_resc()
+        which_resc = re.sub(r'\s*$', '', stdout)
         if len(which_resc) > 0:
             totalline = (
                 f'if ! [ -f {triggerscript} ]; '
@@ -404,11 +411,9 @@ class Resc:
                 ), file=sys.stderr)
             if os.path.isfile(triggerscript):
                 os.remove(triggerscript)
-            sys.exit(1)
+            sys.exit([1,"resc command not found"])
 
     def _crons_register(self):
-        if not hasattr(self, "_crons"):
-            raise RescAttributeError("_crons not found.")
         if not isinstance(self._crons, list):
             raise RescTypeError("_crons must be list.")
         if len(self._crons) == 0:

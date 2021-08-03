@@ -218,7 +218,9 @@ class Cron:
     def available(self):
         exists = subprocess.run(
             self._CRON_WHICH,
-            shell=True
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
         if exists.returncode == 0:
             return True

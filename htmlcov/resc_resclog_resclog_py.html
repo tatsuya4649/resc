@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for resc/resclog/resclog.py: 46%</title>
+    <title>Coverage for resc/resclog/resclog.py: 45%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
@@ -18,15 +18,15 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>resc/resclog/resclog.py</b> :
-            <span class="pc_cov">46%</span>
+            <span class="pc_cov">45%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
             263 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">137 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">126 missing</button>
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">136 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">127 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
-            <button type="button" class="par run show_par shortkey_p button_toggle_par" title="Toggle lines partially run">9 partial</button>
+            <button type="button" class="par run show_par shortkey_p button_toggle_par" title="Toggle lines partially run">10 partial</button>
         </h2>
     </div>
 </div>
@@ -107,8 +107,8 @@
     <p id="t52" class="run"><span class="n"><a href="#t52">52</a></span><span class="t">            <span class="key">for</span> <span class="nam">path</span> <span class="key">in</span> <span class="nam">os</span><span class="op">.</span><span class="nam">path</span><span class="op">.</span><span class="nam">dirname</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">logfile</span><span class="op">)</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">'/'</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t53" class="run"><span class="n"><a href="#t53">53</a></span><span class="t">                <span class="nam">log_pathlist</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">path</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t54" class="run"><span class="n"><a href="#t54">54</a></span><span class="t">                <span class="nam">path</span> <span class="op">=</span> <span class="str">"/"</span><span class="op">.</span><span class="nam">join</span><span class="op">(</span><span class="nam">log_pathlist</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t55" class="run"><span class="n"><a href="#t55">55</a></span><span class="t">                <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">path</span><span class="op">)</span> <span class="op">></span> <span class="num">0</span> <span class="key">and</span> <span class="key">not</span> <span class="nam">os</span><span class="op">.</span><span class="nam">path</span><span class="op">.</span><span class="nam">isdir</span><span class="op">(</span><span class="nam">path</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t56" class="run"><span class="n"><a href="#t56">56</a></span><span class="t">                    <span class="nam">os</span><span class="op">.</span><span class="nam">mkdir</span><span class="op">(</span><span class="nam">path</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t55" class="par run show_par"><span class="n"><a href="#t55">55</a></span><span class="t">                <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">path</span><span class="op">)</span> <span class="op">></span> <span class="num">0</span> <span class="key">and</span> <span class="key">not</span> <span class="nam">os</span><span class="op">.</span><span class="nam">path</span><span class="op">.</span><span class="nam">isdir</span><span class="op">(</span><span class="nam">path</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"><span class="annotate short">55&#x202F;&#x219B;&#x202F;56</span><span class="annotate long">line 55 didn't jump to line 56, because the condition on line 55 was never true</span></span></p>
+    <p id="t56" class="mis show_mis"><span class="n"><a href="#t56">56</a></span><span class="t">                    <span class="nam">os</span><span class="op">.</span><span class="nam">mkdir</span><span class="op">(</span><span class="nam">path</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t57" class="run"><span class="n"><a href="#t57">57</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">format</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_default_format</span><span class="op">(</span><span class="nam">format</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t58" class="run"><span class="n"><a href="#t58">58</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">_date</span> <span class="op">=</span> <span class="nam">str</span><span class="op">(</span><span class="nam">datetime</span><span class="op">.</span><span class="nam">datetime</span><span class="op">.</span><span class="nam">now</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t59" class="run"><span class="n"><a href="#t59">59</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">_over</span> <span class="op">=</span> <span class="nam">RescLogOver</span><span class="op">.</span><span class="nam">FALSE</span>&nbsp;</span><span class="r"></span></p>
@@ -426,7 +426,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2021-08-03 17:31 +0900
+            created at 2021-08-03 18:02 +0900
         </p>
     </div>
 </div>

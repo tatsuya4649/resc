@@ -423,6 +423,17 @@ def test_register_remote_ssh_type_failure(setup_resc):
         setup_resc.register(
             trigger = "* * * * *",
             ip="129.0.0.1",
+            port = "22",
+            username="tatsuya",
+            key_path="example",
+        )(hello)()
+    print(f"\tPORT: {raiseinfo.value}")
+    with pytest.raises(
+        RescTypeError,
+    ) as raiseinfo:
+        setup_resc.register(
+            trigger = "* * * * *",
+            ip="129.0.0.1",
             username=100,
             key_path="example",
         )(hello)()
@@ -459,6 +470,79 @@ def test_register_remote_ssh_type_failure(setup_resc):
         )(hello)()
     print(f"\tTIMEOUT: {raiseinfo.value}")
 
+"""
+
+Register SOURCE Test
+
+"""
+import re
+_DUMMY_DIR = ".dummy"
+def test_source_dir(setup_resc):
+    test_dir = re.sub(
+        r'^~',
+        f'{os.path.expanduser("~")}',
+        os.path.join(
+            setup_resc._RESCPATH_DEFAULT,
+            _DUMMY_DIR
+        )
+    )
+    if os.path.exists(test_dir):
+        for file in os.listdir(
+            test_dir
+        ):
+            os.remove(os.path.join(test_dir,file))
+        os.rmdir(test_dir)
+
+    setup_resc.register(
+        trigger = "* * * * *",
+        rescdir = _DUMMY_DIR,
+    )(hello)()
+
+    assert os.path.exists(test_dir)
+
+def test_register_nonlog(setup_resc):
+    # Delete env variable of output path
+    os.environ.pop(setup_resc._RESCOUTPUT_ENV,None)
+    setup_resc.register(
+        trigger = "* * * * *",
+        outputfile=None,
+    )(hello)()
+
+def test_register_resc_command_not_found(
+    setup_resc,
+    mocker,
+):
+    resc_patch = mocker.patch(
+        "resc._resc.Resc._which_resc"
+    )
+    resc_patch.return_value = ""
+
+    with pytest.raises(
+        SystemExit
+    ) as raiseinfo:
+        setup_resc.register(
+            trigger = "* * * * *",
+            outputfile=None,
+        )(hello)()
+
+    print(f"RESC SYS EXIT: {raiseinfo.value}")
+
+def test_register_crons_register_type(
+    setup_resc,
+):
+    setup_resc._crons = 1
+    with pytest.raises(
+        RescTypeError
+    ) as raiseinfo:
+        setup_resc._crons_register()
+    print(f"RESC CRONS TYPE FAILURE: {raiseinfo.value}")
+
+def test_register_crons_length_zero(
+    setup_resc,
+):
+    result = setup_resc._crons_register()
+    assert result is None
+    assert len(setup_resc._crons) == 0
 
 def test_register():
     resc = Resc(
