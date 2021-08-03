@@ -94,7 +94,7 @@ class CPUDetect(DetectBase):
     def percent(interval):
         if not isinstance(interval, float) and \
                 not isinstance(interval, int):
-            raise TypeError("interval must by float or int type.")
+            raise CPUTypeError("interval must by int or float type.")
         return psutil.cpu_percent(
             interval=float(interval),
             percpu=False
@@ -104,7 +104,7 @@ class CPUDetect(DetectBase):
     def percent_percpu(interval):
         if not isinstance(interval, float) and \
                 not isinstance(interval, int):
-            raise TypeError("interval must by float or int type.")
+            raise CPUTypeError("interval must by int or float type.")
         return psutil.cpu_percent(
             interval=float(interval),
             percpu=True

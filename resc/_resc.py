@@ -41,48 +41,58 @@ class Resc:
         if cpu is not None and not isinstance(cpu, dict):
             raise RescTypeError("cpu must be None or dict.")
         elif cpu is not None:
-            mustkeys = [x for x in
-                        [k for k, v in
-                            inspect
-                            .signature(CPUDetect.__init__)
-                            .parameters
-                            .items()
-                         if v.default is inspect._empty]
-                        if x not in cpu.keys()]
-            mustkeys.remove("self")
-            if len(mustkeys) > 0:
-                raise RescKeyError(f"cpu must have {mustkeys} key.")
+            cpu_detect_keys = [
+                k for k, v in
+                    inspect
+                    .signature(CPUDetect.__init__)
+                    .parameters
+                    .items()
+            ]
+            unexpected_keys = [
+                x for x in cpu.keys()
+                if x not in cpu_detect_keys
+            ]
+            if len(unexpected_keys) > 0:
+                raise RescKeyError(
+                    f"cpu must have only {cpu_detect_keys} key."
+                    f"unexpected keys ({unexpected_keys})."
+                )
 
         if memory is not None and not isinstance(memory, dict):
             raise RescTypeError("memory must be None or dict.")
         elif memory is not None:
-            mustkeys = [x for x in
-                        [k for k, v in
-                            inspect
-                            .signature(MemoryDetect.__init__)
-                            .parameters
-                            .items()
-                            if v.default is inspect._empty]
-                        if x not in memory.keys()]
-            mustkeys.remove("self")
-            if len(mustkeys) > 0:
-                raise RescKeyError(f"memory must have {mustkeys} key.")
+            memory_detect_keys = [
+                k for k, v in
+                    inspect
+                    .signature(MemoryDetect.__init__)
+                    .parameters
+                    .items()
+            ]
+            unexpected_keys = [x for x in memory.keys()
+                        if x not in memory_detect_keys]
+            if len(unexpected_keys) > 0:
+                raise RescKeyError(
+                    f"memory must have only {memory_detect_keys} key."
+                    f"unexpected keys ({unexpected_keys})."
+                )
 
         if disk is not None and not isinstance(disk, dict):
             raise RescTypeError("disk must be None or dict.")
         elif disk is not None:
-            mustkeys = [x for x in
-                        [k for k, v in
-                            inspect
-                            .signature(DiskDetect.__init__)
-                            .parameters
-                            .items()
-                            if v.default is inspect._empty]
-                        if x not in disk.keys()
-                        ]
-            mustkeys.remove("self")
-            if len(mustkeys) > 0:
-                raise RescKeyError(f"disk must have {mustkeys} key.")
+            disk_detect_keys = [
+                k for k, v in
+                    inspect
+                    .signature(DiskDetect.__init__)
+                    .parameters
+                    .items()
+            ]
+            unexpected_keys = [x for x in disk.keys()
+                        if x not in disk_detect_keys]
+            if len(unexpected_keys) > 0:
+                raise RescKeyError(
+                    f"disk must have only {disk_detect_keys} key."
+                    f"unexpected keys ({unexpected_keys})."
+                )
 
         if cpu is not None:
             cpu_string = str()
@@ -159,8 +169,51 @@ class Resc:
         return overlist
 
     @property
-    def crons(self):
-        return self._crons
+    def _check_command(self):
+        return subprocess \
+            .run("command", shell=True) \
+            .returncode
+
+    def _ip_type(self,ip):
+        if not isinstance(ip,str):
+            raise RescTypeError("IP Address must by str type.")
+        return ip
+    def _port_type(self,port):
+        if not isinstance(port,int):
+            raise RescTypeError("Port Number must by str type.")
+        return port
+    def _username_type(self,username):
+        if not isinstance(username,str):
+            raise RescTypeError("username must by str type.")
+        return username
+    def _username_type(self,username):
+        if not isinstance(username,str):
+            raise RescTypeError("username must by str type.")
+        return username
+    def _password_type(self,password):
+        if password is None:
+            return password
+        if not isinstance(password,str):
+            raise RescTypeError("password must by str type.")
+        return password
+    def _key_path_type(self,key_path):
+        if key_path is None:
+            return key_path
+        if not isinstance(key_path,str):
+            raise RescTypeError("key_path must by str type.")
+
+        key_path = re.sub(
+            r'~',
+            f"{os.path.expanduser('~')}",
+            key_path,
+        )
+        return key_path
+    def _timeout_type(self,timeout):
+        if not isinstance(timeout,int):
+            raise RescTypeError("timeout must by int type.")
+        return timeout
+
+
 
     def register(
         self,
@@ -180,17 +233,22 @@ class Resc:
             raise CronCommandError(
                 "not found crontab command. you must have crontab command."
             )
-        if subprocess.run("command", shell=True).returncode != 0:
+        if self._check_command != 0:
             raise RescCronError(
-                "not found command builtin command. \
-                    you must have builtin command."
+               ( "not found command builtin command.",
+                "you must have builtin command.")
             )
         self._call_first = call_first \
             if isinstance(call_first, bool) else False
         if rescdir is not None and isinstance(rescdir, str):
             os.environ[self._RESCPATH_ENV] = rescdir
+        elif rescdir is not None and not isinstance(rescdir, str):
+            raise RescTypeError("rescdir must be str type.")
+
         if outputfile is not None and isinstance(outputfile, str):
             os.environ[self._RESCOUTPUT_ENV] = outputfile
+        elif outputfile is not None and not isinstance(outputfile, str):
+            raise RescTypeError("outputfile must be str type.")
 
         if os.getenv(self._RESCPATH_ENV) is None:
             os.environ[self._RESCPATH_ENV] = re.sub(
@@ -230,20 +288,18 @@ class Resc:
                 if ip is not None and \
                         username is not None and \
                         (key_path is not None or password is not None):
+
                     ssh = SSH(
-                        ip,
-                        port=port,
-                        username=username,
-                        password=password,
-                        key_filename=re.sub(
-                            r'~',
-                            f"{os.path.expanduser('~')}",
-                            key_path
-                        ) if key_path is not None else None,
-                        timeout=timeout,
+                        self._ip_type(ip),
+                        port = self._port_type(port),
+                        username = self._username_type(username),
+                        password = self._password_type(password),
+                        key_filename= self._key_path_type(key_path),
+                        timeout=self._timeout_type(timeout),
                     )
                 else:
                     ssh = None
+                self._resclog._ssh = ssh
                 self._resclog.func = func.__name__
                 self._resclog.remo = ip
                 filename = self._sourcefile(

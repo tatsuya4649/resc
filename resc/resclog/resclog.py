@@ -61,6 +61,7 @@ class RescLog:
         self._file = None
         self._remo = None
         self._sour = None
+        self._ssh = None
 
     @property
     def log(self):
