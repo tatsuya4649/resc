@@ -58,8 +58,8 @@
     <p id="t3" class="run"><span class="n"><a href="#t3">3</a></span><span class="t"><span class="key">import</span> <span class="nam">os</span>&nbsp;</span><span class="r"></span></p>
     <p id="t4" class="pln"><span class="n"><a href="#t4">4</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t5" class="run"><span class="n"><a href="#t5">5</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">rescerr</span> <span class="key">import</span> <span class="nam">RescSSHConnectionError</span><span class="op">,</span> <span class="nam">RescSSHFileNotFoundError</span><span class="op">,</span> <span class="xx">\</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t6" class="pln"><span class="n"><a href="#t6">6</a></span><span class="t">    <span class="nam">RescSCPFileNotFoundError</span><span class="op">,</span> <span class="nam">RescSSHError</span><span class="op">,</span> <span class="nam">RescSCPError</span><span class="op">,</span> <span class="xx">\</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t7" class="pln"><span class="n"><a href="#t7">7</a></span><span class="t">    <span class="nam">RescSCPException</span><span class="op">,</span> <span class="nam">RescSSHTimeoutError</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t6" class="pln"><span class="n"><a href="#t6">6</a></span><span class="t">    <span class="nam">RescSSHError</span><span class="op">,</span> <span class="nam">RescSSHTimeoutError</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t7" class="pln"><span class="n"><a href="#t7">7</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t8" class="pln"><span class="n"><a href="#t8">8</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t9" class="run"><span class="n"><a href="#t9">9</a></span><span class="t"><span class="key">class</span> <span class="nam">SSHError</span><span class="op">(</span><span class="nam">Exception</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t10" class="run"><span class="n"><a href="#t10">10</a></span><span class="t">    <span class="key">pass</span>&nbsp;</span><span class="r"></span></p>
@@ -139,7 +139,7 @@
     <p id="t84" class="run"><span class="n"><a href="#t84">84</a></span><span class="t">        <span class="key">except</span> <span class="nam">Exception</span> <span class="key">as</span> <span class="nam">e</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t85" class="run"><span class="n"><a href="#t85">85</a></span><span class="t">            <span class="key">raise</span> <span class="nam">RescSSHError</span><span class="op">(</span><span class="nam">e</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t86" class="pln"><span class="n"><a href="#t86">86</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t87" class="run"><span class="n"><a href="#t87">87</a></span><span class="t">    <span class="key">def</span> <span class="nam">connect</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span><span class="nam">resclog</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t87" class="run"><span class="n"><a href="#t87">87</a></span><span class="t">    <span class="key">def</span> <span class="nam">connect</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">resclog</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t88" class="run"><span class="n"><a href="#t88">88</a></span><span class="t">        <span class="key">try</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t89" class="run"><span class="n"><a href="#t89">89</a></span><span class="t">            <span class="nam">client</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_connect</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t90" class="run"><span class="n"><a href="#t90">90</a></span><span class="t">            <span class="key">return</span> <span class="nam">client</span>&nbsp;</span><span class="r"></span></p>
@@ -178,9 +178,9 @@
     <p id="t123" class="pln"><span class="n"><a href="#t123">123</a></span><span class="t">                <span class="nam">connect</span><span class="op">.</span><span class="nam">get_transport</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t124" class="pln"><span class="n"><a href="#t124">124</a></span><span class="t">            <span class="op">)</span> <span class="key">as</span> <span class="nam">s</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t125" class="run"><span class="n"><a href="#t125">125</a></span><span class="t">                <span class="nam">s</span><span class="op">.</span><span class="nam">put</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t126" class="pln"><span class="n"><a href="#t126">126</a></span><span class="t">                    <span class="nam">files</span> <span class="op">=</span> <span class="nam">script_path</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t127" class="pln"><span class="n"><a href="#t127">127</a></span><span class="t">                    <span class="nam">remote_path</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_startup_scripts</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t128" class="pln"><span class="n"><a href="#t128">128</a></span><span class="t">                    <span class="nam">recursive</span> <span class="op">=</span> <span class="key">True</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t126" class="pln"><span class="n"><a href="#t126">126</a></span><span class="t">                    <span class="nam">files</span><span class="op">=</span><span class="nam">script_path</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t127" class="pln"><span class="n"><a href="#t127">127</a></span><span class="t">                    <span class="nam">remote_path</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">_startup_scripts</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t128" class="pln"><span class="n"><a href="#t128">128</a></span><span class="t">                    <span class="nam">recursive</span><span class="op">=</span><span class="key">True</span>&nbsp;</span><span class="r"></span></p>
     <p id="t129" class="pln"><span class="n"><a href="#t129">129</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t130" class="run"><span class="n"><a href="#t130">130</a></span><span class="t">            <span class="key">return</span> <span class="key">True</span>&nbsp;</span><span class="r"></span></p>
     <p id="t131" class="mis show_mis"><span class="n"><a href="#t131">131</a></span><span class="t">        <span class="key">except</span> <span class="nam">scp</span><span class="op">.</span><span class="nam">SCPException</span> <span class="key">as</span> <span class="nam">e</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -199,7 +199,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2021-08-04 16:23 +0900
+            created at 2021-08-04 20:36 +0900
         </p>
     </div>
 </div>
