@@ -931,6 +931,8 @@ def test_over_one_recv_q_status_0(
     )
     print(f"RESC OVER_ONE_SSH STATUS: {result}")
     assert result is False
+    assert "stdout".encode("utf-8") == setup_resc._resclog.stdout
+    assert "stderr".encode("utf-8") == setup_resc._resclog.stderr
 
 def test_over_one_recv_q_status_255(
     setup_resc,
@@ -955,6 +957,8 @@ def test_over_one_recv_q_status_255(
     )
     print(f"RESC OVER_ONE_SSH STATUS: {result}")
     assert result is True
+    assert "stdout".encode("utf-8") == setup_resc._resclog.stdout
+    assert "stderr".encode("utf-8") == setup_resc._resclog.stderr
 
 """
 Type Test

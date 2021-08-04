@@ -46,9 +46,5 @@ class RescSSHConnectionError(Exception):
     pass
 
 
-class RescSSHError(Exception):
-    pass
-
-
 class RescSSHTimeoutError(Exception):
     pass

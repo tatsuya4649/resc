@@ -5,8 +5,7 @@ from .cron import Cron, CronCommandError
 from .resclog.header import RescLogSFlag
 from .ssh import SSH
 from .rescerr import RescTypeError, RescKeyError, RescCronError, \
-    RescValueError, RescAttributeError, RescServerError, RescSSHError, \
-    RescSSHFileNotFoundError, RescSSHConnectionError, RescSSHTimeoutError
+    RescValueError, RescServerError
 from .resclog import RescLog
 import resc
 import inspect
@@ -44,10 +43,10 @@ class Resc:
         elif cpu is not None:
             cpu_detect_keys = [
                 k for k, v in
-                    inspect
-                    .signature(CPUDetect.__init__)
-                    .parameters
-                    .items()
+                inspect
+                .signature(CPUDetect.__init__)
+                .parameters
+                .items()
             ]
             unexpected_keys = [
                 x for x in cpu.keys()
@@ -64,13 +63,15 @@ class Resc:
         elif memory is not None:
             memory_detect_keys = [
                 k for k, v in
-                    inspect
-                    .signature(MemoryDetect.__init__)
-                    .parameters
-                    .items()
+                inspect
+                .signature(MemoryDetect.__init__)
+                .parameters
+                .items()
             ]
-            unexpected_keys = [x for x in memory.keys()
-                        if x not in memory_detect_keys]
+            unexpected_keys = [
+                x for x in memory.keys()
+                if x not in memory_detect_keys
+            ]
             if len(unexpected_keys) > 0:
                 raise RescKeyError(
                     f"memory must have only {memory_detect_keys} key."
@@ -82,13 +83,15 @@ class Resc:
         elif disk is not None:
             disk_detect_keys = [
                 k for k, v in
-                    inspect
-                    .signature(DiskDetect.__init__)
-                    .parameters
-                    .items()
+                inspect
+                .signature(DiskDetect.__init__)
+                .parameters
+                .items()
             ]
-            unexpected_keys = [x for x in disk.keys()
-                        if x not in disk_detect_keys]
+            unexpected_keys = [
+                x for x in disk.keys()
+                if x not in disk_detect_keys
+            ]
             if len(unexpected_keys) > 0:
                 raise RescKeyError(
                     f"disk must have only {disk_detect_keys} key."
@@ -175,41 +178,46 @@ class Resc:
             .run("command", shell=True) \
             .returncode
 
-    def _ip_type(self,ip):
-        if not isinstance(ip,str):
+    def _ip_type(self, ip):
+        if not isinstance(ip, str):
             raise RescTypeError("IP Address must by str type.")
         return ip
-    def _port_type(self,port):
-        if not isinstance(port,int):
+
+    def _port_type(self, port):
+        if not isinstance(port, int):
             raise RescTypeError("Port Number must by str type.")
         return port
-    def _username_type(self,username):
-        if not isinstance(username,str):
+
+    def _username_type(self, username):
+        if not isinstance(username, str):
             raise RescTypeError("username must by str type.")
         return username
-    def _password_type(self,password):
+
+    def _password_type(self, password):
         if password is None:
             return password
-        if not isinstance(password,str):
+        if not isinstance(password, str):
             raise RescTypeError("password must by str type.")
         return password
-    def _key_path_type(self,key_path):
+
+    def _key_path_type(self, key_path):
         if key_path is None:
             return key_path
-        if not isinstance(key_path,str):
+        if not isinstance(key_path, str):
             raise RescTypeError("key_path must by str type.")
-
         key_path = re.sub(
             r'~',
             f"{os.path.expanduser('~')}",
             key_path,
         )
         return key_path
-    def _timeout_type(self,timeout):
-        if not isinstance(timeout,int):
+
+    def _timeout_type(self, timeout):
+        if not isinstance(timeout, int):
             raise RescTypeError("timeout must by int type.")
         return timeout
-    def _relative_to_absolute(self,path):
+
+    def _relative_to_absolute(self, path):
         repath = path
         if not pathlib.Path(path).is_absolute():
             repath = f"{pathlib.Path(path).resolve()}"
@@ -235,8 +243,8 @@ class Resc:
             )
         if self._check_command != 0:
             raise RescCronError(
-               ( "not found command builtin command.",
-                "you must have builtin command.")
+                ("not found command builtin command."
+                 "you must have builtin command.")
             )
         self._call_first = call_first \
             if isinstance(call_first, bool) else False
@@ -294,13 +302,12 @@ class Resc:
                 if ip is not None and \
                         username is not None and \
                         (key_path is not None or password is not None):
-
                     ssh = SSH(
                         self._ip_type(ip),
-                        port = self._port_type(port),
-                        username = self._username_type(username),
-                        password = self._password_type(password),
-                        key_filename= self._key_path_type(key_path),
+                        port=self._port_type(port),
+                        username=self._username_type(username),
+                        password=self._password_type(password),
+                        key_filename=self._key_path_type(key_path),
                         timeout=self._timeout_type(timeout),
                     )
                     ssh.ssh_ping()
@@ -400,7 +407,7 @@ class Resc:
                 ), file=sys.stderr)
             if os.path.isfile(triggerscript):
                 os.remove(triggerscript)
-            sys.exit([1,"resc command not found"])
+            sys.exit([1, "resc command not found"])
 
     def _crons_register(self):
         if not isinstance(self._crons, list):
@@ -524,14 +531,14 @@ class Resc:
         package_path = resc.__path__[0]
         return package_path
 
-    def _startup_script(self,client,ssh):
+    def _startup_script(self, client, ssh):
         stdin, stdout, stderr = client.exec_command(
             f"bash {ssh.startup_scripts}"
         )
         stdin.close()
-        return int(stdout.channel.recv_exit_status()),stderr
+        return int(stdout.channel.recv_exit_status()), stderr
 
-    def _resc_q(self,client):
+    def _resc_q(self, client):
         """
             Check Remote Host Resource using 'resc' command
         """
@@ -542,7 +549,7 @@ class Resc:
         status_code = int(stdout.channel.recv_exit_status())
         return status_code, stdout, stderr
 
-    def _output_log(self,stdout,stderr,resclog):
+    def _output_log(self, stdout, stderr, resclog):
         for out in stdout:
             resclog.stdout = out
         for err in stderr:
@@ -562,8 +569,8 @@ class Resc:
         if not self._send_script(ssh, client, full_path, resclog):
             return False
 
-        startup_exit_status, stderr = self._startup_script(client,ssh)
-        if  startup_exit_status != 0:
+        startup_exit_status, stderr = self._startup_script(client, ssh)
+        if startup_exit_status != 0:
             ssh.close(client)
             for err in stderr:
                 resclog.stderr = err
@@ -576,13 +583,13 @@ class Resc:
         status_code, stdout, stderr = self._resc_q(client)
         ssh.close(client)
         if status_code == 0:
-            self._output_log(stdout,stderr,resclog)
+            self._output_log(stdout, stderr, resclog)
             return False
         elif status_code == 1:
-            self._output_log(stdout,stderr,resclog)
+            self._output_log(stdout, stderr, resclog)
             return False
         else:
-            self._output_log(stdout,stderr,resclog)
+            self._output_log(stdout, stderr, resclog)
             # return 255 is over resource
             return True
 

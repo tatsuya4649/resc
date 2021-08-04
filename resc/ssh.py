@@ -3,8 +3,8 @@ import scp
 import os
 
 from .rescerr import RescSSHConnectionError, RescSSHFileNotFoundError, \
-    RescSCPFileNotFoundError, RescSSHError, RescSCPError, \
-    RescSCPException, RescSSHTimeoutError
+    RescSSHError, RescSSHTimeoutError
+
 
 class SSHError(Exception):
     pass
@@ -84,7 +84,7 @@ class SSH:
         except Exception as e:
             raise RescSSHError(e)
 
-    def connect(self,resclog):
+    def connect(self, resclog):
         try:
             client = self._connect()
             return client
@@ -123,9 +123,9 @@ class SSH:
                 connect.get_transport()
             ) as s:
                 s.put(
-                    files = script_path,
-                    remote_path = self._startup_scripts,
-                    recursive = True
+                    files=script_path,
+                    remote_path=self._startup_scripts,
+                    recursive=True
                 )
             return True
         except scp.SCPException as e:
