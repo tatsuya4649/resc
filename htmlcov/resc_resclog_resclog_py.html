@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for resc/resclog/resclog.py: 50%</title>
+    <title>Coverage for resc/resclog/resclog.py: 55%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
@@ -18,15 +18,15 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>resc/resclog/resclog.py</b> :
-            <span class="pc_cov">50%</span>
+            <span class="pc_cov">55%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
             263 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">147 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">116 missing</button>
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">157 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">106 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
-            <button type="button" class="par run show_par shortkey_p button_toggle_par" title="Toggle lines partially run">13 partial</button>
+            <button type="button" class="par run show_par shortkey_p button_toggle_par" title="Toggle lines partially run">17 partial</button>
         </h2>
     </div>
 </div>
@@ -295,23 +295,23 @@
     <p id="t240" class="pln"><span class="n"><a href="#t240">240</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t241" class="run"><span class="n"><a href="#t241">241</a></span><span class="t">    <span class="op">@</span><span class="nam">stdout</span><span class="op">.</span><span class="nam">getter</span>&nbsp;</span><span class="r"></span></p>
     <p id="t242" class="run"><span class="n"><a href="#t242">242</a></span><span class="t">    <span class="key">def</span> <span class="nam">stdout</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t243" class="mis show_mis"><span class="n"><a href="#t243">243</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">hasattr</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="str">"_stdout"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t243" class="par run show_par"><span class="n"><a href="#t243">243</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">hasattr</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="str">"_stdout"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"><span class="annotate short">243&#x202F;&#x219B;&#x202F;244</span><span class="annotate long">line 243 didn't jump to line 244, because the condition on line 243 was never true</span></span></p>
     <p id="t244" class="mis show_mis"><span class="n"><a href="#t244">244</a></span><span class="t">            <span class="key">return</span> <span class="str">b''</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t245" class="mis show_mis"><span class="n"><a href="#t245">245</a></span><span class="t">        <span class="nam">res</span> <span class="op">=</span> <span class="nam">bytes</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t246" class="mis show_mis"><span class="n"><a href="#t246">246</a></span><span class="t">        <span class="key">for</span> <span class="nam">ele</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_stdout</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t247" class="mis show_mis"><span class="n"><a href="#t247">247</a></span><span class="t">            <span class="nam">res</span> <span class="op">+=</span> <span class="nam">ele</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t248" class="mis show_mis"><span class="n"><a href="#t248">248</a></span><span class="t">        <span class="key">return</span> <span class="nam">res</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t245" class="run"><span class="n"><a href="#t245">245</a></span><span class="t">        <span class="nam">res</span> <span class="op">=</span> <span class="nam">bytes</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t246" class="run"><span class="n"><a href="#t246">246</a></span><span class="t">        <span class="key">for</span> <span class="nam">ele</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_stdout</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t247" class="run"><span class="n"><a href="#t247">247</a></span><span class="t">            <span class="nam">res</span> <span class="op">+=</span> <span class="nam">ele</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t248" class="run"><span class="n"><a href="#t248">248</a></span><span class="t">        <span class="key">return</span> <span class="nam">res</span>&nbsp;</span><span class="r"></span></p>
     <p id="t249" class="pln"><span class="n"><a href="#t249">249</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t250" class="run"><span class="n"><a href="#t250">250</a></span><span class="t">    <span class="op">@</span><span class="nam">stdout</span><span class="op">.</span><span class="nam">setter</span>&nbsp;</span><span class="r"></span></p>
     <p id="t251" class="run"><span class="n"><a href="#t251">251</a></span><span class="t">    <span class="key">def</span> <span class="nam">stdout</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">out</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t252" class="mis show_mis"><span class="n"><a href="#t252">252</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">out</span><span class="op">,</span> <span class="nam">list</span><span class="op">)</span> <span class="key">and</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">out</span><span class="op">,</span> <span class="nam">bytes</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t252" class="par run show_par"><span class="n"><a href="#t252">252</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">out</span><span class="op">,</span> <span class="nam">list</span><span class="op">)</span> <span class="key">and</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">out</span><span class="op">,</span> <span class="nam">bytes</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"><span class="annotate short">252&#x202F;&#x219B;&#x202F;253</span><span class="annotate long">line 252 didn't jump to line 253, because the condition on line 252 was never true</span></span></p>
     <p id="t253" class="mis show_mis"><span class="n"><a href="#t253">253</a></span><span class="t">            <span class="key">raise</span> <span class="nam">RescLogTypeError</span><span class="op">(</span><span class="str">"output must be list or byte type."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t254" class="mis show_mis"><span class="n"><a href="#t254">254</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">hasattr</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="str">"_stdout"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t255" class="mis show_mis"><span class="n"><a href="#t255">255</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">_stdout</span> <span class="op">=</span> <span class="nam">list</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t256" class="mis show_mis"><span class="n"><a href="#t256">256</a></span><span class="t">        <span class="key">if</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">out</span><span class="op">,</span> <span class="nam">list</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t254" class="par run show_par"><span class="n"><a href="#t254">254</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">hasattr</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="str">"_stdout"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"><span class="annotate short">254&#x202F;&#x219B;&#x202F;256</span><span class="annotate long">line 254 didn't jump to line 256, because the condition on line 254 was never false</span></span></p>
+    <p id="t255" class="run"><span class="n"><a href="#t255">255</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">_stdout</span> <span class="op">=</span> <span class="nam">list</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t256" class="par run show_par"><span class="n"><a href="#t256">256</a></span><span class="t">        <span class="key">if</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">out</span><span class="op">,</span> <span class="nam">list</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"><span class="annotate short">256&#x202F;&#x219B;&#x202F;257</span><span class="annotate long">line 256 didn't jump to line 257, because the condition on line 256 was never true</span></span></p>
     <p id="t257" class="mis show_mis"><span class="n"><a href="#t257">257</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">_stdout</span> <span class="op">+=</span> <span class="nam">out</span>&nbsp;</span><span class="r"></span></p>
     <p id="t258" class="pln"><span class="n"><a href="#t258">258</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t259" class="mis show_mis"><span class="n"><a href="#t259">259</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">_stdout</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">out</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t259" class="run"><span class="n"><a href="#t259">259</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">_stdout</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">out</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t260" class="pln"><span class="n"><a href="#t260">260</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t261" class="run"><span class="n"><a href="#t261">261</a></span><span class="t">    <span class="op">@</span><span class="nam">property</span>&nbsp;</span><span class="r"></span></p>
     <p id="t262" class="run"><span class="n"><a href="#t262">262</a></span><span class="t">    <span class="key">def</span> <span class="nam">stderr</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -426,7 +426,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2021-08-04 15:39 +0900
+            created at 2021-08-04 17:37 +0900
         </p>
     </div>
 </div>

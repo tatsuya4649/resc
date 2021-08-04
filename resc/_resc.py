@@ -542,7 +542,7 @@ class Resc:
         status_code = int(stdout.channel.recv_exit_status())
         return status_code, stdout, stderr
 
-    def _output_log(self,stdout,stderr,resclo):
+    def _output_log(self,stdout,stderr,resclog):
         for out in stdout:
             resclog.stdout = out
         for err in stderr:
