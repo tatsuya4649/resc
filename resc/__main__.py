@@ -167,7 +167,7 @@ def main():
             memory["mode"] = args.mem_mode
     else:
         memory = None
-    if args.disk_t is not None and args.disk_path:
+    if args.disk_t is not None and args.disk_path is not None:
         disk["threshold"] = args.disk_t
         disk["path"] = args.disk_path
         if args.disk_mode is not None:
@@ -182,11 +182,16 @@ def main():
         )
         parser.print_help()
         sys.exit(1)
-    resc = Resc(
-        cpu=cpu,
-        memory=memory,
-        disk=disk,
-    )
+    try:
+        resc = Resc(
+            cpu=cpu,
+            memory=memory,
+            disk=disk,
+        )
+    except Exception as e:
+        print(e)
+        parser.print_help()
+        sys.exit(1)
     if resc.over_one:
         if not args.q:
             print("over threshold.")

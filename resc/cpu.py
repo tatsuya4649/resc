@@ -111,5 +111,5 @@ class CPUDetect(DetectBase):
         )
 
     @staticmethod
-    def loadavg():
-        return psutil.getloadavg()
+    def loadavg(interval):
+        return psutil.getloadavg()[2]
