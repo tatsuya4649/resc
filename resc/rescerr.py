@@ -20,3 +20,35 @@ class RescServerError(Exception):
 
 class RescCronError(Exception):
     pass
+
+
+class RescSSHError(Exception):
+    pass
+
+
+class RescSCPError(Exception):
+    pass
+
+
+class RescSCPException(Exception):
+    pass
+
+
+class RescSSHFileNotFoundError(FileNotFoundError):
+    pass
+
+
+class RescSCPFileNotFoundError(FileNotFoundError):
+    pass
+
+
+class RescSSHConnectionError(Exception):
+    pass
+
+
+class RescSSHError(Exception):
+    pass
+
+
+class RescSSHTimeoutError(Exception):
+    pass

@@ -5,7 +5,8 @@ from .cron import Cron, CronCommandError
 from .resclog.header import RescLogSFlag
 from .ssh import SSH
 from .rescerr import RescTypeError, RescKeyError, RescCronError, \
-    RescValueError, RescAttributeError, RescServerError
+    RescValueError, RescAttributeError, RescServerError, RescSSHError, \
+    RescSSHFileNotFoundError, RescSSHConnectionError, RescSSHTimeoutError
 from .resclog import RescLog
 import resc
 import inspect
@@ -186,10 +187,6 @@ class Resc:
         if not isinstance(username,str):
             raise RescTypeError("username must by str type.")
         return username
-    def _username_type(self,username):
-        if not isinstance(username,str):
-            raise RescTypeError("username must by str type.")
-        return username
     def _password_type(self,password):
         if password is None:
             return password
@@ -217,7 +214,6 @@ class Resc:
         if not pathlib.Path(path).is_absolute():
             repath = f"{pathlib.Path(path).resolve()}"
         return repath
-
 
     def register(
         self,
@@ -307,6 +303,7 @@ class Resc:
                         key_filename= self._key_path_type(key_path),
                         timeout=self._timeout_type(timeout),
                     )
+                    ssh.ssh_ping()
                 else:
                     ssh = None
                 self._resclog._ssh = ssh
@@ -337,14 +334,6 @@ class Resc:
         i = 0
         if not os.path.isdir(f"{resc_dir}"):
             os.makedirs(f"{resc_dir}")
-#        if not isinstance(func_args["args"], tuple):
-#            raise RescTypeError(
-#                'func_args["args"] must be tuple of argument.'
-#            )
-#        if not isinstance(func_args["kwargs"], dict):
-#            raise RescTypeError(
-#                'func_args["kwargs"] must be dict of keyword argument.'
-#            )
         while True:
             resc_path = f"{resc_dir}"
             resc_key = f"{resc_path}/resc{i}.py"
@@ -426,28 +415,36 @@ class Resc:
         self._resclog.file = filename
         iters = list()
         # delete until def keyword
-        func = func[re.search(r'(?=.*)\t*def', func).start():]
+        func = func[re.search(r'(?=.*)\s*def', func).start():]
         for line in func.split('\n'):
-            match = re.match(r'^(?!(\s*)@).*$', line)
-            if match is not None:
-                iters.append(match)
-        first_tab = re.match(r'^\s*', iters[0].group())
+            if len(line) > 0:
+                iters.append(line)
+#            match = re.match(r'^(?!(\s*)@).*$', line)
+#            if match is not None:
+#                iters.append(match)
+#        first_tab = re.match(r'^\s+', iters[0].group())
+        first_tab = re.match(r'^\s+', iters[0])
         matchs = list()
-        if first_tab is not None and len(first_tab.group()) > 0:
+        if first_tab is not None \
+                and len(first_tab.group()) > 0:
             matchs = [
-                re.sub(f'^{first_tab.group()}',
-                       '',
-                       x.group())
+                re.sub(
+                    f'^{first_tab.group()}',
+                    '',
+                    x
+                )
                 for x in iters
             ]
             matchs = [x + '\n' for x in matchs]
         else:
-            matchs = [x.group() for x in iters]
+            matchs = [x for x in iters]
             matchs = [x + '\n' for x in matchs]
         matchs_str = "".join(matchs)
-        self._resclog.sour = matchs_str[re.search(r'(?=.*)def',
-                                                  matchs_str).start():
-                                        ].encode("utf-8")
+        self._resclog.sour = matchs_str[
+            re.search(
+                r'(?=.*)def',
+                matchs_str
+            ).start():].encode("utf-8")
 
         args_str = str()
         if len(func_args["args"]) > 0:
@@ -518,47 +515,74 @@ class Resc:
 
     @property
     def _package_path(self):
-        if resc.__path__ is None or not isinstance(resc.__path__, list):
+        if resc.__path__ is None:
             raise RescValueError("resc package path is invalid.")
+        if not isinstance(resc.__path__, list):
+            raise RescTypeError("resc package path must be list")
         if len(resc.__path__) != 1:
             raise RescValueError("resc path list is invalid.")
         package_path = resc.__path__[0]
         return package_path
 
-    def over_one_ssh(self, ssh, resclog):
-        client = ssh.connect
-        package_path = self._package_path
-        full_path = f"{package_path}/scripts/{self._SERVER_SCRIPT}"
-        self._send_script(ssh, client, full_path, resclog)
+    def _startup_script(self,client,ssh):
         stdin, stdout, stderr = client.exec_command(
             f"bash {ssh.startup_scripts}"
         )
-        if int(stdout.channel.recv_exit_status()) != 0:
+        stdin.close()
+        return int(stdout.channel.recv_exit_status()),stderr
+
+    def _resc_q(self,client):
+        """
+            Check Remote Host Resource using 'resc' command
+        """
+        stdin, stdout, stderr = client.exec_command(
+            f"PATH=\"$PATH:~/.local/bin\" resc -q {self._resc_arg}"
+        )
+        stdin.close()
+        status_code = int(stdout.channel.recv_exit_status())
+        return status_code, stdout, stderr
+
+    def _output_log(self,stdout,stderr,resclo):
+        for out in stdout:
+            resclog.stdout = out
+        for err in stderr:
+            resclog.stderr = err
+
+    def over_one_ssh(
+        self,
+        ssh,
+        resclog,
+    ):
+        client = ssh.connect(resclog)
+        if client is None:
+            return False
+
+        package_path = self._package_path
+        full_path = f"{package_path}/scripts/{self._SERVER_SCRIPT}"
+        if not self._send_script(ssh, client, full_path, resclog):
+            return False
+
+        startup_exit_status, stderr = self._startup_script(client,ssh)
+        if  startup_exit_status != 0:
             ssh.close(client)
-            for err in stdout:
-                resclog.output.append(err)
+            for err in stderr:
+                resclog.stderr = err
             raise RescServerError(
                 (
                     f"server {os.path.basename(full_path)} "
-                    f"exit status {stdout.channel.recv_exit_status()}"
+                    f"exit status {startup_exit_status}"
                 )
             )
-        _, stdout, stderr = client.exec_command(
-            f"PATH=\"$PATH:~/.local/bin\" resc -q {self._resc_arg}"
-        )
-        status_code = int(stdout.channel.recv_exit_status())
+        status_code, stdout, stderr = self._resc_q(client)
         ssh.close(client)
         if status_code == 0:
-            for out in stdout:
-                resclog.output.append(out)
+            self._output_log(stdout,stderr,resclog)
             return False
         elif status_code == 1:
-            for err in stderr:
-                resclog.output.append(err)
+            self._output_log(stdout,stderr,resclog)
             return False
         else:
-            for out in stdout:
-                resclog.output.append(out)
+            self._output_log(stdout,stderr,resclog)
             # return 255 is over resource
             return True
 
@@ -574,7 +598,7 @@ class Resc:
         if self._memory_dict is not None:
             resc_arg.append(f'--mem_t {self._memory_dict["threshold"]}')
             if "mode" in self._memory_dict.keys():
-                resc_arg.append(f'--mem_mode {self._mem_dict["mode"]}')
+                resc_arg.append(f'--mem_mode {self._memory_dict["mode"]}')
         if self._disk_dict is not None:
             resc_arg.append(f'--disk_t {self._disk_dict["threshold"]}')
             if "mode" in self._disk_dict.keys():
@@ -582,7 +606,7 @@ class Resc:
         return " ".join(resc_arg)
 
     def _send_script(self, ssh, connect, script_path, resclog):
-        ssh.scpfile(connect, script_path, resclog)
+        return ssh.scpfile(connect, script_path, resclog)
 
     @property
     def _par_resc(self):

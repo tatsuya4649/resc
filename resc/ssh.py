@@ -2,6 +2,9 @@ import paramiko
 import scp
 import os
 
+from .rescerr import RescSSHConnectionError, RescSSHFileNotFoundError, \
+    RescSCPFileNotFoundError, RescSSHError, RescSCPError, \
+    RescSCPException, RescSSHTimeoutError
 
 class SSHError(Exception):
     pass
@@ -47,41 +50,91 @@ class SSH:
     def timeout(self):
         return self._timeout
 
-    @property
-    def connect(self):
+    def ssh_ping(self):
+        client = self._connect()
+        _, stdout, stderr = client.exec_command(
+            "true"
+        )
+        if int(stdout.channel.recv_exit_status()) != 0:
+            raise RescSSHError("Remote Host \"true\" command failure.")
+
+    def _connect(self):
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(
             paramiko.AutoAddPolicy()
         )
-        client.connect(
-            hostname=self._ip,
-            port=self._port,
-            username=self._username,
-            password=self._password,
-            key_filename=self._key_filename,
-            timeout=self._timeout,
-        )
-        return client
+        try:
+            client.connect(
+                hostname=self._ip,
+                port=self._port,
+                username=self._username,
+                password=self._password,
+                key_filename=self._key_filename,
+                timeout=self._timeout,
+            )
+            return client
+        except paramiko.ssh_exception.NoValidConnectionsError as e:
+            raise RescSSHConnectionError(e)
+        except paramiko.ssh_exception.SSHException as e:
+            raise RescSSHError(e)
+        except BlockingIOError as e:
+            raise RescSSHTimeoutError(e)
+        except FileNotFoundError as e:
+            raise RescSSHFileNotFoundError(e)
+        except Exception as e:
+            raise RescSSHError(e)
+
+    def connect(self,resclog):
+        try:
+            client = self._connect()
+            return client
+        except paramiko.ssh_exception.NoValidConnectionsError as e:
+            resclog.stderr = str(e).encode("utf-8")
+        except paramiko.ssh_exception.SSHException as e:
+            resclog.stderr = str(e).encode("utf-8")
+        except BlockingIOError as e:
+            resclog.stderr = str(e).encode("utf-8")
+        except FileNotFoundError as e:
+            resclog.stderr = str(e).encode("utf-8")
+        except Exception as e:
+            resclog.stderr = str(e).encode("utf-8")
+        return None
 
     def close(self, client):
         client.close()
 
     def scpfile(self, connect, script_path, resclog):
+        # Remote Host Path
         self._startup_scripts = f"~/.resc/{os.path.basename(script_path)}"
         _, stdout, stderr = connect.exec_command(
             "cd ~;mkdir -p .resc"
         )
         for line in stdout:
-            resclog.output.append(line)
+            resclog.stdout = line
         for line in stderr:
-            resclog.output.append(line)
+            resclog.stderr = line
         if int(stdout.channel.recv_exit_status()) != 0:
             raise SSHError(
                 f"""server exit status \
                 {stdout.channel.recv_exit_status()}"""
             )
-        with scp.SCPClient(connect.get_transport()) as s:
-            s.put(script_path, self._startup_scripts)
+        try:
+            with scp.SCPClient(
+                connect.get_transport()
+            ) as s:
+                s.put(
+                    files = script_path,
+                    remote_path = self._startup_scripts,
+                    recursive = True
+                )
+            return True
+        except scp.SCPException as e:
+            resclog.stderr = str(e).encode("utf-8")
+        except FileNotFoundError as e:
+            resclog.stderr = str(e).encode("utf-8")
+        except Exception as e:
+            resclog.stderr = str(e).encode("utf-8")
+        return False
 
     @property
     def startup_scripts(self):

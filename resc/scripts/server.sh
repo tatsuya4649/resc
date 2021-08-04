@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO='git+https://github.com/tatsuya4649/resc'
+REPO='resc'
 YUM_CMD=$(which yum)
 APT_CMD=$(which apt)
 SUDO_CMD=$(which sudo)

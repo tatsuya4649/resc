@@ -1,6 +1,7 @@
 import os
 import sys
 import pytest
+import paramiko
 
 from resc import Resc
 from resc import *
@@ -12,6 +13,8 @@ from resc.cron import *
 import inspect
 import subprocess
 
+from .docker_setup import RemoteHost
+
 _INTERVAL=0
 
 """
@@ -19,7 +22,7 @@ _INTERVAL=0
 Basic Test
 
 """
-@pytest.fixture(scope="module",autouse=False)
+@pytest.fixture(scope="function",autouse=False)
 def setup_resc():
     resc = Resc(
         cpu={"threshold":80,"interval":_INTERVAL},
@@ -386,23 +389,29 @@ def test_register_remote_ssh(setup_resc):
     assert setup_resc._resclog.remo is not None
     assert setup_resc._resclog._ssh is None
 
-    setup_resc.register(
-        trigger = "* * * * *",
-        ip="128.0.0.1",
-        username="tatsuya",
-        password="example",
-    )(hello)()
-    assert setup_resc._resclog.remo is not None
-    assert setup_resc._resclog._ssh is not None
+    with pytest.raises(
+        RescSSHError
+    ):
+        setup_resc.register(
+            trigger = "* * * * *",
+            ip="128.0.0.1",
+            username="tatsuya",
+            password="example",
+        )(hello)()
+#    assert setup_resc._resclog.remo is not None
+#    assert setup_resc._resclog._ssh is not None
 
-    setup_resc.register(
-        trigger = "* * * * *",
-        ip="128.0.0.1",
-        username="tatsuya",
-        key_path="example",
-    )(hello)()
-    assert setup_resc._resclog.remo is not None
-    assert setup_resc._resclog._ssh is not None
+    with pytest.raises(
+        RescSSHError
+    ):
+        setup_resc.register(
+            trigger = "* * * * *",
+            ip="128.0.0.1",
+            username="tatsuya",
+            key_path="example",
+        )(hello)()
+#    assert setup_resc._resclog.remo is not None
+#    assert setup_resc._resclog._ssh is not None
 
 def test_register_remote_ssh_type_failure(setup_resc):
     # IP Address Raise Error Test
@@ -566,21 +575,431 @@ def test_register():
         print(time.time())
     world(1,b="resc test script")
 
-def test_remote():
+def test_register_first_tab_test():
+    resc = Resc(
+        cpu={"threshold":80,"interval":_INTERVAL},
+        memory={"threshold":80},
+        disk={"threshold":80,"path":"/"},
+    )
+    @resc.register(
+        trigger="*/1 * * * *",
+        rescdir="rescs"
+    )
+    def first_tab():
+        ...
+    first_tab()
+
+def test_remote_key():
     resc = Resc(
         cpu={"threshold":0.0,"interval":_INTERVAL},
         memory={"threshold":80},
         disk={"threshold":80,"path":"/"},
     )
     @resc.register(
-        trigger="* * * * *",
-        rescdir="rescs",
-        outputfile="output",
-        ip="13.231.122.182",
-        username="ubuntu",
-        password="example",
+        trigger = "* * * * *",
+        rescdir = "rescs",
+        outputfile = "output",
+        ip = "localhost",
+        port = 20022,
+        username="root",
+        key_path = test_key_path,
         call_first=True,
     )
     def hello():
         print("hello resc!!!")
     hello()
+
+def test_remote_password():
+    resc = Resc(
+        cpu={"threshold":0.0,"interval":_INTERVAL},
+        memory={"threshold":80},
+        disk={"threshold":80,"path":"/"},
+    )
+    @resc.register(
+        trigger = "* * * * *",
+        rescdir = "rescs",
+        outputfile = "output",
+        ip = "localhost",
+        port = 20022,
+        username = "root",
+        password = "test_resc",
+        call_first=True,
+    )
+    def hello():
+        print("hello resc!!!")
+    hello()
+
+"""
+Package Test
+"""
+import resc
+def test_package_path_none(setup_resc,monkeypatch):
+    monkeypatch.setattr(resc,'__path__',None)
+
+    with pytest.raises(
+        RescValueError
+    ) as raiseinfo:
+        setup_resc._package_path
+
+    print(f"RESC PACKAGE IS NONE: {raiseinfo.value}")
+
+def test_package_path_type_failure(setup_resc,monkeypatch):
+    monkeypatch.setattr(resc,'__path__',"resc")
+
+    with pytest.raises(
+        RescTypeError
+    ) as raiseinfo:
+        setup_resc._package_path
+    print(f"RESC PACKAGE TYPE ERROR: {raiseinfo.value}")
+
+def test_package_path_length_failure(setup_resc,monkeypatch):
+    monkeypatch.setattr(resc,'__path__',["resc","resc"])
+
+    with pytest.raises(
+        RescValueError
+    ) as raiseinfo:
+        setup_resc._package_path
+    print(f"RESC PACKAGE LENGTH ERROR: {raiseinfo.value}")
+
+"""
+Remote Test
+"""
+@pytest.fixture(scope="module",autouse=True)
+def setup_remote_host():
+    """
+    setup and shutdown of Remote Host(made using Docker)
+    """
+    remote_host = RemoteHost()
+    remote_host.startup()
+    yield remote_host
+    remote_host.shutdown()
+
+test_key_path = \
+    os.path.join(
+        os.path.dirname(
+            os.path.abspath(
+                __file__
+            )
+        ),
+        'test_data/test_resc'
+    )
+def test_over_one_ssh(setup_resc):
+    setup_resc.register(
+        trigger="* * * * *",
+        ip="localhost",
+        port=20022,
+        username="root",
+        key_path=test_key_path,
+    )(hello)()
+    ssh = setup_resc._resclog._ssh
+    result = setup_resc.over_one_ssh(ssh,setup_resc._resclog)
+    print(f"RESC SSH OVER ONE SSH: {result}")
+
+def test_over_one_ssh_connect_error(
+    setup_resc,
+    setup_remote_host,
+    mocker,
+):
+    # To disable SSH ping of register
+    mocker.patch(
+        "resc.ssh.SSH.ssh_ping",
+        side_effect = lambda : None,
+    )
+    # Key Path Error
+    setup_resc.register(
+        trigger="* * * * *",
+        ip="localhost",
+        port=20022,
+        username="root",
+        key_path="dummy_key",
+    )(hello)()
+    ssh = setup_resc._resclog._ssh
+    assert len(setup_resc._resclog.stderr) == 0
+    result = setup_resc.over_one_ssh(ssh,setup_resc._resclog)
+    assert len(setup_resc._resclog.stderr) > 0
+
+    with pytest.raises(
+        RescSSHFileNotFoundError
+    ) as raiseinfo:
+        ssh._connect()
+    assert str(raiseinfo.value).encode("utf-8") == \
+        setup_resc._resclog.stderr
+    print(f"RESC SSH FILE NOT FOUND: {str(raiseinfo.value).encode('utf-8')}")
+
+    # Connection Error
+    setup_resc.register(
+        trigger="* * * * *",
+        ip="localhost",
+        port=20021,
+        username="root",
+        key_path=test_key_path,
+    )(hello)()
+    ssh = setup_resc._resclog._ssh
+    assert len(setup_resc._resclog.stderr) == 0
+    result = setup_resc.over_one_ssh(ssh,setup_resc._resclog)
+    assert len(setup_resc._resclog.stderr) > 0
+
+    with pytest.raises(
+        RescSSHConnectionError
+    ) as raiseinfo:
+        ssh._connect()
+    assert str(raiseinfo.value).encode("utf-8") == \
+        setup_resc._resclog.stderr
+
+    print(f"RESC SSH CONNECTION ERROR: {str(raiseinfo.value).encode('utf-8')}")
+
+    # Timeout Error
+    setup_resc.register(
+        trigger="* * * * *",
+        ip="localhost",
+        port=20022,
+        username="root",
+        key_path=test_key_path,
+        timeout=0,
+    )(hello)()
+    ssh = setup_resc._resclog._ssh
+    assert len(setup_resc._resclog.stderr) == 0
+    result = setup_resc.over_one_ssh(ssh,setup_resc._resclog)
+    assert len(setup_resc._resclog.stderr) > 0
+
+    with pytest.raises(
+        RescSSHTimeoutError
+    ) as raiseinfo:
+        ssh._connect()
+    assert str(raiseinfo.value).encode("utf-8") == \
+        setup_resc._resclog.stderr
+
+    print(f"RESC SSH TIMEOUT ERROR: {str(raiseinfo.value).encode('utf-8')}")
+
+def test_over_one_ssh_session_error(
+    setup_resc,
+    mocker,
+):
+    # Session Error
+    def raiseSSHException():
+        return paramiko\
+            .ssh_exception\
+            .SSHException("Session Error")
+
+    setup_resc.register(
+        trigger="* * * * *",
+        ip="localhost",
+        port=20022,
+        username="root",
+        key_path=test_key_path,
+    )(hello)()
+    ssh = setup_resc._resclog._ssh
+
+    mocker.patch(
+        "paramiko.SSHClient.connect",
+        side_effect = raiseSSHException
+    )
+    assert len(setup_resc._resclog.stderr) == 0
+    result = setup_resc.over_one_ssh(ssh,setup_resc._resclog)
+    assert len(setup_resc._resclog.stderr) > 0
+
+    with pytest.raises(
+        RescSSHError
+    ) as raiseinfo:
+        ssh._connect()
+    assert str(raiseinfo.value).encode("utf-8") == \
+        setup_resc._resclog.stderr
+
+    print(f"RESC SSH EXCEPTION: {str(raiseinfo.value).encode('utf-8')}")
+
+def test_send_script(setup_resc):
+    setup_resc.register(
+        trigger = "* * * * *",
+        ip = "localhost",
+        port = 20022,
+        username = "root",
+        key_path = test_key_path,
+    )(hello)()
+    ssh = setup_resc._resclog._ssh
+    setup_resc._send_script(ssh,ssh._connect(),__file__,setup_resc._resclog)
+    print(f"RESC SEND SCRIPT: \"{__file__}\" for test")
+
+def test_over_one_ssh(setup_resc):
+    setup_resc.register(
+        trigger = "* * * * *",
+        ip = "localhost",
+        port = 20022,
+        username = "root",
+        key_path = test_key_path,
+    )(hello)()
+    result = setup_resc.over_one_ssh(
+        ssh = setup_resc._resclog._ssh,
+        resclog = setup_resc._resclog
+    )
+    assert result is not None
+
+def test_over_one_ssh_scp_none(
+    setup_resc,
+    mocker,
+):
+    setup_resc.register(
+        trigger = "* * * * *",
+        ip = "localhost",
+        port = 20022,
+        username = "root",
+        key_path = test_key_path,
+    )(hello)()
+    mocker.patch(
+        "resc._resc.Resc._send_script",
+        return_value = False
+    )
+    result = setup_resc.over_one_ssh(
+        ssh = setup_resc._resclog._ssh,
+        resclog = setup_resc._resclog
+    )
+    assert result is not None
+    assert result is False
+
+def test_over_one_recv_exit_status(
+    setup_resc,
+    mocker,
+):
+    setup_resc.register(
+        trigger = "* * * * *",
+        ip = "localhost",
+        port = 20022,
+        username = "root",
+        key_path = test_key_path,
+    )(hello)()
+
+    mocker.patch(
+        "resc._resc.Resc._startup_script",
+        return_value = (1,["hello world".encode("utf-8")]),
+    )
+
+    with pytest.raises(
+        RescServerError
+    ) as raiseinfo:
+        setup_resc.over_one_ssh(
+            setup_resc._resclog._ssh,
+            setup_resc._resclog,
+        )
+    print(f"RESC OVER_ONE_SSH SERVER ERROR: {raiseinfo.value}")
+    assert "hello world".encode("utf-8") == setup_resc._resclog.stderr
+
+def test_over_one_recv_q_status_1(
+    setup_resc,
+    mocker,
+):
+    setup_resc.register(
+        trigger = "* * * * *",
+        ip = "localhost",
+        port = 20022,
+        username = "root",
+        key_path = test_key_path,
+    )(hello)()
+
+    mocker.patch(
+        "resc._resc.Resc._resc_q",
+        return_value = (1,["stdout".encode("utf-8")],["stderr".encode("utf-8")]),
+    )
+
+    result = setup_resc.over_one_ssh(
+        setup_resc._resclog._ssh,
+        setup_resc._resclog,
+    )
+    print(f"RESC OVER_ONE_SSH STATUS: {result}")
+    assert result is False
+    assert "stdout".encode("utf-8") == setup_resc._resclog.stdout
+    assert "stderr".encode("utf-8") == setup_resc._resclog.stderr
+
+def test_over_one_recv_q_status_0(
+    setup_resc,
+    mocker,
+):
+    setup_resc.register(
+        trigger = "* * * * *",
+        ip = "localhost",
+        port = 20022,
+        username = "root",
+        key_path = test_key_path,
+    )(hello)()
+
+    mocker.patch(
+        "resc._resc.Resc._resc_q",
+        return_value = (0,["stdout".encode("utf-8")],["stderr".encode("utf-8")]),
+    )
+
+    result = setup_resc.over_one_ssh(
+        setup_resc._resclog._ssh,
+        setup_resc._resclog,
+    )
+    print(f"RESC OVER_ONE_SSH STATUS: {result}")
+    assert result is False
+
+def test_over_one_recv_q_status_255(
+    setup_resc,
+    mocker,
+):
+    setup_resc.register(
+        trigger = "* * * * *",
+        ip = "localhost",
+        port = 20022,
+        username = "root",
+        key_path = test_key_path,
+    )(hello)()
+
+    mocker.patch(
+        "resc._resc.Resc._resc_q",
+        return_value = (255,["stdout".encode("utf-8")],["stderr".encode("utf-8")]),
+    )
+
+    result = setup_resc.over_one_ssh(
+        setup_resc._resclog._ssh,
+        setup_resc._resclog,
+    )
+    print(f"RESC OVER_ONE_SSH STATUS: {result}")
+    assert result is True
+
+"""
+Type Test
+"""
+def test_ip_type(setup_resc):
+    with pytest.raises(
+        RescTypeError
+    ) as raiseinfo:
+        result = setup_resc._ip_type(100)
+    print(f"RESC IP TYPE FAILURE: {raiseinfo.value}")
+def test_port_type(setup_resc):
+    with pytest.raises(
+        RescTypeError
+    ) as raiseinfo:
+        result = setup_resc._port_type("100")
+    print(f"RESC PORT TYPE FAILURE: {raiseinfo.value}")
+def test_username_type(setup_resc):
+    with pytest.raises(
+        RescTypeError
+    ) as raiseinfo:
+        result = setup_resc._username_type(100)
+    print(f"RESC USERNAME TYPE FAILURE: {raiseinfo.value}")
+"""
+Another Test
+"""
+def test_resc_arg():
+    resc = Resc(
+        cpu={
+            "threshold":80,
+            "interval":_INTERVAL,
+            "mode": "percent",
+        },
+        memory={
+            "threshold":80,
+            "mode": "percent",
+        },
+        disk={
+            "threshold":80,
+            "mode": "percent",
+            "path":"/",
+        },
+    )
+    result = resc._resc_arg
+
+    assert result is not None
+    assert isinstance(result,str)
+
+    print(f"RESC ARG: {result}")
