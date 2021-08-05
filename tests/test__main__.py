@@ -1,8 +1,10 @@
 import sys
+import re
 import pytest
 from unittest import mock
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from resc.__main__ import main
+import resc
 from resc import *
 from resc.cpu import *
 from resc.memory import *
@@ -76,6 +78,8 @@ def test_cpu_mode(mode):
     args.append(mode)
     args.append("--cpu_t")
     args.append(f"{80.0}")
+    args.append("--cpu_interval")
+    args.append("0")
 
     mode_list = [
         v.value["name"]
@@ -253,3 +257,233 @@ def test_disk_mode(mode):
             assert raiseinfo.value.args[0] == 1
         else:
             assert raiseinfo.value.args[0] != 1
+
+@pytest.mark.parametrize(
+    "q, over",[
+    (True, True),
+    (True, False),
+    (False, True),
+    (False, False),
+])
+def test_q(q, over, capfd):
+    args = list()
+    progname = "test__main__/disk/mode"
+    args.append(progname)
+    args.append("--cpu_t")
+    args.append("90.0")
+    args.append("--cpu_interval")
+    args.append("0")
+    if q:
+        args.append("-q")
+    with mock.patch("sys.argv",args):
+        with mock.patch(
+            "resc.Resc.over_one",
+            over
+        ):
+            with pytest.raises(
+                SystemExit
+            ):
+                main()
+        if not q:
+            if over:
+                assert re.match(
+            r"^exceed",
+            capfd.readouterr().out,
+            ) is not None
+            else:
+                assert re.match(
+            r"^no exceed",
+            capfd.readouterr().out,
+            ) is not None
+        else:
+            assert len(capfd.readouterr().out) == 0
+
+def test_log_analyze(capfd):
+    test_output = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "test_data/output"
+        )
+    )
+    args = list()
+    progname = "test__main__/disk/mode"
+    args.append(progname)
+    args.append("--log")
+    args.append(test_output)
+    with mock.patch("sys.argv",args):
+        with pytest.raises(
+            SystemExit
+        ) as raiseinfo:
+            main()
+    assert raiseinfo.value.args[0] == 0
+
+def test_log_path_error(capfd):
+    args = list()
+    progname = "test__main__/disk/mode"
+    args.append(progname)
+    args.append("--log")
+    args.append("output")
+    with mock.patch("sys.argv",args):
+        with pytest.raises(
+            SystemExit
+        ) as raiseinfo:
+            main()
+    assert re.match(
+        r"^not found",
+        capfd.readouterr().out,
+    ) is not None
+
+def test_log_unmatch_error():
+    test_output = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "test_data/output"
+        )
+    )
+    args = list()
+    progname = "test__main__/disk/mode"
+    args.append(progname)
+    args.append("--log")
+    args.append(test_output)
+    with mock.patch("sys.argv",args):
+        with mock.patch(
+            "resc.RescLogAnalyze.analyze",
+            side_effect = RescLogUnMatchError("unmatch")
+        ):
+            with pytest.raises(
+                SystemExit
+            ) as raiseinfo:
+                main()
+
+def test_log_exception():
+    test_output = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "test_data/output"
+        )
+    )
+    args = list()
+    progname = "test__main__/disk/mode"
+    args.append(progname)
+    args.append("--log")
+    args.append(test_output)
+    with mock.patch("sys.argv",args):
+        with mock.patch(
+            "resc.RescLogAnalyze.analyze",
+            side_effect = Exception("exception")
+        ):
+            with pytest.raises(
+                SystemExit
+            ) as raiseinfo:
+                main()
+
+def test_log_server():
+    args = list()
+    progname = "test__main__/start_server"
+    args.append(progname)
+    args.append("--log_server")
+
+    def server():
+        ...
+
+    resc.__main__.start_server = Mock()
+    resc.__main__.start_server.side_effect = server
+    with mock.patch("sys.argv",args):
+        with pytest.raises(
+            SystemExit
+        ) as raiseinfo:
+            main()
+    assert raiseinfo.value.args[0] == 0
+
+def test_delete_register():
+    args = list()
+    progname = "test__main__/delete_register"
+    args.append(progname)
+    args.append("--delete_register")
+    with mock.patch("sys.argv",args):
+        with pytest.raises(
+            SystemExit
+        ) as raiseinfo:
+            main()
+    assert raiseinfo.value.args[0] == 0
+
+def test_delete_register_no_crontab_no_register(cron_empty,register_empty):
+    args = list()
+    progname = "test__main__/delete_register_no"
+    args.append(progname)
+    args.append("--delete_register")
+    with mock.patch("sys.argv",args):
+        with pytest.raises(
+            SystemExit
+        ) as raiseinfo:
+            main()
+    assert raiseinfo.value.args[0] == 0
+
+def test_delete_register_no_crontab_register(cron_empty,register_noempty):
+    args = list()
+    progname = "test__main__/delete_register"
+    args.append(progname)
+    args.append("--delete_register")
+    with mock.patch("sys.argv",args):
+        with pytest.raises(
+            SystemExit
+        ) as raiseinfo:
+            main()
+    assert raiseinfo.value.args[0] == 0
+
+def test_delete_register_crontab_no_register(cron_noempty,register_empty):
+    args = list()
+    progname = "test__main__/delete_register"
+    args.append(progname)
+    args.append("--delete_register")
+    with mock.patch("sys.argv",args):
+        with pytest.raises(
+            SystemExit
+        ) as raiseinfo:
+            main()
+    assert raiseinfo.value.args[0] == 0
+
+def test_delete_register_crontab_register(cron_noempty,register_noempty):
+    args = list()
+    progname = "test__main__/delete_register_register"
+    args.append(progname)
+    args.append("--delete_register")
+    with mock.patch("sys.argv",args):
+        with pytest.raises(
+            SystemExit
+        ) as raiseinfo:
+            main()
+    assert raiseinfo.value.args[0] == 0
+
+def test_delete_register_same_reg_cro(
+    same_cron_register
+):
+    args = list()
+    progname = "test__main__/delete_register_same"
+    args.append(progname)
+    args.append("--delete_register")
+    with mock.patch("sys.argv",args):
+        with pytest.raises(
+            SystemExit
+        ) as raiseinfo:
+            main()
+    assert raiseinfo.value.args[0] == 0
+
+def test_not_found():
+    test_output = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "test_data/output"
+        )
+    )
+    args = list()
+    progname = "test__main__/not_found"
+    args.append(progname)
+    args.append("--not_found")
+    args.append(f"{test_output}")
+    with mock.patch("sys.argv",args):
+        with pytest.raises(
+            SystemExit
+        ) as raiseinfo:
+            main()
+    assert raiseinfo.value.args[0] == 0

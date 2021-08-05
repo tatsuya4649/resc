@@ -133,7 +133,7 @@ def main():
         if len(cronlists) == 0:
             subprocess.run(
                 "command crontab -r",
-                shell=True
+                shell=True,
             )
         else:
             input = "".join(list(set(cronlists)))

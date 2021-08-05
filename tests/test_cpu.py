@@ -122,12 +122,8 @@ def test_percent_percpu_type_fail():
 def test_loadavg(setup_cpu_percent):
     res = setup_cpu_percent.loadavg()
     assert res is not None
-    assert isinstance(res,tuple)
-    print(f'CPU LOAD AVG PER CPU: (list of float)')
-    for cpu_number in range(len(res)):
-        print(f'\tCPU LOAD AVG[{cpu_number}]: {res[cpu_number]}({type(res[cpu_number])})')
-        assert isinstance(res[cpu_number],float)
-        assert res[cpu_number] >= 0.0
+    assert isinstance(res,float)
+    assert res >= 0.0
 
 def test_check_percent_true(setup_cpu_percent,mocker):
     permock = mocker.patch("resc.cpu.CPUDetect.percent")
