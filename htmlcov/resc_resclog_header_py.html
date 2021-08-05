@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for resc/resclog/header.py: 66%</title>
+    <title>Coverage for resc/resclog/header.py: 88%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
@@ -18,15 +18,15 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>resc/resclog/header.py</b> :
-            <span class="pc_cov">66%</span>
+            <span class="pc_cov">88%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
-            59 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">44 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">15 missing</button>
+            57 statements &nbsp;
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">52 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">5 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
-            <button type="button" class="par run show_par shortkey_p button_toggle_par" title="Toggle lines partially run">0 partial</button>
+            <button type="button" class="par run show_par shortkey_p button_toggle_par" title="Toggle lines partially run">1 partial</button>
         </h2>
     </div>
 </div>
@@ -129,43 +129,41 @@
     <p id="t74" class="pln"><span class="n"><a href="#t74">74</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t75" class="run"><span class="n"><a href="#t75">75</a></span><span class="t">    <span class="op">@</span><span class="nam">classmethod</span>&nbsp;</span><span class="r"></span></p>
     <p id="t76" class="run"><span class="n"><a href="#t76">76</a></span><span class="t">    <span class="key">def</span> <span class="nam">_flag</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">flaglist</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t77" class="mis show_mis"><span class="n"><a href="#t77">77</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">flaglist</span><span class="op">,</span> <span class="nam">list</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t78" class="mis show_mis"><span class="n"><a href="#t78">78</a></span><span class="t">            <span class="key">raise</span> <span class="nam">RescLogHeaderTypeError</span><span class="op">(</span><span class="str">"flagslist must be list type."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t79" class="mis show_mis"><span class="n"><a href="#t79">79</a></span><span class="t">        <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="op">[</span><span class="nam">x</span> <span class="key">for</span> <span class="nam">x</span> <span class="key">in</span> <span class="nam">flaglist</span> <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">x</span><span class="op">,</span> <span class="nam">RescLogFlag</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op">!=</span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t80" class="mis show_mis"><span class="n"><a href="#t80">80</a></span><span class="t">            <span class="key">raise</span> <span class="nam">RescLogHeaderTypeError</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t81" class="pln"><span class="n"><a href="#t81">81</a></span><span class="t">                <span class="str">"flagslist element must be list RescLogFlag."</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t77" class="run"><span class="n"><a href="#t77">77</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">flaglist</span><span class="op">,</span> <span class="nam">list</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t78" class="run"><span class="n"><a href="#t78">78</a></span><span class="t">            <span class="key">raise</span> <span class="nam">RescLogHeaderTypeError</span><span class="op">(</span><span class="str">"flaglist must be list type."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t79" class="par run show_par"><span class="n"><a href="#t79">79</a></span><span class="t">        <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="op">[</span><span class="nam">x</span> <span class="key">for</span> <span class="nam">x</span> <span class="key">in</span> <span class="nam">flaglist</span> <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">x</span><span class="op">,</span> <span class="nam">RescLogFlag</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op">!=</span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"><span class="annotate short">79&#x202F;&#x219B;&#x202F;83</span><span class="annotate long">line 79 didn't jump to line 83, because the condition on line 79 was never false</span></span></p>
+    <p id="t80" class="run"><span class="n"><a href="#t80">80</a></span><span class="t">            <span class="key">raise</span> <span class="nam">RescLogHeaderTypeError</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t81" class="pln"><span class="n"><a href="#t81">81</a></span><span class="t">                <span class="str">"flaglist element must be list RescLogFlag."</span>&nbsp;</span><span class="r"></span></p>
     <p id="t82" class="pln"><span class="n"><a href="#t82">82</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t83" class="mis show_mis"><span class="n"><a href="#t83">83</a></span><span class="t">        <span class="nam">flaglist</span> <span class="op">=</span> <span class="nam">list</span><span class="op">(</span><span class="nam">set</span><span class="op">(</span><span class="nam">flaglist</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t84" class="mis show_mis"><span class="n"><a href="#t84">84</a></span><span class="t">        <span class="nam">result</span> <span class="op">=</span> <span class="nam">int</span><span class="op">(</span><span class="num">0</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t85" class="mis show_mis"><span class="n"><a href="#t85">85</a></span><span class="t">        <span class="key">for</span> <span class="nam">flag</span> <span class="key">in</span> <span class="nam">flaglist</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t86" class="mis show_mis"><span class="n"><a href="#t86">86</a></span><span class="t">            <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">flag</span><span class="op">.</span><span class="nam">value</span><span class="op">,</span> <span class="nam">int</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t87" class="mis show_mis"><span class="n"><a href="#t87">87</a></span><span class="t">                <span class="key">raise</span> <span class="nam">RescLogHeaderTypeError</span><span class="op">(</span><span class="str">"RescLogFlag value must be int."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t88" class="mis show_mis"><span class="n"><a href="#t88">88</a></span><span class="t">            <span class="nam">result</span> <span class="op">|=</span> <span class="nam">flag</span><span class="op">.</span><span class="nam">value</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t89" class="mis show_mis"><span class="n"><a href="#t89">89</a></span><span class="t">        <span class="key">return</span> <span class="nam">result</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t90" class="pln"><span class="n"><a href="#t90">90</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t91" class="run"><span class="n"><a href="#t91">91</a></span><span class="t">    <span class="op">@</span><span class="nam">classmethod</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t92" class="run"><span class="n"><a href="#t92">92</a></span><span class="t">    <span class="key">def</span> <span class="nam">convert</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">formatlist</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t93" class="run"><span class="n"><a href="#t93">93</a></span><span class="t">        <span class="nam">res</span> <span class="op">=</span> <span class="nam">list</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t94" class="run"><span class="n"><a href="#t94">94</a></span><span class="t">        <span class="key">for</span> <span class="nam">f</span> <span class="key">in</span> <span class="nam">formatlist</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t95" class="run"><span class="n"><a href="#t95">95</a></span><span class="t">            <span class="nam">res</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t96" class="pln"><span class="n"><a href="#t96">96</a></span><span class="t">                <span class="nam">eval</span><span class="op">(</span><span class="str">f"{re.sub('^RescLogFormat', 'RescLogFlag', str(f))}"</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t97" class="run"><span class="n"><a href="#t97">97</a></span><span class="t">        <span class="key">return</span> <span class="nam">res</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t98" class="pln"><span class="n"><a href="#t98">98</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t99" class="run"><span class="n"><a href="#t99">99</a></span><span class="t">    <span class="op">@</span><span class="nam">staticmethod</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t100" class="run"><span class="n"><a href="#t100">100</a></span><span class="t">    <span class="key">def</span> <span class="nam">length</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t101" class="mis show_mis"><span class="n"><a href="#t101">101</a></span><span class="t">        <span class="key">return</span> <span class="nam">sizeof</span><span class="op">(</span><span class="nam">RescLogHeader</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t102" class="pln"><span class="n"><a href="#t102">102</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t103" class="run"><span class="n"><a href="#t103">103</a></span><span class="t">    <span class="op">@</span><span class="nam">property</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t104" class="run"><span class="n"><a href="#t104">104</a></span><span class="t">    <span class="key">def</span> <span class="nam">bytes</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t105" class="mis show_mis"><span class="n"><a href="#t105">105</a></span><span class="t">        <span class="nam">buffer</span> <span class="op">=</span> <span class="nam">io</span><span class="op">.</span><span class="nam">BytesIO</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t106" class="mis show_mis"><span class="n"><a href="#t106">106</a></span><span class="t">        <span class="nam">buffer</span><span class="op">.</span><span class="nam">write</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t107" class="mis show_mis"><span class="n"><a href="#t107">107</a></span><span class="t">        <span class="key">return</span> <span class="nam">buffer</span><span class="op">.</span><span class="nam">getvalue</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t86" class="mis show_mis"><span class="n"><a href="#t86">86</a></span><span class="t">            <span class="nam">result</span> <span class="op">|=</span> <span class="nam">flag</span><span class="op">.</span><span class="nam">value</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t87" class="mis show_mis"><span class="n"><a href="#t87">87</a></span><span class="t">        <span class="key">return</span> <span class="nam">result</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t88" class="pln"><span class="n"><a href="#t88">88</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t89" class="run"><span class="n"><a href="#t89">89</a></span><span class="t">    <span class="op">@</span><span class="nam">classmethod</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t90" class="run"><span class="n"><a href="#t90">90</a></span><span class="t">    <span class="key">def</span> <span class="nam">convert</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">formatlist</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t91" class="run"><span class="n"><a href="#t91">91</a></span><span class="t">        <span class="nam">res</span> <span class="op">=</span> <span class="nam">list</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t92" class="run"><span class="n"><a href="#t92">92</a></span><span class="t">        <span class="key">for</span> <span class="nam">f</span> <span class="key">in</span> <span class="nam">formatlist</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t93" class="run"><span class="n"><a href="#t93">93</a></span><span class="t">            <span class="nam">res</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t94" class="pln"><span class="n"><a href="#t94">94</a></span><span class="t">                <span class="nam">eval</span><span class="op">(</span><span class="str">f"{re.sub('^RescLogFormat', 'RescLogFlag', str(f))}"</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t95" class="run"><span class="n"><a href="#t95">95</a></span><span class="t">        <span class="key">return</span> <span class="nam">res</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t96" class="pln"><span class="n"><a href="#t96">96</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t97" class="run"><span class="n"><a href="#t97">97</a></span><span class="t">    <span class="op">@</span><span class="nam">staticmethod</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t98" class="run"><span class="n"><a href="#t98">98</a></span><span class="t">    <span class="key">def</span> <span class="nam">length</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t99" class="run"><span class="n"><a href="#t99">99</a></span><span class="t">        <span class="key">return</span> <span class="nam">sizeof</span><span class="op">(</span><span class="nam">RescLogHeader</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t100" class="pln"><span class="n"><a href="#t100">100</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t101" class="run"><span class="n"><a href="#t101">101</a></span><span class="t">    <span class="op">@</span><span class="nam">property</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t102" class="run"><span class="n"><a href="#t102">102</a></span><span class="t">    <span class="key">def</span> <span class="nam">bytes</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t103" class="run"><span class="n"><a href="#t103">103</a></span><span class="t">        <span class="nam">buffer</span> <span class="op">=</span> <span class="nam">io</span><span class="op">.</span><span class="nam">BytesIO</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t104" class="run"><span class="n"><a href="#t104">104</a></span><span class="t">        <span class="nam">buffer</span><span class="op">.</span><span class="nam">write</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t105" class="run"><span class="n"><a href="#t105">105</a></span><span class="t">        <span class="key">return</span> <span class="nam">buffer</span><span class="op">.</span><span class="nam">getvalue</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </div>
 <div id="footer">
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2021-08-03 10:24 +0900
+            created at 2021-08-05 17:10 +0900
         </p>
     </div>
 </div>

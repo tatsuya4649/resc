@@ -76,3 +76,9 @@ def test_bytes(header):
     assert result is not None
     assert isinstance(result,bytes)
     assert len(result) > 0
+
+def test_flag_type():
+    flags = [ x for x in RescLogFlag ]
+    for flag in flags:
+        print(f"RESC LOG FLAG TYPE: {flag} {type(flag.value)}")
+        assert isinstance(flag.value,int)
