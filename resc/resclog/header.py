@@ -75,16 +75,14 @@ class RescLogHeader(LittleEndianStructure):
     @classmethod
     def _flag(self, flaglist):
         if not isinstance(flaglist, list):
-            raise RescLogHeaderTypeError("flagslist must be list type.")
+            raise RescLogHeaderTypeError("flaglist must be list type.")
         if len([x for x in flaglist if not isinstance(x, RescLogFlag)]) != 0:
             raise RescLogHeaderTypeError(
-                "flagslist element must be list RescLogFlag."
+                "flaglist element must be list RescLogFlag."
             )
         flaglist = list(set(flaglist))
         result = int(0)
         for flag in flaglist:
-            if not isinstance(flag.value, int):
-                raise RescLogHeaderTypeError("RescLogFlag value must be int.")
             result |= flag.value
         return result
 
