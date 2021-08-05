@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for resc/cpu.py: 100%</title>
+    <title>Coverage for resc/cpu.py: 87%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
@@ -18,15 +18,15 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>resc/cpu.py</b> :
-            <span class="pc_cov">100%</span>
+            <span class="pc_cov">87%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
             56 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">56 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">0 missing</button>
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">50 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">6 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
-            <button type="button" class="par run show_par shortkey_p button_toggle_par" title="Toggle lines partially run">0 partial</button>
+            <button type="button" class="par run show_par shortkey_p button_toggle_par" title="Toggle lines partially run">2 partial</button>
         </h2>
     </div>
 </div>
@@ -126,7 +126,7 @@
     <p id="t71" class="pln"><span class="n"><a href="#t71">71</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t72" class="run"><span class="n"><a href="#t72">72</a></span><span class="t">    <span class="op">@</span><span class="nam">property</span>&nbsp;</span><span class="r"></span></p>
     <p id="t73" class="run"><span class="n"><a href="#t73">73</a></span><span class="t">    <span class="key">def</span> <span class="nam">mode</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t74" class="run"><span class="n"><a href="#t74">74</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_mode</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t74" class="mis show_mis"><span class="n"><a href="#t74">74</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_mode</span>&nbsp;</span><span class="r"></span></p>
     <p id="t75" class="pln"><span class="n"><a href="#t75">75</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t76" class="run"><span class="n"><a href="#t76">76</a></span><span class="t">    <span class="op">@</span><span class="nam">property</span>&nbsp;</span><span class="r"></span></p>
     <p id="t77" class="run"><span class="n"><a href="#t77">77</a></span><span class="t">    <span class="key">def</span> <span class="nam">check</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -139,8 +139,8 @@
     <p id="t84" class="run"><span class="n"><a href="#t84">84</a></span><span class="t">            <span class="nam">res</span> <span class="op">=</span> <span class="nam">eval</span><span class="op">(</span><span class="str">f"self.{self._mode.value['name']}({self._interval})"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t85" class="pln"><span class="n"><a href="#t85">85</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t86" class="run"><span class="n"><a href="#t86">86</a></span><span class="t">            <span class="nam">res</span> <span class="op">=</span> <span class="nam">eval</span><span class="op">(</span><span class="str">f"self.{self._mode.value['name']}()"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t87" class="run"><span class="n"><a href="#t87">87</a></span><span class="t">        <span class="key">if</span> <span class="nam">eval</span><span class="op">(</span><span class="str">f"{res} {self._mode.value['logic'].value} {self.threshold}"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t88" class="run"><span class="n"><a href="#t88">88</a></span><span class="t">            <span class="key">return</span> <span class="key">False</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t87" class="par run show_par"><span class="n"><a href="#t87">87</a></span><span class="t">        <span class="key">if</span> <span class="nam">eval</span><span class="op">(</span><span class="str">f"{res} {self._mode.value['logic'].value} {self.threshold}"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"><span class="annotate short">87&#x202F;&#x219B;&#x202F;88</span><span class="annotate long">line 87 didn't jump to line 88, because the condition on line 87 was never true</span></span></p>
+    <p id="t88" class="mis show_mis"><span class="n"><a href="#t88">88</a></span><span class="t">            <span class="key">return</span> <span class="key">False</span>&nbsp;</span><span class="r"></span></p>
     <p id="t89" class="pln"><span class="n"><a href="#t89">89</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t90" class="run"><span class="n"><a href="#t90">90</a></span><span class="t">            <span class="key">return</span> <span class="key">True</span>&nbsp;</span><span class="r"></span></p>
     <p id="t91" class="pln"><span class="n"><a href="#t91">91</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -150,9 +150,9 @@
     <p id="t95" class="pln"><span class="n"><a href="#t95">95</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t96" class="run"><span class="n"><a href="#t96">96</a></span><span class="t">    <span class="op">@</span><span class="nam">staticmethod</span>&nbsp;</span><span class="r"></span></p>
     <p id="t97" class="run"><span class="n"><a href="#t97">97</a></span><span class="t">    <span class="key">def</span> <span class="nam">percent</span><span class="op">(</span><span class="nam">interval</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t98" class="run"><span class="n"><a href="#t98">98</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">interval</span><span class="op">,</span> <span class="nam">float</span><span class="op">)</span> <span class="key">and</span> <span class="xx">\</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t98" class="par run show_par"><span class="n"><a href="#t98">98</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">interval</span><span class="op">,</span> <span class="nam">float</span><span class="op">)</span> <span class="key">and</span> <span class="xx">\</span>&nbsp;</span><span class="r"><span class="annotate short">98&#x202F;&#x219B;&#x202F;100</span><span class="annotate long">line 98 didn't jump to line 100, because the condition on line 98 was never true</span></span></p>
     <p id="t99" class="pln"><span class="n"><a href="#t99">99</a></span><span class="t">                <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">interval</span><span class="op">,</span> <span class="nam">int</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t100" class="run"><span class="n"><a href="#t100">100</a></span><span class="t">            <span class="key">raise</span> <span class="nam">CPUTypeError</span><span class="op">(</span><span class="str">"interval must by int or float type."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t100" class="mis show_mis"><span class="n"><a href="#t100">100</a></span><span class="t">            <span class="key">raise</span> <span class="nam">CPUTypeError</span><span class="op">(</span><span class="str">"interval must by int or float type."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t101" class="run"><span class="n"><a href="#t101">101</a></span><span class="t">        <span class="key">return</span> <span class="nam">psutil</span><span class="op">.</span><span class="nam">cpu_percent</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p id="t102" class="pln"><span class="n"><a href="#t102">102</a></span><span class="t">            <span class="nam">interval</span><span class="op">=</span><span class="nam">float</span><span class="op">(</span><span class="nam">interval</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t103" class="pln"><span class="n"><a href="#t103">103</a></span><span class="t">            <span class="nam">percpu</span><span class="op">=</span><span class="key">False</span>&nbsp;</span><span class="r"></span></p>
@@ -160,10 +160,10 @@
     <p id="t105" class="pln"><span class="n"><a href="#t105">105</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t106" class="run"><span class="n"><a href="#t106">106</a></span><span class="t">    <span class="op">@</span><span class="nam">staticmethod</span>&nbsp;</span><span class="r"></span></p>
     <p id="t107" class="run"><span class="n"><a href="#t107">107</a></span><span class="t">    <span class="key">def</span> <span class="nam">percent_percpu</span><span class="op">(</span><span class="nam">interval</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t108" class="run"><span class="n"><a href="#t108">108</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">interval</span><span class="op">,</span> <span class="nam">float</span><span class="op">)</span> <span class="key">and</span> <span class="xx">\</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t108" class="mis show_mis"><span class="n"><a href="#t108">108</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">interval</span><span class="op">,</span> <span class="nam">float</span><span class="op">)</span> <span class="key">and</span> <span class="xx">\</span>&nbsp;</span><span class="r"></span></p>
     <p id="t109" class="pln"><span class="n"><a href="#t109">109</a></span><span class="t">                <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">interval</span><span class="op">,</span> <span class="nam">int</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t110" class="run"><span class="n"><a href="#t110">110</a></span><span class="t">            <span class="key">raise</span> <span class="nam">CPUTypeError</span><span class="op">(</span><span class="str">"interval must by int or float type."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t111" class="run"><span class="n"><a href="#t111">111</a></span><span class="t">        <span class="key">return</span> <span class="nam">psutil</span><span class="op">.</span><span class="nam">cpu_percent</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t110" class="mis show_mis"><span class="n"><a href="#t110">110</a></span><span class="t">            <span class="key">raise</span> <span class="nam">CPUTypeError</span><span class="op">(</span><span class="str">"interval must by int or float type."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t111" class="mis show_mis"><span class="n"><a href="#t111">111</a></span><span class="t">        <span class="key">return</span> <span class="nam">psutil</span><span class="op">.</span><span class="nam">cpu_percent</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p id="t112" class="pln"><span class="n"><a href="#t112">112</a></span><span class="t">            <span class="nam">interval</span><span class="op">=</span><span class="nam">float</span><span class="op">(</span><span class="nam">interval</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t113" class="pln"><span class="n"><a href="#t113">113</a></span><span class="t">            <span class="nam">percpu</span><span class="op">=</span><span class="key">True</span>&nbsp;</span><span class="r"></span></p>
     <p id="t114" class="pln"><span class="n"><a href="#t114">114</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -176,7 +176,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2021-08-05 12:36 +0900
+            created at 2021-08-05 21:44 +0900
         </p>
     </div>
 </div>
