@@ -7,6 +7,13 @@ import re
 import pytest
 import subprocess
 
+_TEST_LOGFILE = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "test_data/output"
+    )
+)
+
 def _cronlist():
     process = subprocess.Popen(
         "command crontab -l",
@@ -141,12 +148,6 @@ def same_cron_register():
 
 @pytest.fixture(scope="function",autouse=False)
 def logfile_empty():
-    _TEST_LOGFILE = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            "test_data/output"
-        )
-    )
     with open(_TEST_LOGFILE,"rb") as f:
         _logcontent = f.read()
     with open(_TEST_LOGFILE,"wb") as f:

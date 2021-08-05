@@ -37,27 +37,6 @@ class RescLogAnalyze:
         else:
             return False
 
-    def _errinfo(self, flag_set):
-        for flag in flag_set:
-            print(flag.value["explain"])
-
-    def _analyze_deco(func):
-        def _wrapper(*args, **kwargs):
-            if "counter" not in kwargs.keys() or \
-                    not isinstance(kwargs["counter"], int):
-                raise RescLogKeyError(
-                    "_analyze_deco must be counter argument(int type)."
-                )
-            print(
-                f"----- analyze({kwargs['counter']})-------"
-            )
-            result = func(*args, **kwargs)
-            print(
-                "----------------"
-            )
-            return result
-        return _wrapper
-
     @classmethod
     def _analyze_dict(
         self,
@@ -67,9 +46,9 @@ class RescLogAnalyze:
         resdict = dict()
         if not isinstance(log, bytes):
             raise RescLogTypeError("log must be bytes type.")
-        common_header = RescLogCommonHeader()
         _buffer = io.BytesIO(log)
         _now_seek = _buffer.tell()
+        common_header = RescLogCommonHeader()
         _buffer.readinto(common_header)
         sflag = common_header.sflag
         if common_header.identify != COMMONMAGIC.IDENTIFY:
@@ -119,8 +98,9 @@ class RescLogAnalyze:
             resdict["remo_length"] = remo_length
             resdict["sour_length"] = sour_length
             if body_length != \
-                    (date_length + over_length + func_length +
-                     file_length + remo_length + sour_length):
+        (date_length + over_length + \
+         func_length + file_length + \
+         remo_length + sour_length):
                 raise RescLogUnMatchError(
                     "unmatch total body length and individual length."
                 )
