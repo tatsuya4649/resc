@@ -75,7 +75,7 @@ def main():
     parser.add_argument(
         "--not_found",
         help="for crontab. If not found script, write to log",
-        type=str
+        type=str,
     )
     parser.add_argument(
         "-r",
@@ -100,16 +100,13 @@ def main():
             print(e)
         except Exception as e:
             print(e)
-        finally:
-            sys.exit(1)
+        sys.exit(1)
     elif args.log_server:
         start_server()
+        sys.exit(0)
     elif args.not_found is not None:
-        if len(args.not_found) == 0:
-            sys.exit(0)
-        else:
-            RescLog._not_found(args.not_found)
-            sys.exit(0)
+        RescLog._not_found(args.not_found)
+        sys.exit(0)
     elif args.delete_register:
         REGISTER_FILE = f"{os.path.expanduser('~')}/.resc/register"
         result = subprocess.Popen(
@@ -194,11 +191,11 @@ def main():
         sys.exit(1)
     if resc.over_one:
         if not args.q:
-            print("over threshold.")
+            print("exceed threshold.")
         sys.exit(255)
     else:
         if not args.q:
-            print("over threshold.")
+            print("no exceed threshold.")
         sys.exit(0)
 
 

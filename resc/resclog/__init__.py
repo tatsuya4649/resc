@@ -3,8 +3,10 @@ from .header import RescLogFlag, RescLogHeader, \
 from .resclog import RescLog
 from .rformat import RescLogFormat, RescLogOver
 from .analyze import RescLogAnalyze
-from .anaerr import RescLogPathError, RescLogKeyError, \
-    RescLogTypeError, RescLogUnMatchError
+from .anaerr import RescLogPathError, \
+    RescLogKeyError, RescLogTypeError, \
+    RescLogUnMatchError
+
 from .logserver import start_server
 
 
