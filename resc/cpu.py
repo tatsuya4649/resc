@@ -80,7 +80,10 @@ class CPUDetect(DetectBase):
         over threshold: return False
         within threshold: return True
         """
-        res = eval(f"self.{self._mode.value['name']}({self._interval})")
+        if self._mode is CPUDetectMode.PERCENT:
+            res = eval(f"self.{self._mode.value['name']}({self._interval})")
+        else:
+            res = eval(f"self.{self._mode.value['name']}()")
         if eval(f"{res} {self._mode.value['logic'].value} {self.threshold}"):
             return False
         else:
@@ -112,4 +115,4 @@ class CPUDetect(DetectBase):
 
     @staticmethod
     def loadavg():
-        return psutil.getloadavg()
+        return psutil.getloadavg()[2]

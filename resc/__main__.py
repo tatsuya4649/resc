@@ -75,7 +75,7 @@ def main():
     parser.add_argument(
         "--not_found",
         help="for crontab. If not found script, write to log",
-        type=str
+        type=str,
     )
     parser.add_argument(
         "-r",
@@ -100,16 +100,13 @@ def main():
             print(e)
         except Exception as e:
             print(e)
-        finally:
-            sys.exit(1)
+        sys.exit(1)
     elif args.log_server:
         start_server()
+        sys.exit(0)
     elif args.not_found is not None:
-        if len(args.not_found) == 0:
-            sys.exit(0)
-        else:
-            RescLog._not_found(args.not_found)
-            sys.exit(0)
+        RescLog._not_found(args.not_found)
+        sys.exit(0)
     elif args.delete_register:
         REGISTER_FILE = f"{os.path.expanduser('~')}/.resc/register"
         result = subprocess.Popen(
@@ -136,7 +133,7 @@ def main():
         if len(cronlists) == 0:
             subprocess.run(
                 "command crontab -r",
-                shell=True
+                shell=True,
             )
         else:
             input = "".join(list(set(cronlists)))
@@ -167,7 +164,7 @@ def main():
             memory["mode"] = args.mem_mode
     else:
         memory = None
-    if args.disk_t is not None and args.disk_path:
+    if args.disk_t is not None and args.disk_path is not None:
         disk["threshold"] = args.disk_t
         disk["path"] = args.disk_path
         if args.disk_mode is not None:
@@ -182,18 +179,23 @@ def main():
         )
         parser.print_help()
         sys.exit(1)
-    resc = Resc(
-        cpu=cpu,
-        memory=memory,
-        disk=disk,
-    )
+    try:
+        resc = Resc(
+            cpu=cpu,
+            memory=memory,
+            disk=disk,
+        )
+    except Exception as e:
+        print(e)
+        parser.print_help()
+        sys.exit(1)
     if resc.over_one:
         if not args.q:
-            print("over threshold.")
+            print("exceed threshold.")
         sys.exit(255)
     else:
         if not args.q:
-            print("over threshold.")
+            print("no exceed threshold.")
         sys.exit(0)
 
 

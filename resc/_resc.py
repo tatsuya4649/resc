@@ -376,9 +376,14 @@ class Resc:
         stdout = self._which_resc()
         which_resc = re.sub(r'\s*$', '', stdout)
         if len(which_resc) > 0:
+            not_found = str()
+            if len(output) > 0:
+                not_found = f'{which_resc} --not_found \'{output_path}\''
+            else:
+                not_found = ':'
             totalline = (
                 f'if ! [ -f {triggerscript} ]; '
-                f'then {which_resc} --not_found \'{output_path}\'; '
+                f'then {not_found}; '
                 f'else command python3 {triggerscript} {output}; fi'
             )
             cron = Cron(
