@@ -138,3 +138,19 @@ def same_cron_register():
         f.truncate(0)
     with open(_FILE,"w") as f:
         f.write(prereg)
+
+@pytest.fixture(scope="function",autouse=False)
+def logfile_empty():
+    _TEST_LOGFILE = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "test_data/output"
+        )
+    )
+    with open(_TEST_LOGFILE,"rb") as f:
+        _logcontent = f.read()
+    with open(_TEST_LOGFILE,"wb") as f:
+        f.truncate(0)
+    yield _TEST_LOGFILE
+    with open(_TEST_LOGFILE,"wb") as f:
+        f.write(_logcontent)

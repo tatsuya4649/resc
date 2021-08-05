@@ -8,12 +8,23 @@ app = FastAPI()
 
 
 @app.post("/analyze")
-async def analyze(logfile: UploadFile = File(...)):
+async def analyze(
+    logfile: UploadFile = File(...)
+):
     log = await logfile.read()
     analyze = RescLogAnalyze.analyze(log)
     if len(analyze) == 0:
-        return {"result": "failure", "explain": "this is not resclog file."}
-    return {"result": "success", "analyze": analyze}
+        return {
+    "result": "failure",
+    "explain": (
+    "this is not resclog file "
+    "or empty file."
+    )
+        }
+    return {
+        "result": "success",
+        "analyze": analyze
+    }
 
 
 app.mount(

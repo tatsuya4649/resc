@@ -62,6 +62,13 @@ def test_flag_element_type_failure(
         raiseinfo.value.args[0],
     ) is not None
 
+def test_flag():
+    result = RescLogHeader._flag(
+        [ x for x in RescLogFlag ]
+    )
+    assert result is not None
+    assert isinstance(result, int)
+
 def test_length():
     result = RescLogHeader.length()
     assert result is not None
