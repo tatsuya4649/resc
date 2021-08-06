@@ -4,7 +4,6 @@ from unittest.mock import Mock
 from resc.cron import *
 import _io
 import subprocess
-
 _INTERVAL=10
 _INTERVAL_MODE="interval"
 _INTERVAL_SCALE="day"
@@ -189,7 +188,7 @@ def test_delete_cronlists_nonzero(cron_noempty):
         command=_INTERVAL_COMMAND,
         interval_str=_INTERVAL_STR
     )
-    cron._totalline = cron_noempty.rstrip('\n')
+    cron._totalline = cron_noempty
     _cronregister(cron_noempty)
     result = cron.delete()
     assert result == 0
