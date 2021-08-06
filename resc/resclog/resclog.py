@@ -122,10 +122,6 @@ class RescLog:
 
     @property
     def date(self):
-        pass
-
-    @date.getter
-    def date(self):
         return str(self._date).encode("utf-8")
 
     @date.setter
@@ -137,10 +133,6 @@ class RescLog:
         self._date = str(date)
 
     @property
-    def over(self):
-        pass
-
-    @over.getter
     def over(self):
         return self._over.value.encode("utf-8")
 
@@ -154,10 +146,6 @@ class RescLog:
 
     @property
     def func(self):
-        pass
-
-    @func.getter
-    def func(self):
         if self._func is None:
             return None
         return self._func.encode("utf-8")
@@ -169,10 +157,6 @@ class RescLog:
         self._func = func
 
     @property
-    def remo(self):
-        pass
-
-    @remo.getter
     def remo(self):
         if self._remo is None:
             return None
@@ -186,10 +170,6 @@ class RescLog:
 
     @property
     def sour(self):
-        pass
-
-    @sour.getter
-    def sour(self):
         if self._sour is None:
             return None
         return self._sour
@@ -202,10 +182,6 @@ class RescLog:
 
     @property
     def file(self):
-        pass
-
-    @file.getter
-    def file(self):
         if self._file is None:
             return None
         return self._file.encode("utf-8")
@@ -217,10 +193,6 @@ class RescLog:
         self._file = file
 
     @property
-    def stdout(self):
-        pass
-
-    @stdout.getter
     def stdout(self):
         if not hasattr(self, "_stdout"):
             return b''
@@ -248,10 +220,6 @@ class RescLog:
             self._stdout.append(out)
 
     @property
-    def stderr(self):
-        pass
-
-    @stderr.getter
     def stderr(self):
         if not hasattr(self, "_stderr"):
             return b''
@@ -283,12 +251,7 @@ class RescLog:
         res = bytes()
         for f in RescLogFormat:
             if f in self.format:
-                if isinstance(eval(f'self.{f.value}'), str):
-                    res += eval(f'self.{f.value}.encode("utf-8")')
-                elif isinstance(eval(f'self.{f.value}'), bytes):
-                    res += eval(f'self.{f.value}')
-                else:
-                    res += eval(f'self.{f.value}.encode("utf-8")')
+                res += eval(f'self.{f.value}')
         return res
 
     def header(self, sflag=0):
@@ -296,8 +259,6 @@ class RescLog:
         for f in RescLogFormat:
             if f in self.format:
                 value = eval(f'self.{f.value}')
-                if not isinstance(value, bytes) and value is not None:
-                    raise RescLogTypeError(f"{value}({f}) must be str type.")
                 lendict[f.value] = 0 if value is None else len(value)
         self._header = RescLogHeader(
             identify=COMMONMAGIC.IDENTIFY,
@@ -332,11 +293,6 @@ class RescLog:
             )
         if self.log:
             self.over = over
-            for f in self.format:
-                if not hasattr(self, f"{f.value}"):
-                    raise RescLogValueError(
-                        f"threre is \"{f.value}\" in format,but not define."
-                    )
             with open(self.logfile, "ab") as f:
                 f.write(self.header(sflag))
                 f.write(self.body)

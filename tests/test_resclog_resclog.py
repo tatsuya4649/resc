@@ -427,4 +427,5 @@ def test_write_type_error(rescloger,over,sflag):
         rescloger.write(
             over = over,
             sflag = sflag,
+
         )
