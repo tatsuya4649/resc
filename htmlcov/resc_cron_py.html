@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for resc/cron.py: 98%</title>
+    <title>Coverage for resc/cron.py: 100%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
@@ -18,15 +18,15 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>resc/cron.py</b> :
-            <span class="pc_cov">98%</span>
+            <span class="pc_cov">100%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
-            117 statements &nbsp;
+            116 statements &nbsp;
             <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">116 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">1 missing</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">0 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
-            <button type="button" class="par run show_par shortkey_p button_toggle_par" title="Toggle lines partially run">2 partial</button>
+            <button type="button" class="par run show_par shortkey_p button_toggle_par" title="Toggle lines partially run">0 partial</button>
         </h2>
     </div>
 </div>
@@ -249,11 +249,11 @@
     <p id="t194" class="run"><span class="n"><a href="#t194">194</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_list</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t195" class="run"><span class="n"><a href="#t195">195</a></span><span class="t">            <span class="key">return</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p id="t196" class="pln"><span class="n"><a href="#t196">196</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t197" class="run"><span class="n"><a href="#t197">197</a></span><span class="t">            <span class="nam">iter</span> <span class="op">=</span> <span class="nam">re</span><span class="op">.</span><span class="nam">finditer</span><span class="op">(</span><span class="str">r'.*\n'</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_list</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t198" class="run"><span class="n"><a href="#t198">198</a></span><span class="t">            <span class="nam">cronlists</span> <span class="op">=</span> <span class="op">[</span><span class="nam">x</span><span class="op">.</span><span class="nam">group</span><span class="op">(</span><span class="op">)</span> <span class="key">for</span> <span class="nam">x</span> <span class="key">in</span> <span class="nam">iter</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t197" class="run"><span class="n"><a href="#t197">197</a></span><span class="t">            <span class="nam">iters</span> <span class="op">=</span> <span class="nam">re</span><span class="op">.</span><span class="nam">finditer</span><span class="op">(</span><span class="str">r'.*\n'</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_list</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t198" class="run"><span class="n"><a href="#t198">198</a></span><span class="t">            <span class="nam">cronlists</span> <span class="op">=</span> <span class="op">[</span><span class="nam">re</span><span class="op">.</span><span class="nam">sub</span><span class="op">(</span><span class="str">r'\n$'</span><span class="op">,</span><span class="str">''</span><span class="op">,</span><span class="nam">x</span><span class="op">.</span><span class="nam">group</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="key">for</span> <span class="nam">x</span> <span class="key">in</span> <span class="nam">iters</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p id="t199" class="pln"><span class="n"><a href="#t199">199</a></span><span class="t">            <span class="com"># delete duplication</span>&nbsp;</span><span class="r"></span></p>
     <p id="t200" class="run"><span class="n"><a href="#t200">200</a></span><span class="t">            <span class="nam">cronlists</span> <span class="op">=</span> <span class="nam">list</span><span class="op">(</span><span class="nam">set</span><span class="op">(</span><span class="nam">cronlists</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t201" class="par run show_par"><span class="n"><a href="#t201">201</a></span><span class="t">            <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_totalline</span> <span class="key">in</span> <span class="nam">cronlists</span><span class="op">:</span>&nbsp;</span><span class="r"><span class="annotate short">201&#x202F;&#x219B;&#x202F;203</span><span class="annotate long">line 201 didn't jump to line 203, because the condition on line 201 was never false</span></span></p>
+    <p id="t201" class="run"><span class="n"><a href="#t201">201</a></span><span class="t">            <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_totalline</span> <span class="key">in</span> <span class="nam">cronlists</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t202" class="run"><span class="n"><a href="#t202">202</a></span><span class="t">                <span class="nam">cronlists</span><span class="op">.</span><span class="nam">remove</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">_totalline</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t203" class="run"><span class="n"><a href="#t203">203</a></span><span class="t">            <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">cronlists</span><span class="op">)</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t204" class="run"><span class="n"><a href="#t204">204</a></span><span class="t">                <span class="nam">res</span> <span class="op">=</span> <span class="nam">subprocess</span><span class="op">.</span><span class="nam">run</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
@@ -292,26 +292,25 @@
     <p id="t237" class="pln"><span class="n"><a href="#t237">237</a></span><span class="t">            <span class="nam">stdout</span><span class="op">=</span><span class="nam">subprocess</span><span class="op">.</span><span class="nam">PIPE</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t238" class="pln"><span class="n"><a href="#t238">238</a></span><span class="t">            <span class="nam">stderr</span><span class="op">=</span><span class="nam">subprocess</span><span class="op">.</span><span class="nam">PIPE</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t239" class="pln"><span class="n"><a href="#t239">239</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t240" class="run"><span class="n"><a href="#t240">240</a></span><span class="t">        <span class="nam">stderr</span> <span class="op">=</span> <span class="nam">result</span><span class="op">.</span><span class="nam">stderr</span><span class="op">.</span><span class="nam">read</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t241" class="par run show_par"><span class="n"><a href="#t241">241</a></span><span class="t">        <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">stderr</span><span class="op">)</span> <span class="op">></span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"><span class="annotate short">241&#x202F;&#x219B;&#x202F;242</span><span class="annotate long">line 241 didn't jump to line 242, because the condition on line 241 was never true</span></span></p>
-    <p id="t242" class="mis show_mis"><span class="n"><a href="#t242">242</a></span><span class="t">            <span class="key">raise</span> <span class="nam">CronCommandError</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t240" class="run"><span class="n"><a href="#t240">240</a></span><span class="t">        <span class="nam">stdout</span><span class="op">,</span><span class="nam">stderr</span> <span class="op">=</span> <span class="nam">result</span><span class="op">.</span><span class="nam">communicate</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t241" class="run"><span class="n"><a href="#t241">241</a></span><span class="t">        <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">stderr</span><span class="op">)</span> <span class="op">></span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t242" class="run"><span class="n"><a href="#t242">242</a></span><span class="t">            <span class="key">raise</span> <span class="nam">CronCommandError</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p id="t243" class="pln"><span class="n"><a href="#t243">243</a></span><span class="t">                <span class="str">"An error occurred in \"command which crontab\"."</span>&nbsp;</span><span class="r"></span></p>
     <p id="t244" class="pln"><span class="n"><a href="#t244">244</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t245" class="run"><span class="n"><a href="#t245">245</a></span><span class="t">        <span class="nam">stdout</span> <span class="op">=</span> <span class="nam">result</span><span class="op">.</span><span class="nam">stdout</span><span class="op">.</span><span class="nam">read</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t246" class="run"><span class="n"><a href="#t246">246</a></span><span class="t">        <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">stdout</span><span class="op">)</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t247" class="run"><span class="n"><a href="#t247">247</a></span><span class="t">            <span class="key">raise</span> <span class="nam">CronCommandError</span><span class="op">(</span><span class="str">"not found crontab command."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t248" class="pln"><span class="n"><a href="#t248">248</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t249" class="pln"><span class="n"><a href="#t249">249</a></span><span class="t">        <span class="com"># "/usr/bin/crontab\n"</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t250" class="run"><span class="n"><a href="#t250">250</a></span><span class="t">        <span class="nam">path</span> <span class="op">=</span> <span class="nam">stdout</span><span class="op">.</span><span class="nam">decode</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t251" class="run"><span class="n"><a href="#t251">251</a></span><span class="t">        <span class="nam">delete_empty</span> <span class="op">=</span> <span class="nam">re</span><span class="op">.</span><span class="nam">sub</span><span class="op">(</span><span class="str">r'(\n|\s)+$'</span><span class="op">,</span> <span class="str">''</span><span class="op">,</span> <span class="nam">path</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t252" class="pln"><span class="n"><a href="#t252">252</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t253" class="run"><span class="n"><a href="#t253">253</a></span><span class="t">        <span class="key">return</span> <span class="nam">delete_empty</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t245" class="run"><span class="n"><a href="#t245">245</a></span><span class="t">        <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">stdout</span><span class="op">)</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t246" class="run"><span class="n"><a href="#t246">246</a></span><span class="t">            <span class="key">raise</span> <span class="nam">CronCommandError</span><span class="op">(</span><span class="str">"not found crontab command."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t247" class="pln"><span class="n"><a href="#t247">247</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t248" class="pln"><span class="n"><a href="#t248">248</a></span><span class="t">        <span class="com"># "/usr/bin/crontab\n"</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t249" class="run"><span class="n"><a href="#t249">249</a></span><span class="t">        <span class="nam">path</span> <span class="op">=</span> <span class="nam">stdout</span><span class="op">.</span><span class="nam">decode</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t250" class="run"><span class="n"><a href="#t250">250</a></span><span class="t">        <span class="nam">delete_empty</span> <span class="op">=</span> <span class="nam">re</span><span class="op">.</span><span class="nam">sub</span><span class="op">(</span><span class="str">r'(\n|\s)+$'</span><span class="op">,</span> <span class="str">''</span><span class="op">,</span> <span class="nam">path</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t251" class="pln"><span class="n"><a href="#t251">251</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t252" class="run"><span class="n"><a href="#t252">252</a></span><span class="t">        <span class="key">return</span> <span class="nam">delete_empty</span>&nbsp;</span><span class="r"></span></p>
 </div>
 <div id="footer">
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2021-08-06 20:41 +0900
+            created at 2021-08-06 21:28 +0900
         </p>
     </div>
 </div>

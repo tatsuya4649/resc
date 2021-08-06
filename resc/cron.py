@@ -194,8 +194,8 @@ class Cron:
         if self._list is None:
             return None
         else:
-            iter = re.finditer(r'.*\n', self._list)
-            cronlists = [x.group() for x in iter]
+            iters = re.finditer(r'.*\n', self._list)
+            cronlists = [re.sub(r'\n$','',x.group()) for x in iters]
             # delete duplication
             cronlists = list(set(cronlists))
             if self._totalline in cronlists:
@@ -237,12 +237,11 @@ class Cron:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        stderr = result.stderr.read()
+        stdout,stderr = result.communicate()
         if len(stderr) > 0:
             raise CronCommandError(
                 "An error occurred in \"command which crontab\"."
             )
-        stdout = result.stdout.read()
         if len(stdout) == 0:
             raise CronCommandError("not found crontab command.")
 

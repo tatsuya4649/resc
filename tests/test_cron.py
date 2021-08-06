@@ -141,6 +141,7 @@ def test_available_false():
         result = Cron.available()
         assert result is False
 
+import _io
 def test_path_stderr():
     cron = Cron(
         command=_INTERVAL_COMMAND,
@@ -149,9 +150,9 @@ def test_path_stderr():
     with mock.patch(
         "subprocess.Popen"
     ) as popen:
-        popen.configure_mock(**{
-            "stderr.read.return_value": b"Error"
-        })
+        instance = popen.return_value
+        instance.communicate.return_value = \
+            (b"", b"Error")
         with pytest.raises(
             CronCommandError
         ) as raiseinfo:
@@ -165,9 +166,9 @@ def test_path_stdout():
     with mock.patch(
         "subprocess.Popen"
     ) as popen:
-        popen.configure_mock(**{
-            "stdout.read.return_value": b""
-        })
+        instance = popen.return_value
+        instance.communicate.return_value = \
+            (b"", b"")
         with pytest.raises(
             CronCommandError
         ) as raiseinfo:
@@ -179,5 +180,16 @@ def test_delete_cronlists_zero(cron_noempty):
         interval_str=_INTERVAL_STR
     )
     cron._totalline = cron_noempty
+    result = cron.delete()
+    assert result == 0
+
+from .conftest import _cronregister
+def test_delete_cronlists_nonzero(cron_noempty):
+    cron = Cron(
+        command=_INTERVAL_COMMAND,
+        interval_str=_INTERVAL_STR
+    )
+    cron._totalline = cron_noempty.rstrip('\n')
+    _cronregister(cron_noempty)
     result = cron.delete()
     assert result == 0
