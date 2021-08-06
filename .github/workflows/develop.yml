@@ -1,6 +1,6 @@
 name: develop
 on:
-  push
+  push:
     branches:
       - develop
   pull_request:
