@@ -10,6 +10,14 @@ class SSHError(Exception):
     pass
 
 
+class SSHTypeError(TypeError):
+    pass
+
+
+class SSHValueError(TypeError):
+    pass
+
+
 class SSH:
     _FORDEST = "/var/resc/"
 
@@ -22,17 +30,54 @@ class SSH:
         timeout=5,
         port=22,
     ):
+        if not isinstance(ip, str):
+            raise SSHTypeError(
+        "IP must be str type."
+            )
         self._ip = ip
+        if not isinstance(port, int):
+            raise SSHTypeError(
+        "Port must be int type."
+            )
         self._port = port
+        if not isinstance(username, str):
+            raise SSHTypeError(
+        "Username must be str type."
+            )
         self._username = username
+        if password is not None and \
+            not isinstance(password, str):
+            raise SSHTypeError(
+        "Password must be str type."
+            )
         self._password = password
+        if key_filename is not None and \
+            not isinstance(key_filename, str):
+            raise SSHTypeError(
+        "Password must be str type."
+            )
         self._key_filename = key_filename
+        if not isinstance(timeout, int):
+            raise SSHTypeError(
+        "Timeout must be int type."
+            )
+        if (self._password is not None and \
+            self._key_filename is not None) or \
+            (self._password is None and \
+            self._key_filename is None):
+            raise SSHValueError(
+        "Which Password and Key?"
+            )
         self._timeout = timeout
         self._startup_scripts = None
 
     @property
     def ip(self):
         return self._ip
+
+    @property
+    def port(self):
+        return self._port
 
     @property
     def username(self):
@@ -88,16 +133,18 @@ class SSH:
         try:
             client = self._connect()
             return client
-        except paramiko.ssh_exception.NoValidConnectionsError as e:
-            resclog.stderr = str(e).encode("utf-8")
-        except paramiko.ssh_exception.SSHException as e:
-            resclog.stderr = str(e).encode("utf-8")
-        except BlockingIOError as e:
-            resclog.stderr = str(e).encode("utf-8")
-        except FileNotFoundError as e:
-            resclog.stderr = str(e).encode("utf-8")
-        except Exception as e:
-            resclog.stderr = str(e).encode("utf-8")
+        except RescSSHConnectionError as e:
+            resclog.stderr = \
+        str(e).encode("utf-8")
+        except RescSSHError as e:
+            resclog.stderr = \
+        str(e).encode("utf-8")
+        except RescSSHTimeoutError as e:
+            resclog.stderr = \
+        str(e).encode("utf-8")
+        except RescSSHFileNotFoundError as e:
+            resclog.stderr = \
+        str(e).encode("utf-8")
         return None
 
     def close(self, client):
@@ -110,9 +157,9 @@ class SSH:
             "cd ~;mkdir -p .resc"
         )
         for line in stdout:
-            resclog.stdout = line
+            resclog.stdout = line.encode("utf-8")
         for line in stderr:
-            resclog.stderr = line
+            resclog.stderr = line.encode("utf-8")
         if int(stdout.channel.recv_exit_status()) != 0:
             raise SSHError(
                 f"""server exit status \

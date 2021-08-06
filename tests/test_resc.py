@@ -12,8 +12,7 @@ from resc.disk import *
 from resc.cron import *
 import inspect
 import subprocess
-
-from .docker_setup import RemoteHost
+from .conftest import _KEY_PATH
 
 _INTERVAL=0
 
@@ -602,7 +601,7 @@ def test_remote_key():
         ip = "localhost",
         port = 20022,
         username="root",
-        key_path = test_key_path,
+        key_path = _KEY_PATH,
         call_first=True,
     )
     def hello():
@@ -664,32 +663,13 @@ def test_package_path_length_failure(setup_resc,monkeypatch):
 """
 Remote Test
 """
-@pytest.fixture(scope="module",autouse=True)
-def setup_remote_host():
-    """
-    setup and shutdown of Remote Host(made using Docker)
-    """
-    remote_host = RemoteHost()
-    remote_host.startup()
-    yield remote_host
-    remote_host.shutdown()
-
-test_key_path = \
-    os.path.join(
-        os.path.dirname(
-            os.path.abspath(
-                __file__
-            )
-        ),
-        'test_data/test_resc'
-    )
 def test_over_one_ssh(setup_resc):
     setup_resc.register(
         trigger="* * * * *",
         ip="localhost",
         port=20022,
         username="root",
-        key_path=test_key_path,
+        key_path=_KEY_PATH,
     )(hello)()
     ssh = setup_resc._resclog._ssh
     result = setup_resc.over_one_ssh(ssh,setup_resc._resclog)
@@ -732,7 +712,7 @@ def test_over_one_ssh_connect_error(
         ip="localhost",
         port=20021,
         username="root",
-        key_path=test_key_path,
+        key_path=_KEY_PATH,
     )(hello)()
     ssh = setup_resc._resclog._ssh
     assert len(setup_resc._resclog.stderr) == 0
@@ -754,7 +734,7 @@ def test_over_one_ssh_connect_error(
         ip="localhost",
         port=20022,
         username="root",
-        key_path=test_key_path,
+        key_path=_KEY_PATH,
         timeout=0,
     )(hello)()
     ssh = setup_resc._resclog._ssh
@@ -786,7 +766,7 @@ def test_over_one_ssh_session_error(
         ip="localhost",
         port=20022,
         username="root",
-        key_path=test_key_path,
+        key_path=_KEY_PATH,
     )(hello)()
     ssh = setup_resc._resclog._ssh
 
@@ -813,7 +793,7 @@ def test_send_script(setup_resc):
         ip = "localhost",
         port = 20022,
         username = "root",
-        key_path = test_key_path,
+        key_path = _KEY_PATH,
     )(hello)()
     ssh = setup_resc._resclog._ssh
     setup_resc._send_script(ssh,ssh._connect(),__file__,setup_resc._resclog)
@@ -825,7 +805,7 @@ def test_over_one_ssh(setup_resc):
         ip = "localhost",
         port = 20022,
         username = "root",
-        key_path = test_key_path,
+        key_path = _KEY_PATH,
     )(hello)()
     result = setup_resc.over_one_ssh(
         ssh = setup_resc._resclog._ssh,
@@ -842,7 +822,7 @@ def test_over_one_ssh_scp_none(
         ip = "localhost",
         port = 20022,
         username = "root",
-        key_path = test_key_path,
+        key_path = _KEY_PATH,
     )(hello)()
     mocker.patch(
         "resc._resc.Resc._send_script",
@@ -864,7 +844,7 @@ def test_over_one_recv_exit_status(
         ip = "localhost",
         port = 20022,
         username = "root",
-        key_path = test_key_path,
+        key_path = _KEY_PATH,
     )(hello)()
 
     mocker.patch(
@@ -891,7 +871,7 @@ def test_over_one_recv_q_status_1(
         ip = "localhost",
         port = 20022,
         username = "root",
-        key_path = test_key_path,
+        key_path = _KEY_PATH,
     )(hello)()
 
     mocker.patch(
@@ -917,7 +897,7 @@ def test_over_one_recv_q_status_0(
         ip = "localhost",
         port = 20022,
         username = "root",
-        key_path = test_key_path,
+        key_path = _KEY_PATH,
     )(hello)()
 
     mocker.patch(
@@ -943,7 +923,7 @@ def test_over_one_recv_q_status_255(
         ip = "localhost",
         port = 20022,
         username = "root",
-        key_path = test_key_path,
+        key_path = _KEY_PATH,
     )(hello)()
 
     mocker.patch(

@@ -62,9 +62,11 @@ class Cron:
 
         if interval_str is None:
             raise CronValueError("interval_str must be not None.")
+        if not isinstance(interval_str, str):
+            raise CronTypeError("interval_str must be str type.")
 
         self._interval_str = interval_str
-        self._str_to_lists()
+#        self._str_to_lists()
         self._totalline = f"{self._interval_str} {self._command}\n"
         self._register_file = register_file
 
@@ -82,48 +84,48 @@ class Cron:
     def totalline(self):
         return self._totalline
 
-    def _str_to_lists(self):
-        self._intervals = list()
-        template = self._CRON_RE
-        results = re.finditer(template, self._interval_str)
-        results = [i for i in results]
-        if len(results) != 5:
-            raise CronRegularExpressionError("invalid cron string")
-        for res in results:
-            # */10
-            deleteblank = re.match(r"^\S+", res.group())
-            if deleteblank is None:
-                raise CronRegularExpressionError(
-                    "invalid cron string"
-                )
-            # *
-            before_slash = deleteblank.group().split('/')[0]
-
-            index = results.index(res)
-            if len(before_slash.split('-')) > 1:
-                self._intervals.append({
-                    "interval": -1,
-                    "scale": CronMode.SCHEDULE,
-                    "mode": list(CronScale)[index],
-                    "from": before_slash.split('-')[0],
-                    "to": before_slash.split('-')[1],
-                })
-            else:
-                self._intervals.append({
-                    "interval": int(before_slash)
-                    if before_slash != '*' else "*",
-                    "scale": CronMode.SCHEDULE,
-                    "mode": list(CronScale)[index],
-                })
-
-            # 10
-            if len(deleteblank.group().split('/')) > 1:
-                after_slash = deleteblank.group().split('/')[1]
-                self._intervals.append({
-                    "interval": int(after_slash),
-                    "scale": CronMode.INTERVAL,
-                    "mode": list(CronScale)[index],
-                })
+#    def _str_to_lists(self):
+#        self._intervals = list()
+#        template = self._CRON_RE
+#        results = re.finditer(template, self._interval_str)
+#        results = [i for i in results]
+#        if len(results) != 5:
+#            raise CronRegularExpressionError("invalid cron string")
+#        for res in results:
+#            # */10
+#            deleteblank = re.match(r"^\S+", res.group())
+#            if deleteblank is None:
+#                raise CronRegularExpressionError(
+#                    "invalid cron string"
+#                )
+#            # *
+#            before_slash = deleteblank.group().split('/')[0]
+#
+#            index = results.index(res)
+#            if len(before_slash.split('-')) > 1:
+#                self._intervals.append({
+#                    "interval": -1,
+#                    "scale": CronMode.SCHEDULE,
+#                    "mode": list(CronScale)[index],
+#                    "from": before_slash.split('-')[0],
+#                    "to": before_slash.split('-')[1],
+#                })
+#            else:
+#                self._intervals.append({
+#                    "interval": int(before_slash)
+#                    if before_slash != '*' else "*",
+#                    "scale": CronMode.SCHEDULE,
+#                    "mode": list(CronScale)[index],
+#                })
+#
+#            # 10
+#            if len(deleteblank.group().split('/')) > 1:
+#                after_slash = deleteblank.group().split('/')[1]
+#                self._intervals.append({
+#                    "interval": int(after_slash),
+#                    "scale": CronMode.INTERVAL,
+#                    "mode": list(CronScale)[index],
+#                })
 
     def _quote_replace(self):
         return self._command.replace('"', '\\"')

@@ -6,6 +6,27 @@ import os
 import re
 import pytest
 import subprocess
+from .docker_setup import RemoteHost
+
+@pytest.fixture(scope="session",autouse=True)
+def setup_remote_host():
+    """
+    setup and shutdown of Remote Host(made using Docker)
+    """
+    remote_host = RemoteHost()
+    remote_host.startup()
+    yield remote_host
+    remote_host.shutdown()
+
+_KEY_PATH = \
+    os.path.join(
+        os.path.dirname(
+            os.path.abspath(
+                __file__
+            )
+        ),
+        'test_data/test_resc'
+    )
 
 _TEST_LOGFILE = os.path.abspath(
     os.path.join(
@@ -70,15 +91,17 @@ def cron_empty():
     crontab_list = process.stdout.read()
     _crondelete()
     yield
+    _crondelete()
     _cronregister(crontab_list)
 
 @pytest.fixture(scope="function",autouse=False)
 def cron_noempty():
+    _LINE = "* * * * * echo 'Hello World'\n"
     process = _cronlist()
     crontab_list = process.stdout.read()
     _crondelete()
-    _cronregister("* * * * * echo 'Hello World'\n")
-    yield
+    _cronregister(_LINE)
+    yield _LINE
     _crondelete()
     _cronregister(crontab_list)
 
