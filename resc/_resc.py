@@ -315,7 +315,8 @@ class Resc:
                     ssh = None
                 self._resclog._ssh = ssh
                 self._resclog.func = func.__name__
-                self._resclog.remo = ip
+                if ip is not None:
+                    self._resclog.remo = ip
                 filename = self._sourcefile(
                     file=call_file,
                     func=call_code,
@@ -499,8 +500,8 @@ class Resc:
         renparams["resc_disk"] = self._disk_dict
         renparams["logfile"] = f"\"{self._resclog.pure_log}\"" \
             if self._resclog.pure_log is not None else None
-        renparams["logformat"] = self._resclog.format_meta(self._resclog)
-        renparams["logvars"] = self._resclog.define_resclog(self._resclog)
+        renparams["logformat"] = self._resclog.format_meta
+        renparams["logvars"] = self._resclog.define_resclog
         renparams["ssh"] = ssh
         renparams["func"] = f"{funcname}({args_str}{kwargs_str})"
         renparams["defname"] = funcname

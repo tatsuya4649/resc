@@ -23,10 +23,6 @@ class RescLogAnalyze:
 
     @property
     def path(self):
-        pass
-
-    @path.getter
-    def path(self):
         return re.sub(r'^~', os.path.expanduser('~'), self._path)
 
     @classmethod
