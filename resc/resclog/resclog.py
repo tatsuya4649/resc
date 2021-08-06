@@ -78,75 +78,61 @@ class RescLog:
         else:
             return self._LOGFORMAT_DEFAULT
 
-    @property
-    def format_str(self):
-        results = list()
-        for f in self.format:
-            if not isinstance(f, RescLogFormat):
-                raise RescLogTypeError(
-                    "format must be RescLogFormat(enum) type."
-                )
-            f_str = eval(f'self.format_{f.value}(self._{f.value})')
-            results.append(str(f_str))
-        return " ".join(results)
-
-    def format_date(self, date):
-        date_str = str()
-        date_str = str(date)
-        return date_str
-
-    def format_over(self, over):
-        over_str = str()
-        over_str = str(over)
-        return over_str
-
-    def format_func(self, func):
-        func_str = str()
-        func_str = str(func)
-        return func_str
-
-    def format_remo(self, remo):
-        remo_str = str()
-        remo_str = str(remo)
-        return remo_str
-
-    def format_file(self, file):
-        file_str = str()
-        file_str = str(file)
-        return file_str
-
-    def format_sour(self, sour):
-        sour_str = str()
-        sour_str = str(sour)
-        return sour_str
+#    @property
+#    def format_str(self):
+#        results = list()
+#        for f in self.format:
+#            if not isinstance(f, RescLogFormat):
+#                raise RescLogTypeError(
+#                    "format must be RescLogFormat(enum) type."
+#                )
+#            f_str = eval(f'self.format_{f.value}(self._{f.value})')
+#            results.append(str(f_str))
+#        return " ".join(results)
+#
+#    def format_date(self, date):
+#        date_str = str()
+#        date_str = str(date)
+#        return date_str
+#
+#    def format_over(self, over):
+#        over_str = str()
+#        over_str = str(over)
+#        return over_str
+#
+#    def format_func(self, func):
+#        func_str = str()
+#        func_str = str(func)
+#        return func_str
+#
+#    def format_remo(self, remo):
+#        remo_str = str()
+#        remo_str = str(remo)
+#        return remo_str
+#
+#    def format_file(self, file):
+#        file_str = str()
+#        file_str = str(file)
+#        return file_str
+#
+#    def format_sour(self, sour):
+#        sour_str = str()
+#        sour_str = str(sour)
+#        return sour_str
 
     @property
     def date(self):
-        pass
-
-    @date.getter
-    def date(self):
-        if self._date is None:
-            return None
         return str(self._date).encode("utf-8")
 
     @date.setter
     def date(self, date):
-        if date is None:
-            self._date = None
-        else:
-            if not isinstance(date, datetime.datetime) and \
-                    not isinstance(date, str):
-                raise RescLogTypeError(
-                    f"date must be datetime or str.now {type(date)}"
-                )
-            self._date = str(date)
+        if not isinstance(date, datetime.datetime):
+            raise RescLogTypeError(
+                f"date must be datetime or str.now {type(date)}"
+            )
+        self._date = str(date)
 
     @property
-    def over(self):
-        pass
-
-    @over.getter
     def over(self):
         return self._over.value.encode("utf-8")
 
@@ -160,28 +146,17 @@ class RescLog:
 
     @property
     def func(self):
-        pass
-
-    @func.getter
-    def func(self):
         if self._func is None:
             return None
         return self._func.encode("utf-8")
 
     @func.setter
     def func(self, func):
-        if func is None:
-            self._func = None
-        else:
-            if not isinstance(func, str):
-                raise RescLogTypeError(f"func must be str. now {type(func)}")
-            self._func = func
+        if not isinstance(func, str):
+            raise RescLogTypeError(f"func must be str. now {type(func)}")
+        self._func = func
 
     @property
-    def remo(self):
-        pass
-
-    @remo.getter
     def remo(self):
         if self._remo is None:
             return None
@@ -189,18 +164,11 @@ class RescLog:
 
     @remo.setter
     def remo(self, remo):
-        if remo is None:
-            self._remo = None
-        else:
-            if not isinstance(remo, str):
-                raise RescLogTypeError(f"remo must be str. now {type(remo)}")
-            self._remo = remo
+        if not isinstance(remo, str):
+            raise RescLogTypeError(f"remo must be str. now {type(remo)}")
+        self._remo = remo
 
     @property
-    def sour(self):
-        pass
-
-    @sour.getter
     def sour(self):
         if self._sour is None:
             return None
@@ -208,18 +176,11 @@ class RescLog:
 
     @sour.setter
     def sour(self, sour):
-        if sour is None:
-            self._sour = None
-        else:
-            if not isinstance(sour, bytes):
-                raise RescLogTypeError(f"sour must be bytes. now {type(sour)}")
-            self._sour = sour
+        if not isinstance(sour, bytes):
+            raise RescLogTypeError(f"sour must be bytes. now {type(sour)}")
+        self._sour = sour
 
     @property
-    def file(self):
-        pass
-
-    @file.getter
     def file(self):
         if self._file is None:
             return None
@@ -227,18 +188,11 @@ class RescLog:
 
     @file.setter
     def file(self, file):
-        if file is None:
-            self._file = None
-        else:
-            if not isinstance(file, str):
-                raise RescLogTypeError(f"file must be str. now {type(file)}")
-            self._file = file
+        if not isinstance(file, str):
+            raise RescLogTypeError(f"file must be str. now {type(file)}")
+        self._file = file
 
     @property
-    def stdout(self):
-        pass
-
-    @stdout.getter
     def stdout(self):
         if not hasattr(self, "_stdout"):
             return b''
@@ -250,7 +204,14 @@ class RescLog:
     @stdout.setter
     def stdout(self, out):
         if not isinstance(out, list) and not isinstance(out, bytes):
-            raise RescLogTypeError("output must be list or byte type.")
+            raise RescLogTypeError(
+        "stdout must be list or byte type."
+            )
+        if isinstance(out, list) and \
+    len([x for x in out if not isinstance(x, bytes)]) != 0:
+            raise RescLogTypeError(
+        "stdout element must be bytes type."
+            )
         if not hasattr(self, "_stdout"):
             self._stdout = list()
         if isinstance(out, list):
@@ -259,10 +220,6 @@ class RescLog:
             self._stdout.append(out)
 
     @property
-    def stderr(self):
-        pass
-
-    @stderr.getter
     def stderr(self):
         if not hasattr(self, "_stderr"):
             return b''
@@ -274,7 +231,14 @@ class RescLog:
     @stderr.setter
     def stderr(self, out):
         if not isinstance(out, list) and not isinstance(out, bytes):
-            raise RescLogTypeError("output must be list or byte type.")
+            raise RescLogTypeError(
+        "stderr must be list or byte type."
+            )
+        if isinstance(out, list) and \
+            len([x for x in out if not isinstance(x, bytes)]) != 0:
+            raise RescLogTypeError(
+        "stderr element must be bytes type."
+            )
         if not hasattr(self, "_stderr"):
             self._stderr = list()
         if isinstance(out, list):
@@ -287,12 +251,7 @@ class RescLog:
         res = bytes()
         for f in RescLogFormat:
             if f in self.format:
-                if isinstance(eval(f'self.{f.value}'), str):
-                    res += eval(f'self.{f.value}.encode("utf-8")')
-                elif isinstance(eval(f'self.{f.value}'), bytes):
-                    res += eval(f'self.{f.value}')
-                else:
-                    res += eval(f'self.{f.value}.encode("utf-8")')
+                res += eval(f'self.{f.value}')
         return res
 
     def header(self, sflag=0):
@@ -300,8 +259,6 @@ class RescLog:
         for f in RescLogFormat:
             if f in self.format:
                 value = eval(f'self.{f.value}')
-                if not isinstance(value, bytes) and value is not None:
-                    raise RescLogTypeError(f"{value}({f}) must be str type.")
                 lendict[f.value] = 0 if value is None else len(value)
         self._header = RescLogHeader(
             identify=COMMONMAGIC.IDENTIFY,
@@ -320,20 +277,30 @@ class RescLog:
         return self._header.bytes
 
     def write(self, over, sflag):
+        if not isinstance(
+            over,
+            RescLogOver
+        ):
+            raise RescLogTypeError(
+                "over must be RescLogOver"
+            )
+        if not isinstance(
+            sflag,
+            int
+        ):
+            raise RescLogTypeError(
+                "sflag must be int type."
+            )
         if self.log:
             self.over = over
-            for f in self.format:
-                if not hasattr(self, f"{f.value}"):
-                    raise RescLogValueError(
-                        f"threre is \"{f.value}\" in format,but not define."
-                    )
             with open(self.logfile, "ab") as f:
                 f.write(self.header(sflag))
                 f.write(self.body)
                 f.write(self.stdout)
                 f.write(self.stderr)
 
-    def define_resclog(self, resclog):
+    @property
+    def define_resclog(self):
         lists = list()
         for k, v in vars(self).items():
             value = v if not isinstance(v, str) else f'\"{v}\"'
@@ -341,9 +308,10 @@ class RescLog:
                 lists.append(f"resclog.{re.sub(r'^_', '', k)}={value}")
         return lists
 
-    def format_meta(self, resclog):
+    @property
+    def format_meta(self):
         meta_list = list()
-        for format in resclog.format:
+        for format in self.format:
             meta_list.append(format.__class__.__name__ + '.' + format.name)
         return re.sub(r"'", '', str(meta_list))
 
