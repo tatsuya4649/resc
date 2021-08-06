@@ -69,7 +69,7 @@ def test_cron_init_command_type_error(command):
     b"interval_str",
     {"interval_str": 1}
 ])
-def test_cron_init_command_type_error(interval_str):
+def test_cron_init_interval_str_type_error(interval_str):
     with pytest.raises(
         CronTypeError
     ) as raiseinfo:
