@@ -34,6 +34,8 @@ class DiskDetect(DetectBase):
             raise DiskTypeError("threshold must be float or int type.")
         self._threshold = threshold
 
+        if mode is None:
+            mode = DiskDetectMode.PERCENT.value["name"]
         if not isinstance(mode, str):
             raise DiskTypeError("mode must be string type.")
         if len([x for x in DiskDetectMode

@@ -1,6 +1,7 @@
 import os
 import sys
 import pytest
+from unittest import mock
 import paramiko
 
 from resc import Resc
@@ -253,6 +254,59 @@ def test_register_command_failure(setup_resc,mocker):
          f"RESC REGISTER COMMAND NOT"
          f"FOUND OUTPUT: {raiseinfo.value}"
          ))
+
+def test_crons_get(setup_resc):
+    import hashlib
+    import resc
+    i = 0
+    while True:
+        number = f"{i}".encode("utf-8")
+        _SCRIPT_PATH = f"script{hashlib.md5(number).hexdigest()}"
+        if not os.path.isfile(_SCRIPT_PATH):
+            break
+        i += 1
+    
+    with open(_SCRIPT_PATH, "w") as fp: 
+            fp.write("Hello World")
+    
+    with mock.patch(
+        "resc._resc.Resc._which_resc"
+    ) as which_resc:
+        which_resc.return_value = ""
+
+        setup_resc._call_first = False
+        with pytest.raises(
+            SystemExit
+        ) as raiseinfo:
+            setup_resc._crons_get("* * * *", _SCRIPT_PATH)
+    assert raiseinfo.value.args[0][0] == 1
+
+    assert not os.path.isfile(_SCRIPT_PATH)
+
+def test_source_write(setup_resc):
+    _FILENAME = "filename"
+    setup_resc._resclog = RescLog()
+    filename = setup_resc._source_write(
+        filename=_FILENAME,
+        func="def hello()\n    ...",
+        funcname="hello",
+        func_args={
+            "args": ["hello"],
+            "kwargs": {
+                "test": 1,
+                "test2": 1.0,
+                "test3": ["list"],
+                "test4": {"dict": 1},
+                "test5": "world",
+                "test6": b"world",
+            }
+        },
+    )
+    assert filename is not None
+    assert isinstance(filename, str)
+    assert os.path.isfile(_FILENAME)
+
+    os.remove(_FILENAME)
 
 def test_register_trigger_str_failure(setup_resc):
     with pytest.raises(
@@ -987,3 +1041,95 @@ def test_resc_arg():
     assert isinstance(result,str)
 
     print(f"RESC ARG: {result}")
+
+@pytest.mark.parametrize(
+    "threshold, mode, interval",[
+    (80.0, "percent", 10.0),
+    (80.0, None, 10.0),
+    (80.0, "percent", None),
+])
+def test_resc_arg_cpu(
+    threshold, mode, interval
+):
+    resc = Resc(
+        cpu = {
+            "threshold": threshold,
+            "mode": mode,
+            "interval": interval,
+        }
+    )
+    result = resc._resc_arg
+
+    assert result is not None
+    assert isinstance(result, str)
+    print(f"RESC ARG CPU: {result}")
+
+@pytest.mark.parametrize(
+    "threshold, mode",[
+    (80.0, "percent"),
+    (80.0, None),
+])
+def test_resc_arg_memory(
+    threshold, mode
+):
+    resc = Resc(
+        memory = {
+            "threshold": threshold,
+            "mode": mode,
+        }
+    )
+    result = resc._resc_arg
+
+    assert result is not None
+    assert isinstance(result, str)
+    print(f"RESC ARG MEMORY: {result}")
+
+@pytest.mark.parametrize(
+    "threshold, mode",[
+    (80.0, "percent"),
+    (80.0, None),
+])
+def test_resc_arg_memory(
+    threshold, mode
+):
+    resc = Resc(
+        memory = {
+            "threshold": threshold,
+            "mode": mode,
+        }
+    )
+    result = resc._resc_arg
+
+    assert result is not None
+    assert isinstance(result, str)
+    print(f"RESC ARG MEMORY: {result}")
+
+@pytest.mark.parametrize(
+    "threshold, path, mode",[
+    (80.0, "/" , "percent"),
+    (80.0, "/", None),
+])
+def test_resc_arg_disk(
+    threshold, path, mode
+):
+    resc = Resc(
+        disk = {
+            "threshold": threshold,
+            "path": path,
+            "mode": mode,
+        }
+    )
+    result = resc._resc_arg
+
+    assert result is not None
+    assert isinstance(result, str)
+    print(f"RESC ARG DISK: {result}")
+
+def test_check(setup_resc):
+    result = setup_resc.checks
+    assert result is not None
+    assert isinstance(result, dict)
+    result = setup_resc.checks
+    assert result is not None
+    assert isinstance(result, dict)
+    

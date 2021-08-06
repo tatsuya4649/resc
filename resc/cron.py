@@ -195,7 +195,7 @@ class Cron:
             return None
         else:
             iters = re.finditer(r'.*\n', self._list)
-            cronlists = [re.sub(r'\n$','',x.group()) for x in iters]
+            cronlists = [x.group() for x in iters]
             # delete duplication
             cronlists = list(set(cronlists))
             if self._totalline in cronlists:

@@ -468,7 +468,7 @@ class Resc:
             )
             args_str += ","
         kwargs_str = str()
-        if len(func_args["kwargs"]) > 0:
+        if len(func_args["kwargs"].items()) > 0:
             for k, v in func_args["kwargs"].items():
                 if isinstance(v, str):
                     func_args["kwargs"][k] = f'\"{v}\"'
@@ -614,6 +614,7 @@ class Resc:
                 resc_arg.append(f'--mem_mode {self._memory_dict["mode"]}')
         if self._disk_dict is not None:
             resc_arg.append(f'--disk_t {self._disk_dict["threshold"]}')
+            resc_arg.append(f'--disk_path {self._disk_dict["path"]}')
             if "mode" in self._disk_dict.keys():
                 resc_arg.append(f'--disk_mode {self._disk_dict["mode"]}')
         return " ".join(resc_arg)

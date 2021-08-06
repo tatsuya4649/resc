@@ -34,6 +34,8 @@ class MemoryDetect(DetectBase):
             )
         self._threshold = threshold
 
+        if mode is None:
+            mode = MemoryDetectMode.PERCENT.value["name"]
         if not isinstance(mode, str):
             raise MemoryTypeError("mode most be string type.")
         if len([x for x in MemoryDetectMode

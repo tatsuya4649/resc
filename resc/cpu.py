@@ -37,6 +37,8 @@ class CPUDetect(DetectBase):
             )
         self._threshold = threshold
 
+        if mode is None:
+            mode = CPUDetectMode.PERCENT.value["name"]
         if not isinstance(mode, str):
             raise CPUTypeError(
                 (
@@ -60,10 +62,13 @@ class CPUDetect(DetectBase):
                 f'{mode}',
                 flags=re.IGNORECASE
             )][0]
-        if not isinstance(interval, int) and \
-                not isinstance(interval, float):
-            raise CPUTypeError("interval must be int or float type.")
-        self._interval = interval
+        if interval is None:
+            self._interval = self._CPU_INTERVAL_DEFAULT
+        else:
+            if not isinstance(interval, int) and \
+                    not isinstance(interval, float):
+                raise CPUTypeError("interval must be int or float type.")
+            self._interval = interval
 
     @property
     def resource(self):
