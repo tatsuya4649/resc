@@ -200,6 +200,101 @@ def test_ssh_pin_err(ssh):
         ) as raiseinfo:
             ssh.ssh_ping()
 
+@pytest.mark.parametrize(
+    "err",[
+    paramiko.ssh_exception.NoValidConnectionsError,
+    paramiko.ssh_exception.SSHException,
+    BlockingIOError,
+    FileNotFoundError,
+    Exception
+])
+def test_connect_error(ssh,err):
+    _FILE="output"
+    _DEFAULT_PATH=f"~/.resc/{_FILE}"
+    _RESCLOG=RescLog()
+    if err is paramiko.ssh_exception. \
+        NoValidConnectionsError:
+        _ERRCONTENT = "World"
+        _ERR = {
+            ("127.0.0.1",22): _ERRCONTENT
+        }
+    else:
+        _ERR = "Hello"
+    with mock.patch(
+        "paramiko.SSHClient.connect",
+        side_effect=err(_ERR)
+    ) as client:
+        result = ssh.connect(
+            resclog=_RESCLOG
+        )
+    assert result is None
+
+    if err is not paramiko.ssh_exception. \
+        NoValidConnectionsError:
+        assert _RESCLOG.stderr == \
+            _ERR.encode("utf-8")
+
+def test__connect_novalidconnection_error(ssh):
+    _RESCLOG=RescLog()
+    with mock.patch(
+        "paramiko.SSHClient.connect",
+        side_effect=paramiko.ssh_exception. \
+    NoValidConnectionsError({
+        ("127.0.0.1",20022) : (
+            "error",
+            "hello"
+        )
+    })
+    ) as client:
+        with pytest.raises(
+            RescSSHConnectionError
+        ) as raiseinfo:
+            result = ssh._connect()
+
+def test__connect_sshexception_error(ssh):
+    _RESCLOG=RescLog()
+    with mock.patch(
+        "paramiko.SSHClient.connect",
+        side_effect=paramiko.ssh_exception. \
+    SSHException
+    ) as client:
+        with pytest.raises(
+            RescSSHError
+        ) as raiseinfo:
+            result = ssh._connect()
+def test__connect_blocking_error(ssh):
+    _RESCLOG=RescLog()
+    with mock.patch(
+        "paramiko.SSHClient.connect",
+        side_effect=BlockingIOError
+    ) as client:
+        with pytest.raises(
+            RescSSHTimeoutError
+        ) as raiseinfo:
+            result = ssh._connect()
+def test__connect_filenotfound_error(ssh):
+    _RESCLOG=RescLog()
+    with mock.patch(
+        "paramiko.SSHClient.connect",
+        side_effect=FileNotFoundError
+    ) as client:
+        with pytest.raises(
+            RescSSHFileNotFoundError
+        ) as raiseinfo:
+            result = ssh._connect()
+def test__connect_exception_error(ssh):
+    _RESCLOG=RescLog()
+    with mock.patch(
+        "paramiko.SSHClient.connect",
+        side_effect=Exception
+    ) as client:
+        with pytest.raises(
+            RescSSHError
+        ) as raiseinfo:
+            result = ssh._connect()
+
+
+
 def test_scpfile_status_error(ssh):
     _FILE="output"
     _DEFAULT_PATH=f"~/.resc/{_FILE}"

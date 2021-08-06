@@ -133,16 +133,18 @@ class SSH:
         try:
             client = self._connect()
             return client
-        except paramiko.ssh_exception.NoValidConnectionsError as e:
-            resclog.stderr = str(e).encode("utf-8")
-        except paramiko.ssh_exception.SSHException as e:
-            resclog.stderr = str(e).encode("utf-8")
-        except BlockingIOError as e:
-            resclog.stderr = str(e).encode("utf-8")
-        except FileNotFoundError as e:
-            resclog.stderr = str(e).encode("utf-8")
-        except Exception as e:
-            resclog.stderr = str(e).encode("utf-8")
+        except RescSSHConnectionError as e:
+            resclog.stderr = \
+        str(e).encode("utf-8")
+        except RescSSHError as e:
+            resclog.stderr = \
+        str(e).encode("utf-8")
+        except RescSSHTimeoutError as e:
+            resclog.stderr = \
+        str(e).encode("utf-8")
+        except RescSSHFileNotFoundError as e:
+            resclog.stderr = \
+        str(e).encode("utf-8")
         return None
 
     def close(self, client):

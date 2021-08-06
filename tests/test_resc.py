@@ -12,7 +12,7 @@ from resc.disk import *
 from resc.cron import *
 import inspect
 import subprocess
-from .conftest import _KEYPATH
+from .conftest import _KEY_PATH
 
 _INTERVAL=0
 
