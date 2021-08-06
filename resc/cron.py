@@ -62,6 +62,8 @@ class Cron:
 
         if interval_str is None:
             raise CronValueError("interval_str must be not None.")
+        if not isinstance(interval_str, str):
+            raise CronTypeError("interval_str must be str type.")
 
         self._interval_str = interval_str
         self._str_to_lists()

@@ -70,15 +70,17 @@ def cron_empty():
     crontab_list = process.stdout.read()
     _crondelete()
     yield
+    _crondelete()
     _cronregister(crontab_list)
 
 @pytest.fixture(scope="function",autouse=False)
 def cron_noempty():
+    _LINE = "* * * * * echo 'Hello World'\n"
     process = _cronlist()
     crontab_list = process.stdout.read()
     _crondelete()
-    _cronregister("* * * * * echo 'Hello World'\n")
-    yield
+    _cronregister(_LINE)
+    yield _LINE
     _crondelete()
     _cronregister(crontab_list)
 
