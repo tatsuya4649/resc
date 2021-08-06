@@ -88,7 +88,7 @@ class DiskDetect(DetectBase):
     @staticmethod
     def _usage(path):
         if not isinstance(path, str):
-            raise TypeError("path must be string type.")
+            raise DiskTypeError("path must be string type.")
         if not os.path.exists(path):
             raise FileNotFoundError(f"{path} not exists")
         return psutil.disk_usage(path)
