@@ -15,11 +15,11 @@ async def analyze(
     analyze = RescLogAnalyze.analyze(log)
     if len(analyze) == 0:
         return {
-    "result": "failure",
-    "explain": (
-    "this is not resclog file "
-    "or empty file."
-    )
+            "result": "failure",
+            "explain": (
+                "this is not resclog file "
+                "or empty file."
+            )
         }
     return {
         "result": "success",

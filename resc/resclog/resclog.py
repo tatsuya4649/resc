@@ -205,12 +205,12 @@ class RescLog:
     def stdout(self, out):
         if not isinstance(out, list) and not isinstance(out, bytes):
             raise RescLogTypeError(
-        "stdout must be list or byte type."
+                "stdout must be list or byte type."
             )
         if isinstance(out, list) and \
-    len([x for x in out if not isinstance(x, bytes)]) != 0:
+                len([x for x in out if not isinstance(x, bytes)]) != 0:
             raise RescLogTypeError(
-        "stdout element must be bytes type."
+                "stdout element must be bytes type."
             )
         if not hasattr(self, "_stdout"):
             self._stdout = list()
@@ -232,12 +232,12 @@ class RescLog:
     def stderr(self, out):
         if not isinstance(out, list) and not isinstance(out, bytes):
             raise RescLogTypeError(
-        "stderr must be list or byte type."
+                "stderr must be list or byte type."
             )
         if isinstance(out, list) and \
-            len([x for x in out if not isinstance(x, bytes)]) != 0:
+                len([x for x in out if not isinstance(x, bytes)]) != 0:
             raise RescLogTypeError(
-        "stderr element must be bytes type."
+                "stderr element must be bytes type."
             )
         if not hasattr(self, "_stderr"):
             self._stderr = list()

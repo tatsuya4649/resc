@@ -12,10 +12,11 @@ class RescDump:
         self._content = content
 
     @classmethod
-    def _content_type(self,content):
+    def _content_type(self, content):
         if not isinstance(content, bytes):
             raise RescDumpTypeError(f"content({content}) \
                 must be bytes type.now {type(content)}.")
+
     @classmethod
     def bindump(
         self,

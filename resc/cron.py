@@ -237,7 +237,7 @@ class Cron:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        stdout,stderr = result.communicate()
+        stdout, stderr = result.communicate()
         if len(stderr) > 0:
             raise CronCommandError(
                 "An error occurred in \"command which crontab\"."

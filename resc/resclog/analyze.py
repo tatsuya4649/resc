@@ -7,7 +7,7 @@ from .cons import COMMONMAGIC
 from .header import RescLogSFlag, RescLogEmergeHeader, RescLogHeader
 from .dump import RescDump
 from .anaerr import RescLogPathError, \
-    RescLogUnMatchError, RescLogKeyError, RescLogTypeError
+    RescLogUnMatchError, RescLogTypeError
 
 
 class RescLogCommonHeader(LittleEndianStructure):
@@ -94,9 +94,9 @@ class RescLogAnalyze:
             resdict["remo_length"] = remo_length
             resdict["sour_length"] = sour_length
             if body_length != \
-        (date_length + over_length + \
-         func_length + file_length + \
-         remo_length + sour_length):
+                    (date_length + over_length +
+                     func_length + file_length +
+                     remo_length + sour_length):
                 raise RescLogUnMatchError(
                     "unmatch total body length and individual length."
                 )

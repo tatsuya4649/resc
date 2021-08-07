@@ -32,41 +32,41 @@ class SSH:
     ):
         if not isinstance(ip, str):
             raise SSHTypeError(
-        "IP must be str type."
+                "IP must be str type."
             )
         self._ip = ip
         if not isinstance(port, int):
             raise SSHTypeError(
-        "Port must be int type."
+                "Port must be int type."
             )
         self._port = port
         if not isinstance(username, str):
             raise SSHTypeError(
-        "Username must be str type."
+                "Username must be str type."
             )
         self._username = username
         if password is not None and \
-            not isinstance(password, str):
+                not isinstance(password, str):
             raise SSHTypeError(
-        "Password must be str type."
+                "Password must be str type."
             )
         self._password = password
         if key_filename is not None and \
-            not isinstance(key_filename, str):
+                not isinstance(key_filename, str):
             raise SSHTypeError(
-        "Password must be str type."
+                "Password must be str type."
             )
         self._key_filename = key_filename
         if not isinstance(timeout, int):
             raise SSHTypeError(
-        "Timeout must be int type."
+                "Timeout must be int type."
             )
-        if (self._password is not None and \
+        if (self._password is not None and
             self._key_filename is not None) or \
-            (self._password is None and \
-            self._key_filename is None):
+            (self._password is None and
+             self._key_filename is None):
             raise SSHValueError(
-        "Which Password and Key?"
+                "Which Password and Key?"
             )
         self._timeout = timeout
         self._startup_scripts = None
@@ -135,16 +135,16 @@ class SSH:
             return client
         except RescSSHConnectionError as e:
             resclog.stderr = \
-        str(e).encode("utf-8")
+                str(e).encode("utf-8")
         except RescSSHError as e:
             resclog.stderr = \
-        str(e).encode("utf-8")
+                str(e).encode("utf-8")
         except RescSSHTimeoutError as e:
             resclog.stderr = \
-        str(e).encode("utf-8")
+                str(e).encode("utf-8")
         except RescSSHFileNotFoundError as e:
             resclog.stderr = \
-        str(e).encode("utf-8")
+                str(e).encode("utf-8")
         return None
 
     def close(self, client):
