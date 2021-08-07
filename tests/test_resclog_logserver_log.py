@@ -60,6 +60,7 @@ def test_analyze():
     assert content["result"] == "success"
 
 def test_analyze_empty(logfile_empty):
+    print(logfile_empty)
     response = client.post(
         "/analyze",
         files={

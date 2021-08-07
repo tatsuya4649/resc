@@ -265,10 +265,10 @@ def test_crons_get(setup_resc):
         if not os.path.isfile(_SCRIPT_PATH):
             break
         i += 1
-    
-    with open(_SCRIPT_PATH, "w") as fp: 
+
+    with open(_SCRIPT_PATH, "w") as fp:
             fp.write("Hello World")
-    
+
     with mock.patch(
         "resc._resc.Resc._which_resc"
     ) as which_resc:
@@ -642,45 +642,6 @@ def test_register_first_tab_test():
         ...
     first_tab()
 
-def test_remote_key():
-    resc = Resc(
-        cpu={"threshold":0.0,"interval":_INTERVAL},
-        memory={"threshold":80},
-        disk={"threshold":80,"path":"/"},
-    )
-    @resc.register(
-        trigger = "* * * * *",
-        rescdir = "rescs",
-        outputfile = "output",
-        ip = "localhost",
-        port = 20022,
-        username="root",
-        key_path = _KEY_PATH,
-        call_first=True,
-    )
-    def hello():
-        print("hello resc!!!")
-    hello()
-
-def test_remote_password():
-    resc = Resc(
-        cpu={"threshold":0.0,"interval":_INTERVAL},
-        memory={"threshold":80},
-        disk={"threshold":80,"path":"/"},
-    )
-    @resc.register(
-        trigger = "* * * * *",
-        rescdir = "rescs",
-        outputfile = "output",
-        ip = "localhost",
-        port = 20022,
-        username = "root",
-        password = "test_resc",
-        call_first=True,
-    )
-    def hello():
-        print("hello resc!!!")
-    hello()
 
 """
 Package Test
@@ -717,6 +678,49 @@ def test_package_path_length_failure(setup_resc,monkeypatch):
 """
 Remote Test
 """
+@pytest.mark.usefixtures("setup_remote_host")
+def test_remote_key():
+    resc = Resc(
+        cpu={"threshold":0.0,"interval":_INTERVAL},
+        memory={"threshold":80},
+        disk={"threshold":80,"path":"/"},
+    )
+    @resc.register(
+        trigger = "* * * * *",
+        rescdir = "rescs",
+        outputfile = "output",
+        ip = "localhost",
+        port = 20022,
+        username="root",
+        key_path = _KEY_PATH,
+        call_first=True,
+    )
+    def hello():
+        print("hello resc!!!")
+    hello()
+
+@pytest.mark.usefixtures("setup_remote_host")
+def test_remote_password():
+    resc = Resc(
+        cpu={"threshold":0.0,"interval":_INTERVAL},
+        memory={"threshold":80},
+        disk={"threshold":80,"path":"/"},
+    )
+    @resc.register(
+        trigger = "* * * * *",
+        rescdir = "rescs",
+        outputfile = "output",
+        ip = "localhost",
+        port = 20022,
+        username = "root",
+        password = "test_resc",
+        call_first=True,
+    )
+    def hello():
+        print("hello resc!!!")
+    hello()
+
+@pytest.mark.usefixtures("setup_remote_host")
 def test_over_one_ssh(setup_resc):
     setup_resc.register(
         trigger="* * * * *",
@@ -729,6 +733,7 @@ def test_over_one_ssh(setup_resc):
     result = setup_resc.over_one_ssh(ssh,setup_resc._resclog)
     print(f"RESC SSH OVER ONE SSH: {result}")
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_over_one_ssh_connect_error(
     setup_resc,
     setup_remote_host,
@@ -805,6 +810,7 @@ def test_over_one_ssh_connect_error(
 
     print(f"RESC SSH TIMEOUT ERROR: {str(raiseinfo.value).encode('utf-8')}")
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_over_one_ssh_session_error(
     setup_resc,
     mocker,
@@ -841,6 +847,7 @@ def test_over_one_ssh_session_error(
 
     print(f"RESC SSH EXCEPTION: {str(raiseinfo.value).encode('utf-8')}")
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_send_script(setup_resc):
     setup_resc.register(
         trigger = "* * * * *",
@@ -853,6 +860,7 @@ def test_send_script(setup_resc):
     setup_resc._send_script(ssh,ssh._connect(),__file__,setup_resc._resclog)
     print(f"RESC SEND SCRIPT: \"{__file__}\" for test")
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_over_one_ssh(setup_resc):
     setup_resc.register(
         trigger = "* * * * *",
@@ -867,6 +875,7 @@ def test_over_one_ssh(setup_resc):
     )
     assert result is not None
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_over_one_ssh_scp_none(
     setup_resc,
     mocker,
@@ -889,6 +898,7 @@ def test_over_one_ssh_scp_none(
     assert result is not None
     assert result is False
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_over_one_recv_exit_status(
     setup_resc,
     mocker,
@@ -916,6 +926,7 @@ def test_over_one_recv_exit_status(
     print(f"RESC OVER_ONE_SSH SERVER ERROR: {raiseinfo.value}")
     assert "hello world".encode("utf-8") == setup_resc._resclog.stderr
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_over_one_recv_q_status_1(
     setup_resc,
     mocker,
@@ -942,6 +953,7 @@ def test_over_one_recv_q_status_1(
     assert "stdout".encode("utf-8") == setup_resc._resclog.stdout
     assert "stderr".encode("utf-8") == setup_resc._resclog.stderr
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_over_one_recv_q_status_0(
     setup_resc,
     mocker,
@@ -968,6 +980,7 @@ def test_over_one_recv_q_status_0(
     assert "stdout".encode("utf-8") == setup_resc._resclog.stdout
     assert "stderr".encode("utf-8") == setup_resc._resclog.stderr
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_over_one_recv_q_status_255(
     setup_resc,
     mocker,
@@ -1132,4 +1145,4 @@ def test_check(setup_resc):
     result = setup_resc.checks
     assert result is not None
     assert isinstance(result, dict)
-    
+

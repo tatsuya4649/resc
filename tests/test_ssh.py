@@ -190,6 +190,7 @@ def test_timeout(ssh):
     assert result is not None
     assert isinstance(result, int)
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_ssh_pin_err(ssh):
     with mock.patch(
         "paramiko.Channel.recv_exit_status"
@@ -200,6 +201,7 @@ def test_ssh_pin_err(ssh):
         ) as raiseinfo:
             ssh.ssh_ping()
 
+@pytest.mark.usefixtures("setup_remote_host")
 @pytest.mark.parametrize(
     "err",[
     paramiko.ssh_exception.NoValidConnectionsError,
@@ -295,6 +297,7 @@ def test__connect_exception_error(ssh):
 
 
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_scpfile_status_error(ssh):
     _FILE="output"
     _DEFAULT_PATH=f"~/.resc/{_FILE}"
@@ -313,6 +316,7 @@ def test_scpfile_status_error(ssh):
                 resclog=_RESCLOG,
             )
 
+@pytest.mark.usefixtures("setup_remote_host")
 @pytest.mark.parametrize(
     "err",[
     scp.SCPException,
@@ -337,6 +341,7 @@ def test_scpfile_scp_error(ssh,err):
     assert isinstance(_RESCLOG.stderr,bytes)
     assert _RESCLOG.stderr == _ERR_CONTENT.encode("utf-8")
 
+@pytest.mark.usefixtures("setup_remote_host")
 def test_scpfile_scp_out_err(ssh):
     _PATH="scpfile/test/output"
     _DEFAULT_PATH=f"{os.path.expanduser('~')}/.resc"

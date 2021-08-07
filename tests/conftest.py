@@ -8,7 +8,7 @@ import pytest
 import subprocess
 from .docker_setup import RemoteHost
 
-@pytest.fixture(scope="session",autouse=True)
+@pytest.fixture(scope="module",autouse=False)
 def setup_remote_host():
     """
     setup and shutdown of Remote Host(made using Docker)
@@ -110,105 +110,118 @@ _FILE = os.path.join(
     f"{_USER_PATH}",
     ".resc/register"
 )
-_EXREG = "* * * * * resc --help"
+_EXREG = "* * * * * resc --help\n"
 
-def _register_dir(target):
-    def _wrapper(func):
-        def _delete_target(*args,**kwargs):
-            paths = list()
-            makepaths = list()
-            for path in os.path.dirname(
-                target
-            ).split('/'):
-                paths.append(path)
-                dire = "/".join(paths)
-                if not os.path.isdir(dire):
-                    os.mkdir(dire)
-                    makepaths.append(dire)
-
-            func(*args,**kwargs)
-
-            for path in reversed(makepaths):
-                if os.path.isdir(dire) and \
-            len(os.listdir(dire)) == 0:
-                    os.rmdir(dire)
-
-        return _delete_target
-    return _wrapper
+class _RegDir:
+    def __init__(self, path):
+        self._target = path
+        self._paths = list()
+        self._makepaths = list()
+    def __enter__(
+        self
+    ):
+        for path in os.path.dirname(
+            self._target
+        ).split('/'):
+            self._paths.append(path)
+            dire = "/".join(self._paths)
+            if not os.path.isdir(dire) and \
+            len(dire) > 0:
+                os.mkdir(dire)
+                self._makepaths.append(dire)
+        return self
+    def __exit__(
+        self,
+        exc_type,
+        exc_value,
+        traceback,
+    ):
+        for dire in reversed(self._makepaths):
+            if os.path.isdir(dire) and \
+        len(os.listdir(dire)) == 0:
+                os.rmdir(dire)
 
 @pytest.fixture(scope="function",autouse=False)
-@_register_dir(_FILE)
 def register_empty():
-    with open(_FILE,"r") as f:
-        prereg = f.read()
-    with open(_FILE,"w") as f:
-        f.truncate(0)
-    yield
+    with _RegDir(_FILE):
+        prereg = None
+        if os.path.isfile(_FILE):
+            with open(_FILE,"r") as f:
+                prereg = f.read()
+            with open(_FILE,"w") as f:
+                f.truncate(0)
+        yield
 
-    if len(prereg) == 0:
-        os.remove(_FILE)
-    else:
-        with open(_FILE,"w") as f:
-            f.write(prereg)
+        if prereg is None or len(prereg) == 0:
+            os.remove(_FILE)
+        else:
+            with open(_FILE,"w") as f:
+                f.write(prereg)
 
 @pytest.fixture(scope="function",autouse=False)
-@_register_dir(_FILE)
 def register_noempty():
-    with open(_FILE,"r") as f:
-        prereg = f.read()
-    with open(_FILE,"w") as f:
-        f.truncate(0)
-    with open(_FILE,"w") as f:
-        f.write(_EXREG)
-    yield
-    with open(_FILE,"w") as f:
-        f.truncate(0)
-
-    if len(prereg) == 0:
-        os.remove(_FILE)
-    else:
+    with _RegDir(_FILE):
+        prereg = None
+        if os.path.isfile(_FILE):
+            with open(_FILE,"r") as f:
+                prereg = f.read()
+            with open(_FILE,"w") as f:
+                f.truncate(0)
         with open(_FILE,"w") as f:
-            f.write(prereg)
+            f.write(_EXREG)
+        yield
+        with open(_FILE,"w") as f:
+            f.truncate(0)
+
+        if prereg is None or len(prereg) == 0:
+            os.remove(_FILE)
+        else:
+            with open(_FILE,"w") as f:
+                f.write(prereg)
 
 @pytest.fixture(scope="function",autouse=False)
-@_register_dir(_FILE)
 def same_cron_register():
-    # Register file only _EXREG
-    with open(_FILE,"r") as f:
-        prereg = f.read()
-    with open(_FILE,"w") as f:
-        f.truncate(0)
-    with open(_FILE,"w") as f:
-        f.write(_EXREG)
-    # Crontab only _EXREG
-    process = _cronlist()
-    crontab_list = process.stdout.read()
-    _crondelete()
-    _cronregister(_EXREG)
-    yield
-    # Undo
-    _crondelete()
-    _cronregister(crontab_list)
-
-    with open(_FILE,"w") as f:
-        f.truncate(0)
-    if len(prereg) == 0:
-        os.remove(_FILE)
-    else:
+    with _RegDir(_FILE):
+        # Register file only _EXREG
+        prereg = None
+        if os.path.isfile(_FILE):
+            with open(_FILE,"r") as f:
+                prereg = f.read()
+            with open(_FILE,"w") as f:
+                f.truncate(0)
         with open(_FILE,"w") as f:
-            f.write(prereg)
+            f.write(_EXREG)
+        # Crontab only _EXREG
+        process = _cronlist()
+        crontab_list = process.stdout.read()
+        _crondelete()
+        _cronregister(_EXREG)
+        yield
+        # Undo
+        _crondelete()
+        _cronregister(crontab_list)
+
+        with open(_FILE,"w") as f:
+            f.truncate(0)
+        if prereg is None or len(prereg) == 0:
+            os.remove(_FILE)
+        else:
+            with open(_FILE,"w") as f:
+                f.write(prereg)
 
 @pytest.fixture(scope="function",autouse=False)
-@_register_dir(_TEST_LOGFILE)
 def logfile_empty():
-    with open(_TEST_LOGFILE,"rb") as f:
-        _logcontent = f.read()
-    with open(_TEST_LOGFILE,"wb") as f:
-        f.truncate(0)
-    yield _TEST_LOGFILE
+    with _RegDir(_TEST_LOGFILE):
+        _logcontent = None
+        if os.path.isfile(_TEST_LOGFILE):
+            with open(_TEST_LOGFILE,"rb") as f:
+                _logcontent = f.read()
+            with open(_TEST_LOGFILE,"wb") as f:
+                f.truncate(0)
+        yield _TEST_LOGFILE
 
-    if len(_logcontent) == 0:
-        os.remove(_TEST_LOGFILE)
-    else:
-        with open(_TEST_LOGFILE,"wb") as f:
-            f.write(_logcontent)
+        if _logcontent is None  is None or len(_logcontent) == 0:
+            os.remove(_TEST_LOGFILE)
+        else:
+            with open(_TEST_LOGFILE,"wb") as f:
+                f.write(_logcontent)
