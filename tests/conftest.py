@@ -27,16 +27,23 @@ def _remote_singleton():
     _rsingleton = _RemoteSingleton()
     yield _rsingleton
 
+@pytest.fixture(scope="session",autouse=False)
+def _remote_init():
+    remote_host = RemoteHost()
+    yield remote_host
+
+    # If use remote host, shutdown at end of test
+    if remote_host.use:
+        remote_host.shutdown()
+
 @pytest.fixture(scope="module",autouse=False)
-def setup_remote_host(_remote_singleton):
+def setup_remote_host(_remote_singleton,_remote_init):
     """
     setup and shutdown of Remote Host(made using Docker)
     """
     if _remote_singleton():
-        remote_host = RemoteHost()
-        remote_host.startup()
-        yield remote_host
-        remote_host.shutdown()
+        _remote_init.startup()
+        yield _remote_init
     else:
         yield
 
