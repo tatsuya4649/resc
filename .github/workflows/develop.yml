@@ -48,7 +48,7 @@ jobs:
       - name: Coverage Test
         run: |
           pip install coverage
-          python -m pytest -v --cov=tests --cov-config=./.coveragerc --cov-port=xml
+          python -m pytest -v --cov=tests --cov-config=./.coveragerc --cov-report=xml
       - name: Codecov Upload
         uses: codecov/codecov-action@v2
         with:
