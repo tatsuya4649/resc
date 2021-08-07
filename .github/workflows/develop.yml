@@ -37,16 +37,22 @@ jobs:
           sudo apt update
           sudo apt install docker-ce docker-ce-cli containerd.io
           sudo gpasswd -a $(whoami) docker
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v3
       - name: Resc Command Check
         run: |
           resc --help
       - name: Test Resc
         run: bash ./test.sh
         shell: bash
-      - name: Codecov test
+      - name: Coverage Test
+        run: |
+          pip install coverage
+          python -m pytest -v --cov=resc --cov-config=./.coveragerc --cov-report=xml
+      - name: Codecov Upload
         uses: codecov/codecov-action@v2
         with:
-          files: .coverage
+          files: ./coverage.xml
+          fail_ci_if_error: true
+          verbose: true
         if: success()

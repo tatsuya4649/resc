@@ -35,7 +35,11 @@ class RemoteHost:
         )
     _DEFAULT_TIMEOUT_TIME = 180
     def __init__(self):
-        ...
+        self._use = False
+
+    @property
+    def use(self):
+        return self._use
 
     def startup(self,stdout=False,stderr=False):
         process = subprocess.Popen(
@@ -57,6 +61,7 @@ class RemoteHost:
             raise RemoteHostStartupFailure(
                 "failure to startup docker remote host."
             )
+        self._use = True
         return
 
     def shutdown(self,stdout=False,stderr=False):

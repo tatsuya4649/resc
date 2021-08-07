@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pytest -s -v --cov-config=.coveragerc --cov=resc
+python -m pytest -s -v ./tests
