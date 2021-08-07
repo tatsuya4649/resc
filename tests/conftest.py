@@ -178,8 +178,9 @@ def register_empty():
             os.path.isfile(_REGFILE):
             os.remove(_REGFILE)
         else:
-            with open(_REGFILE,"w") as f:
-                f.write(prereg)
+            if (prereg is not None and len(prereg) > 0):
+                with open(_REGFILE,"w") as f:
+                    f.write(prereg)
 
 @pytest.fixture(scope="function",autouse=False)
 def register_noempty():
@@ -200,8 +201,9 @@ def register_noempty():
             os.path.isfile(_REGFILE):
             os.remove(_REGFILE)
         else:
-            with open(_REGFILE,"w") as f:
-                f.write(prereg)
+            if (prereg is not None and len(prereg) > 0):
+                with open(_REGFILE,"w") as f:
+                    f.write(prereg)
 
 @pytest.fixture(scope="function",autouse=False)
 def same_cron_register():
