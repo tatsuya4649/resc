@@ -47,11 +47,12 @@ jobs:
         shell: bash
       - name: Coverage Test
         run: |
-          python -m pytest --cov=resc --cov-report=xml -v --cov-config=./.coveragerc
+          pip install coverage
+          coverage run -m pytest tests
       - name: Codecov Upload
         uses: codecov/codecov-action@v2
         with:
-          files: ./coverage.xml
+          files: ./.coverage
           name: codecov-umbrella
           fail_ci_if_error: true
           verbose: true
