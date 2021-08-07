@@ -37,14 +37,14 @@ jobs:
           sudo apt update
           sudo apt install docker-ce docker-ce-cli containerd.io
           sudo gpasswd -a runner docker
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Resc Command Check
         run: |
           resc --help
       - name: Test Resc
         run: bash ./test.sh
         shell: bash
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
       - name: Codecov test
         uses: codecov/codecov-action@v2
         with:
