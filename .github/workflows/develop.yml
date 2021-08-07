@@ -48,11 +48,11 @@ jobs:
       - name: Coverage Test
         run: |
           pip install coverage
-          python -m pytest -v --cov=tests --cov-config=./.coveragerc
+          python -m pytest -v --cov=tests --cov-config=./.coveragerc --cov-port=xml
       - name: Codecov Upload
         uses: codecov/codecov-action@v2
         with:
-          files: .coverage
+          files: ./coverage.xml
           fail_ci_if_error: true
           verbose: true
         if: success()
