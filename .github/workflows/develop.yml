@@ -45,8 +45,14 @@ jobs:
       - name: Test Resc
         run: bash ./test.sh
         shell: bash
+      - name: Coverage Test
+        run: |
+          python -m pytest --cov=resc --cov-report=xml -v
       - name: Codecov test
         uses: codecov/codecov-action@v2
         with:
-          files: .coverage
+          files: ./coverage.xml
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true
         if: success()
