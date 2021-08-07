@@ -47,7 +47,7 @@ jobs:
         shell: bash
       - name: Coverage Test
         run: |
-          python -m pytest --cov=resc --cov-report=xml -v --cov-config=.coveragerc
+          python -m pytest --cov=resc --cov-report=xml -v --cov-config=./.coveragerc
       - name: Codecov Upload
         uses: codecov/codecov-action@v2
         with:

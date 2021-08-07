@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pytest -s -v resc
+python -m pytest -s -v ./tests
