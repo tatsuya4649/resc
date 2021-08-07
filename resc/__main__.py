@@ -109,7 +109,7 @@ def main():
         sys.exit(0)
     elif args.delete_register:
         REGISTER_FILE = f"{os.path.expanduser('~')}/.resc/register"
-        if os.path.isfile(REGISTER_FILE):
+        if not os.path.isfile(REGISTER_FILE):
             sys.exit(0)
         result = subprocess.Popen(
             "command crontab -l",
