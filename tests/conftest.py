@@ -8,15 +8,37 @@ import pytest
 import subprocess
 from .docker_setup import RemoteHost
 
+class _RemoteSingleton:
+    def __new__(cls):
+        if not hasattr(cls, "_instance"):
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    def __init__(self):
+        ...
+    def __call__(self):
+        if self._instance is not None:
+            self._instance = None
+            return True
+        else:
+            return False
+
+@pytest.fixture(scope="session",autouse=True)
+def _remote_singleton():
+    _rsingleton = _RemoteSingleton()
+    yield _rsingleton
+
 @pytest.fixture(scope="module",autouse=False)
-def setup_remote_host():
+def setup_remote_host(_remote_singleton):
     """
     setup and shutdown of Remote Host(made using Docker)
     """
-    remote_host = RemoteHost()
-    remote_host.startup()
-    yield remote_host
-    remote_host.shutdown()
+    if _remote_singleton():
+        remote_host = RemoteHost()
+        remote_host.startup()
+        yield remote_host
+        remote_host.shutdown()
+    else:
+        yield
 
 _KEY_PATH = \
     os.path.join(
@@ -152,7 +174,8 @@ def register_empty():
                 f.truncate(0)
         yield
 
-        if prereg is None or len(prereg) == 0:
+        if (prereg is None or len(prereg) == 0) and \
+            os.path.isfile(_REGFILE):
             os.remove(_REGFILE)
         else:
             with open(_REGFILE,"w") as f:
@@ -173,7 +196,8 @@ def register_noempty():
         with open(_REGFILE,"w") as f:
             f.truncate(0)
 
-        if prereg is None or len(prereg) == 0:
+        if (prereg is None or len(prereg) == 0) and \
+            os.path.isfile(_REGFILE):
             os.remove(_REGFILE)
         else:
             with open(_REGFILE,"w") as f:
@@ -203,7 +227,8 @@ def same_cron_register():
 
         with open(_REGFILE,"w") as f:
             f.truncate(0)
-        if prereg is None or len(prereg) == 0:
+        if prereg is None or len(prereg) == 0 and \
+            os.path.isfile(_REGFILE):
             os.remove(_REGFILE)
         else:
             with open(_REGFILE,"w") as f:
@@ -220,7 +245,8 @@ def logfile_empty():
                 f.truncate(0)
         yield _TEST_LOGFILE
 
-        if _logcontent is None  is None or len(_logcontent) == 0:
+        if (_logcontent is None  is None or len(_logcontent) == 0) \
+            and os.path.isfile(_TEST_LOGFILE):
             os.remove(_TEST_LOGFILE)
         else:
             with open(_TEST_LOGFILE,"wb") as f:
