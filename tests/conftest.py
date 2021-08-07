@@ -105,29 +105,55 @@ def cron_noempty():
     _crondelete()
     _cronregister(crontab_list)
 
+_USER_PATH = os.path.expanduser("~")
+_FILE = os.path.join(
+    f"{_USER_PATH}",
+    ".resc/register"
+)
+_EXREG = "* * * * * resc --help"
+
+def _register_dir(target):
+    def _wrapper(func):
+        def _delete_target(*args,**kwargs):
+            paths = list()
+            makepaths = list()
+            for path in os.path.dirname(
+                target
+            ).split('/'):
+                paths.append(path)
+                dire = "/".join(paths)
+                if not os.path.isdir(dire):
+                    os.mkdir(dire)
+                    makepaths.append(dire)
+
+            func(*args,**kwargs)
+
+            for path in reversed(makepaths):
+                if os.path.isdir(dire) and \
+            len(os.listdir(dire)) == 0:
+                    os.rmdir(dire)
+
+        return _delete_target
+    return _wrapper
+
 @pytest.fixture(scope="function",autouse=False)
+@_register_dir(_FILE)
 def register_empty():
-    _USER_PATH = os.path.expanduser("~")
-    _FILE = os.path.join(
-        f"{_USER_PATH}",
-        ".resc/register"
-    )
     with open(_FILE,"r") as f:
         prereg = f.read()
     with open(_FILE,"w") as f:
         f.truncate(0)
     yield
-    with open(_FILE,"w") as f:
-        f.write(prereg)
+
+    if len(prereg) == 0:
+        os.remove(_FILE)
+    else:
+        with open(_FILE,"w") as f:
+            f.write(prereg)
 
 @pytest.fixture(scope="function",autouse=False)
+@_register_dir(_FILE)
 def register_noempty():
-    _USER_PATH = os.path.expanduser("~")
-    _FILE = os.path.join(
-        f"{_USER_PATH}",
-        ".resc/register"
-    )
-    _EXREG = "* * * * * resc --help"
     with open(_FILE,"r") as f:
         prereg = f.read()
     with open(_FILE,"w") as f:
@@ -137,17 +163,16 @@ def register_noempty():
     yield
     with open(_FILE,"w") as f:
         f.truncate(0)
-    with open(_FILE,"w") as f:
-        f.write(prereg)
+
+    if len(prereg) == 0:
+        os.remove(_FILE)
+    else:
+        with open(_FILE,"w") as f:
+            f.write(prereg)
 
 @pytest.fixture(scope="function",autouse=False)
+@_register_dir(_FILE)
 def same_cron_register():
-    _USER_PATH = os.path.expanduser("~")
-    _FILE = os.path.join(
-        f"{_USER_PATH}",
-        ".resc/register"
-    )
-    _EXREG = "* * * * * resc --help\n"
     # Register file only _EXREG
     with open(_FILE,"r") as f:
         prereg = f.read()
@@ -164,17 +189,26 @@ def same_cron_register():
     # Undo
     _crondelete()
     _cronregister(crontab_list)
+
     with open(_FILE,"w") as f:
         f.truncate(0)
-    with open(_FILE,"w") as f:
-        f.write(prereg)
+    if len(prereg) == 0:
+        os.remove(_FILE)
+    else:
+        with open(_FILE,"w") as f:
+            f.write(prereg)
 
 @pytest.fixture(scope="function",autouse=False)
+@_register_dir(_TEST_LOGFILE)
 def logfile_empty():
     with open(_TEST_LOGFILE,"rb") as f:
         _logcontent = f.read()
     with open(_TEST_LOGFILE,"wb") as f:
         f.truncate(0)
     yield _TEST_LOGFILE
-    with open(_TEST_LOGFILE,"wb") as f:
-        f.write(_logcontent)
+
+    if len(_logcontent) == 0:
+        os.remove(_TEST_LOGFILE)
+    else:
+        with open(_TEST_LOGFILE,"wb") as f:
+            f.write(_logcontent)
