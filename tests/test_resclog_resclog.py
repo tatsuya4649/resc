@@ -7,50 +7,36 @@ from resc.resclog.resclog import *
 _LOGPATH_DEFAULT = f"{os.path.expanduser('~')}/.resc/log/"
 
 def _getlogpath(path):
-    result = os.path.join(
+    return os.path.join(
         _LOGPATH_DEFAULT,
         path
     )
-    return result
 
 def _logpath_verify(logpath):
-    dirs = os.path.join(
-        os.path.dirname(logpath)
-    ).split('/')
-    paths = list()
-    for path in dirs:
-        paths.append(path)
-        path = os.path.join(
-            _LOGPATH_DEFAULT,
-            "/".join(paths)
-        )
-        if os.path.isdir(path):
-            sys.exit(1)
+    path = _getlogpath(os.path.dirname(logpath))
+    os.makedirs(path, exist_ok=True)
 
 def _logpath_delete(logpath):
-    dirs = os.path.join(
-        os.path.dirname(logpath)
-    ).split('/')
+    dirs = _getlogpath(os.path.dirname(logpath)).split('/')
     paths = list()
     rmpaths = list()
     for path in dirs:
         paths.append(path)
-        path = os.path.join(
-            _LOGPATH_DEFAULT,
-            "/".join(paths)
-        )
-        rmpaths.append(path)
-    rmpaths.reverse()
-    for path in rmpaths:
-        os.rmdir(path)
+        rmpaths.append("/".join(paths))
+    for path in reversed(rmpaths):
+        if len(path) > 0 and len(os.listdir(path)) == 0:
+            os.rmdir(path)
 
 @pytest.fixture(scope="module",autouse=True)
 def rescloger():
     _LOGPATH = "hello/output/log"
     _logpath_verify(_LOGPATH)
 
+    os.makedirs(os.path.dirname(
+        _getlogpath(_LOGPATH)
+    ), exist_ok=True)
     resclog = RescLog(
-        logfile = _LOGPATH,
+        logfile = _getlogpath(_LOGPATH),
         format = [
             x for x in RescLogFormat
         ]
@@ -63,14 +49,8 @@ def rescloger():
 def rescloger_notdefine():
     _LOGPATH = "notdefine/output/log"
     _logpath_verify(_LOGPATH)
-    yield _LOGPATH
+    yield _getlogpath(_LOGPATH)
     _logpath_delete(_LOGPATH)
-
-
-def test_default_directory(rescloger):
-    result = rescloger.default_directory()
-    assert result is not None
-    assert isinstance(result, str)
 
 def test_date(rescloger):
     result = rescloger.date
@@ -367,7 +347,10 @@ def test_format_meta(rescloger):
     assert isinstance(result, str)
 
 def test_not_found(rescloger_notdefine):
-    _full_path = _getlogpath(rescloger_notdefine)
+    _full_path = rescloger_notdefine
+    if not os.path.isfile(_full_path):
+        with open(_full_path, "w") as f:
+            ...
     resclog = RescLog(
         logfile = rescloger_notdefine
     )
@@ -379,7 +362,7 @@ def test_not_found(rescloger_notdefine):
         os.remove(_full_path)
 
 def test_not_found_except(rescloger_notdefine):
-    _full_path = _getlogpath(rescloger_notdefine)
+    _full_path = rescloger_notdefine
     resclog = RescLog(
         logfile = rescloger_notdefine
     )
@@ -394,7 +377,7 @@ def test_not_found_except(rescloger_notdefine):
         )
 
 def test_write(rescloger):
-    _full_path = _getlogpath(rescloger.pure_log)
+    _full_path = rescloger.pure_log
     if os.path.isfile(_full_path):
         sys.exit(1)
     rescloger.write(
@@ -418,7 +401,7 @@ def test_write(rescloger):
     (RescLogOver.TRUE, RescLogSFlag.ERR),
 ])
 def test_write_type_error(rescloger,over,sflag):
-    _full_path = _getlogpath(rescloger.pure_log)
+    _full_path = _getlogpath(rescloger.logfile)
     if os.path.isfile(_full_path):
         sys.exit(1)
     with pytest.raises(

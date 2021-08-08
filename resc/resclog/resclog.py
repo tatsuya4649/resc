@@ -22,7 +22,6 @@ class RescLogPathError(Exception):
 class RescLog:
     """
     """
-    _LOGPATH_DEFAULT = "~/.resc/log/"
     _LOGFILE_DEFAULT = ""
     _LOGFORMAT_DEFAULT = [
         RescLogFormat.DATE,
@@ -40,7 +39,7 @@ class RescLog:
     ):
         if logfile is not None:
             self.pure_log = logfile
-            self.logfile = self._LOGPATH_DEFAULT + re.sub(r'^/', '', logfile)
+            self.logfile = logfile
             self.logfile = \
                 re.sub(r'^~', f'{os.path.expanduser("~")}', self.logfile)
         else:
@@ -66,10 +65,6 @@ class RescLog:
     @property
     def log(self):
         return self.logfile is not None
-
-    @staticmethod
-    def default_directory():
-        return RescLog._LOGPATH_DEFAULT
 
     def _default_format(self, format):
         if format is not None and isinstance(format, list) \

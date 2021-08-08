@@ -9,6 +9,7 @@ from resc import *
 from resc.cpu import *
 from resc.memory import *
 from resc.disk import *
+from .conftest import _TEST_LOGFILE
 
 @pytest.mark.parametrize(
     # @param over: CPU resource exceed threshold.
@@ -318,11 +319,12 @@ def test_log_analyze(capfd):
     assert raiseinfo.value.args[0] == 0
 
 def test_log_path_error(capfd):
+    _ERR_LOGFILE = "errlogfile"
     args = list()
     progname = "test__main__/disk/mode"
     args.append(progname)
     args.append("--log")
-    args.append("output")
+    args.append(_ERR_LOGFILE)
     with mock.patch("sys.argv",args):
         with pytest.raises(
             SystemExit

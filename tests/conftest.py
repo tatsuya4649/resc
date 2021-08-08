@@ -7,6 +7,7 @@ import re
 import pytest
 import subprocess
 from .docker_setup import RemoteHost
+from resc import *
 
 class _RemoteSingleton:
     def __new__(cls):
@@ -167,7 +168,8 @@ class _RegDir:
     ):
         for dire in reversed(self._makepaths):
             if os.path.isdir(dire) and \
-        len(os.listdir(dire)) == 0:
+                len(os.listdir(dire)) == 0:
+                print(dire)
                 os.rmdir(dire)
 
 @pytest.fixture(scope="function",autouse=False)
@@ -211,6 +213,74 @@ def register_noempty():
             if (prereg is not None and len(prereg) > 0):
                 with open(_REGFILE,"w") as f:
                     f.write(prereg)
+
+# pass of resc dir
+_RESCDIR = "test/rescs"
+_RESCDIR_FULL = os.path.join(
+    Resc._RESCDIR_DEFAULT,
+    _RESCDIR
+)
+# pass of resc log
+_OUTPUT = "test/log/output"
+_OUTPUT_FULL = os.path.join(
+    Resc._RESCSLOG_DEFAULT,
+    _OUTPUT
+)
+
+@pytest.fixture(scope="function", autouse=False)
+def register_undo():
+    with _RegDir(Resc._REGIPATH_DEFAULT):
+        prereg = None
+        if os.path.isfile(Resc._REGIPATH_DEFAULT):
+            with open(Resc._REGIPATH_DEFAULT, "r") as f:
+                prereg = f.read()
+        yield
+        if (prereg is None or len(prereg) == 0) and \
+            os.path.isfile(_REGFILE):
+            os.remove(_REGFILE)
+        else:
+            if (prereg is not None and len(prereg) > 0):
+                with open(_REGFILE,"w") as f:
+                    f.write(prereg)
+
+@pytest.fixture(scope="function", autouse=False)
+def resc_undo():
+    with _RegDir(_RESCDIR_FULL):
+        prefiles = None
+        if os.path.isdir(_RESCDIR_FULL):
+            prefiles = os.listdir(_RESCDIR_FULL)
+        yield
+        if prefiles is not None:
+            for path in os.listdir(_RESCDIR_FULL):
+                if path not in prefiles:
+                    os.remove(
+                        os.path.join(
+                            _RESCDIR_FULL,
+                            path
+                        )
+                    )
+    
+@pytest.fixture(scope="function", autouse=False)
+def crontab_undo():
+    process = _cronlist()
+    crontab_list = process.stdout.read()
+    yield
+    _crondelete()
+    _cronregister(crontab_list)
+
+@pytest.fixture(scope="function",autouse=False)
+def register_undos(
+    crontab_undo,
+    resc_undo,
+    register_undo
+):
+    yield
+
+@pytest.fixture(scope="function", autouse=False)
+def register_env():
+    os.environ[Resc._RESCDIR_ENV] = _RESCDIR
+    yield
+    os.environ.pop(Resc._RESCDIR_ENV, None)
 
 @pytest.fixture(scope="function",autouse=False)
 def same_cron_register():

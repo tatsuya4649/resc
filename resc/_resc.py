@@ -21,8 +21,19 @@ from jinja2 import Environment, FileSystemLoader
 class Resc:
     """
     """
-    _RESCPATH_ENV = "RESCPATH"
-    _RESCPATH_DEFAULT = "~/.resc/"
+    _RESCDIR_ENV = "RESCDIR"
+    _RESCDIR_DEFAULT = os.path.join(
+        os.path.expanduser("~"),
+        ".resc"
+     )
+    _RESCSLOG_DEFAULT = os.path.join(
+        os.path.expanduser("~"),
+        ".resc/log"
+     )
+    _REGIPATH_DEFAULT = os.path.join(
+            _RESCDIR_DEFAULT,
+            "register"
+    )
     _RESCOUTPUT_ENV = "RESCOUTPUT"
     _SERVER_SCRIPT = "server.sh"
 
@@ -249,7 +260,7 @@ class Resc:
         self._call_first = call_first \
             if isinstance(call_first, bool) else False
         if rescdir is not None and isinstance(rescdir, str):
-            os.environ[self._RESCPATH_ENV] = rescdir
+            os.environ[self._RESCDIR_ENV] = rescdir
         elif rescdir is not None and not isinstance(rescdir, str):
             raise RescTypeError("rescdir must be str type.")
 
@@ -258,27 +269,24 @@ class Resc:
         elif outputfile is not None and not isinstance(outputfile, str):
             raise RescTypeError("outputfile must be str type.")
 
-        if os.getenv(self._RESCPATH_ENV) is None:
-            os.environ[self._RESCPATH_ENV] = re.sub(
-                r'^~',
-                f'{os.path.expanduser("~")}',
-                self._RESCPATH_DEFAULT + "resc",
+        if os.getenv(self._RESCDIR_ENV) is None:
+            os.environ[self._RESCDIR_ENV] = os.path.join(
+                self._RESCDIR_DEFAULT,
+                "resc"
             )
         else:
             if rescdir is not None:
-                os.environ[self._RESCPATH_ENV] = re.sub(
-                    r'^~',
-                    f'{os.path.expanduser("~")}',
-                    self._resc_dir(rescdir),
+                os.environ[self._RESCDIR_ENV] = os.path.join(
+                    self._RESCDIR_DEFAULT,
+                    rescdir
                 )
             else:
-                os.environ[self._RESCPATH_ENV] = re.sub(
-                    r'^~',
-                    f'{os.path.expanduser("~")}',
-                    self._RESCPATH_DEFAULT + os.environ[self._RESCPATH_ENV]
+                os.environ[self._RESCDIR_ENV] = os.path.join(
+                    self._RESCDIR_DEFAULT,
+                    os.environ[self._RESCDIR_ENV]
                 )
-        os.environ[self._RESCPATH_ENV] = \
-            self._relative_to_absolute(os.environ[self._RESCPATH_ENV])
+        os.environ[self._RESCDIR_ENV] = \
+            self._relative_to_absolute(os.environ[self._RESCDIR_ENV])
         if os.getenv(self._RESCOUTPUT_ENV) is not None:
             os.environ[self._RESCOUTPUT_ENV] = \
                 self._relative_to_absolute(os.environ[self._RESCOUTPUT_ENV])
@@ -286,7 +294,11 @@ class Resc:
         if not isinstance(trigger, str):
             raise RescTypeError("trigger must be string type.")
         self._resclog = RescLog(
-            logfile=os.getenv(self._RESCOUTPUT_ENV),
+            logfile=None if os.getenv(self._RESCOUTPUT_ENV) is None else \
+                    os.path.join(
+                        self._RESCSLOG_DEFAULT,
+                        os.getenv(self._RESCOUTPUT_ENV)
+            ),
             format=format,
         )
         if self._resclog.logfile is not None:
@@ -317,7 +329,7 @@ class Resc:
                 self._resclog.func = func.__name__
                 if ip is not None:
                     self._resclog.remo = ip
-                filename = self._sourcefile(
+                compiled_filename = self._sourcefile(
                     file=call_file,
                     func=call_code,
                     funcname=func.__name__,
@@ -326,27 +338,36 @@ class Resc:
                 )
 
                 # Register crontable from trigger
-                self._crons_get(trigger, filename)
+                self._crons_get(trigger, compiled_filename)
                 self._crons_register()
 
                 if self._call_first:
                     func(*args, **kwargs)
+                
+                return {
+                    "compiled_file": compiled_filename,
+                }
+
             return _wrapper
         return _register
 
-    def _resc_dir(self, dire):
-        return self._RESCPATH_DEFAULT + re.sub(r'^/', '', str(dire))
+    def _directory_make(self, dirpath):
+        os.makedirs(dirpath,exist_ok=True)
 
     def _sourcefile(self, file, func, funcname, func_args, ssh=None):
-        resc_dir = os.getenv(self._RESCPATH_ENV)
+        resc_dir = os.getenv(self._RESCDIR_ENV)
         i = 0
-        if not os.path.isdir(f"{resc_dir}"):
-            os.makedirs(f"{resc_dir}")
+        self._directory_make(resc_dir)
         while True:
-            resc_path = f"{resc_dir}"
-            resc_key = f"{resc_path}/resc{i}.py"
-            hash = hashlib.md5(resc_key.encode('utf-8')).hexdigest()
-            filename = f"{resc_path}/resc{hash}.py"
+            resc_key = os.path.join(
+                resc_dir,
+                f"resc{i}.py"
+            )
+            hash_value = hashlib.md5(resc_key.encode('utf-8')).hexdigest()
+            filename = os.path.join(
+                resc_dir,
+                f"resc{hash_value}.py"
+            )
             if not os.path.exists(filename):
                 return self._source_write(
                     filename,
@@ -393,7 +414,7 @@ class Resc:
                 re.sub(
                     r'^~',
                     f'{os.path.expanduser("~")}',
-                    self._RESCPATH_DEFAULT + "register",
+                    self._RESCDIR_DEFAULT + "register",
                 )
             )
             if self._call_first:
@@ -521,7 +542,7 @@ class Resc:
               % (re.sub(
                   r'^~',
                   f'{os.path.expanduser("~")}',
-                  self._RESCPATH_DEFAULT + "register")
+                  self._RESCDIR_DEFAULT + "register")
                  )
               )
         return filename
