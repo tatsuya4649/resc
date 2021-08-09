@@ -155,7 +155,7 @@ def test_path_stderr():
         with pytest.raises(
             CronCommandError
         ) as raiseinfo:
-            cron._path
+            cron._path()
 
 def test_path_stdout():
     cron = Cron(
@@ -171,7 +171,7 @@ def test_path_stdout():
         with pytest.raises(
             CronCommandError
         ) as raiseinfo:
-            cron._path
+            cron._path()
 
 def test_delete_cronlists_zero(cron_noempty):
     cron = Cron(

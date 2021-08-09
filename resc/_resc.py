@@ -3,6 +3,7 @@ from .memory import MemoryDetect
 from .disk import DiskDetect
 from .cron import Cron, CronCommandError
 from .resclog.header import RescLogSFlag
+from .object import RescObject
 from .ssh import SSH
 from .rescerr import RescTypeError, RescKeyError, RescCronError, \
     RescValueError, RescServerError
@@ -30,9 +31,13 @@ class Resc:
         os.path.expanduser("~"),
         ".resc/log"
      )
-    _REGIPATH_DEFAULT = os.path.join(
+    _REGIPATH = os.path.join(
             _RESCDIR_DEFAULT,
             "register"
+    )
+    _RESCJSONPATH = os.path.join(
+            _RESCDIR_DEFAULT,
+            "resc.ndjson"
     )
     _RESCOUTPUT_ENV = "RESCOUTPUT"
     _SERVER_SCRIPT = "server.sh"
@@ -338,15 +343,20 @@ class Resc:
                 )
 
                 # Register crontable from trigger
-                self._crons_get(trigger, compiled_filename)
+                totalline = self._crons_get(trigger, compiled_filename)
                 self._crons_register()
 
                 if self._call_first:
                     func(*args, **kwargs)
                 
-                return {
-                    "compiled_file": compiled_filename,
-                }
+                return RescObject(
+                    dump_filepath=self._RESCJSONPATH,
+                    compiled_file=compiled_filename,
+                    crontab_line=totalline,
+                    register_file=self._REGIPATH,
+                    function=func,
+                    log_file=None,
+                )
 
             return _wrapper
         return _register
@@ -409,13 +419,9 @@ class Resc:
                 f'else command python3 {triggerscript} {output}; fi'
             )
             cron = Cron(
-                totalline,
-                trigger,
-                re.sub(
-                    r'^~',
-                    f'{os.path.expanduser("~")}',
-                    self._RESCDIR_DEFAULT + "register",
-                )
+                command=totalline,
+                interval_str=trigger,
+                register_file=self._REGIPATH
             )
             if self._call_first:
                 with open(output_path, "wb") as fp:
@@ -426,6 +432,7 @@ class Resc:
                         shell=True,
                     )
             self._crons.append(cron)
+            return totalline
         else:
             print(
                 (
@@ -539,11 +546,7 @@ class Resc:
         if self._resclog.log:
             print("Output of log:\t %s" % (self._resclog.logfile))
         print("Output of register:\t %s"
-              % (re.sub(
-                  r'^~',
-                  f'{os.path.expanduser("~")}',
-                  self._RESCDIR_DEFAULT + "register")
-                 )
+              % (self._REGIPATH)
               )
         return filename
 
