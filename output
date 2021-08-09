@@ -1,93 +1,69 @@
-  File "/home/tatsuya/.resc/rescs/resc3587de377598d448285e28ec694d91ec.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7e100>
+  File "/home/tatsuya/.resc/rescs/resc47086dcfe98b5f68eb20ff3bd5d1623e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ada9d0>
                 ^
 SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/resc05e14f5741f753940dae19996736503a.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4322dc0>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc31293f2f263cd68faa40cdf63da3e3b3.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d81d30>
-                ^
-SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/rescd67d0fbdfb717a580e68e58b6028efa5.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7fd5e5a1f3a0>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/rescd1914d2879938658be770dd39dc61b85.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d29d60>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/rescbcad23b8d46304f4d5343d71b49b845c.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d3dca0>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc684093856e0526d68e3a2762c10e0172.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc5af0>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc572ca137d0eceb345233e8e2667eaf97.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c790>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc05bf7b1ba09825a4ae7d9284c71c6b36.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e431b670>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc852c9748a73d593c78cd4c04cd9ef270.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69e50>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc3587de377598d448285e28ec694d91ec.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7e100>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc4827afe291a18bdb0da5ffe75d8dba63.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e43249d0>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resca932c9208aa6bfbb1a0d01bac1075208.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e42ca310>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/rescda4064ce9a199ff4f40477043ae559d3.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc53d0>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resce631245d73fc7717d6cfc3df8106eeaa.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c9d0>
+  File "/home/tatsuya/.resc/rescs/resc164ac8c5d9d0123bae3e7eda566ad583.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a98ca0>
                 ^
 SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/rescc8f75fa8cc857441470cc973f72d173a.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7bc10>
                 ^
 SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescbcad23b8d46304f4d5343d71b49b845c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d3dca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescda4064ce9a199ff4f40477043ae559d3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc53d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc3587de377598d448285e28ec694d91ec.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7e100>
+                ^
+SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/rescd4503d40bcca56076f15d3a53b8b74cb.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c89130>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc7fab480835072019214a0a781771375e.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c8c910>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resce92139be4650a1ffcaf2dc93d25099e2.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69550>
+  File "/home/tatsuya/.resc/rescs/resc852c9748a73d593c78cd4c04cd9ef270.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69e50>
                 ^
 SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/resc952cd5d4cc748c3a98c5212cfb9b8642.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cd8160>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc33dfe47ded2be7555c206b8c35287a0d.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c63e9880>
+  File "/home/tatsuya/.resc/rescs/resc05bf7b1ba09825a4ae7d9284c71c6b36.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e431b670>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resca074fe38918f35019013d00702eaf4a8.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cdbaf0>
+  File "/home/tatsuya/.resc/rescs/resc4549e75d3d8b859e8abbfbf35ee66b14.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4aa99d0>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resce631245d73fc7717d6cfc3df8106eeaa.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c9d0>
+  File "/home/tatsuya/.resc/rescs/resc2bfe62ebfc30589bba7db6b6c9d5bbf1.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4366400>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescfeb86b8994613517774f77115b28b32c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4370be0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc628740d174fbb5cc383c3205cb331052.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad2730>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc47086dcfe98b5f68eb20ff3bd5d1623e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ada9d0>
                 ^
 SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/rescf3002e70a8f79d25b8366914cf2370fb.py", line 98
@@ -98,56 +74,240 @@ SyntaxError: invalid syntax
     resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c8c910>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/rescd67d0fbdfb717a580e68e58b6028efa5.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e5a1f3a0>
+  File "/home/tatsuya/.resc/rescs/resc6480aeabaf144f1b7f89836fbbe66e67.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b7700>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc1144b9d4242f1a41742daac546bf5a80.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4acfbe0>
                 ^
 SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/resccf16d97610f39f910beb3706fff7ca38.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dee0a0>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/rescd4503d40bcca56076f15d3a53b8b74cb.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c89130>
+  File "/home/tatsuya/.resc/rescs/resce92139be4650a1ffcaf2dc93d25099e2.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69550>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc3587de377598d448285e28ec694d91ec.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7e100>
+  File "/home/tatsuya/.resc/rescs/resceb8430a9cf1e0290b9d612ec2fba28c6.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b5370>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc852c9748a73d593c78cd4c04cd9ef270.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69e50>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resca074fe38918f35019013d00702eaf4a8.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cdbaf0>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc572ca137d0eceb345233e8e2667eaf97.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c790>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/rescd1914d2879938658be770dd39dc61b85.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d29d60>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/rescfeb86b8994613517774f77115b28b32c.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4370be0>
-                ^
-SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc31293f2f263cd68faa40cdf63da3e3b3.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d81d30>
+  File "/home/tatsuya/.resc/rescs/resc95578633cb7415c2a8ba22883bc4950e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a55670>
                 ^
 SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/resc4827afe291a18bdb0da5ffe75d8dba63.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7fd5e43249d0>
                 ^
 SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca932c9208aa6bfbb1a0d01bac1075208.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e42ca310>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc572ca137d0eceb345233e8e2667eaf97.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c790>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc92e0ef957cdd5a7b89c68a7ddf2838b7.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c434b4f0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc31293f2f263cd68faa40cdf63da3e3b3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d81d30>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce631245d73fc7717d6cfc3df8106eeaa.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c9d0>
+                ^
+SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/resc684093856e0526d68e3a2762c10e0172.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc5af0>
                 ^
 SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc33dfe47ded2be7555c206b8c35287a0d.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c63e9880>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd1914d2879938658be770dd39dc61b85.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d29d60>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca074fe38918f35019013d00702eaf4a8.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cdbaf0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc13b0560eb892cf9c521638ed9df2f96b.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40e0160>
+                ^
+SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/resc952cd5d4cc748c3a98c5212cfb9b8642.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cd8160>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc7fab480835072019214a0a781771375e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c8c910>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd1914d2879938658be770dd39dc61b85.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d29d60>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescda4064ce9a199ff4f40477043ae559d3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc53d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc164ac8c5d9d0123bae3e7eda566ad583.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a98ca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc47086dcfe98b5f68eb20ff3bd5d1623e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ada9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf0fbbd47964b4ece913887955affece4.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4107bb0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc31293f2f263cd68faa40cdf63da3e3b3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d81d30>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc684093856e0526d68e3a2762c10e0172.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc5af0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc572ca137d0eceb345233e8e2667eaf97.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c790>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc33dfe47ded2be7555c206b8c35287a0d.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c63e9880>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca932c9208aa6bfbb1a0d01bac1075208.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e42ca310>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resceb8430a9cf1e0290b9d612ec2fba28c6.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b5370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc05e14f5741f753940dae19996736503a.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4322dc0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc1144b9d4242f1a41742daac546bf5a80.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4acfbe0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescbcad23b8d46304f4d5343d71b49b845c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d3dca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4549e75d3d8b859e8abbfbf35ee66b14.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4aa99d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc628740d174fbb5cc383c3205cb331052.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad2730>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescc8f75fa8cc857441470cc973f72d173a.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7bc10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc95578633cb7415c2a8ba22883bc4950e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a55670>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc6480aeabaf144f1b7f89836fbbe66e67.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b7700>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4827afe291a18bdb0da5ffe75d8dba63.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e43249d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf3002e70a8f79d25b8366914cf2370fb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d63c10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc2bfe62ebfc30589bba7db6b6c9d5bbf1.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4366400>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce631245d73fc7717d6cfc3df8106eeaa.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc05bf7b1ba09825a4ae7d9284c71c6b36.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e431b670>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca074fe38918f35019013d00702eaf4a8.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cdbaf0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc852c9748a73d593c78cd4c04cd9ef270.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69e50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc92e0ef957cdd5a7b89c68a7ddf2838b7.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c434b4f0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce92139be4650a1ffcaf2dc93d25099e2.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69550>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd4503d40bcca56076f15d3a53b8b74cb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c89130>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc703d0f23dcdb47c40ea51b3ef8dabcfd.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cab50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc412e5c81b7429af16ec925cc579d20ac.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad26a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd67d0fbdfb717a580e68e58b6028efa5.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e5a1f3a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc14072c34798baca44d50d20ddc6ebeb0.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cf370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc3587de377598d448285e28ec694d91ec.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7e100>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resccf16d97610f39f910beb3706fff7ca38.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dee0a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescfeb86b8994613517774f77115b28b32c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4370be0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc412e5c81b7429af16ec925cc579d20ac.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad26a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc2bfe62ebfc30589bba7db6b6c9d5bbf1.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4366400>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf0fbbd47964b4ece913887955affece4.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4107bb0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc05e14f5741f753940dae19996736503a.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4322dc0>
                 ^
 SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/resc05bf7b1ba09825a4ae7d9284c71c6b36.py", line 98
@@ -158,24 +318,732 @@ SyntaxError: invalid syntax
     resclog.ssh=<resc.ssh.SSH object at 0x7f25c63e9880>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resce92139be4650a1ffcaf2dc93d25099e2.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69550>
+  File "/home/tatsuya/.resc/rescs/resc92e0ef957cdd5a7b89c68a7ddf2838b7.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c434b4f0>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc05e14f5741f753940dae19996736503a.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4322dc0>
+  File "/home/tatsuya/.resc/rescs/resc13b0560eb892cf9c521638ed9df2f96b.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40e0160>
                 ^
 SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/resca932c9208aa6bfbb1a0d01bac1075208.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7fd5e42ca310>
                 ^
 SyntaxError: invalid syntax
-  File "/home/tatsuya/.resc/rescs/resc2bfe62ebfc30589bba7db6b6c9d5bbf1.py", line 98
-    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4366400>
+  File "/home/tatsuya/.resc/rescs/rescd67d0fbdfb717a580e68e58b6028efa5.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e5a1f3a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc1144b9d4242f1a41742daac546bf5a80.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4acfbe0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc95578633cb7415c2a8ba22883bc4950e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a55670>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc703d0f23dcdb47c40ea51b3ef8dabcfd.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cab50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce92139be4650a1ffcaf2dc93d25099e2.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69550>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescfeb86b8994613517774f77115b28b32c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4370be0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce631245d73fc7717d6cfc3df8106eeaa.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resceb8430a9cf1e0290b9d612ec2fba28c6.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b5370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescbcad23b8d46304f4d5343d71b49b845c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d3dca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc3587de377598d448285e28ec694d91ec.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7e100>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc952cd5d4cc748c3a98c5212cfb9b8642.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cd8160>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc31293f2f263cd68faa40cdf63da3e3b3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d81d30>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd1914d2879938658be770dd39dc61b85.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d29d60>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc684093856e0526d68e3a2762c10e0172.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc5af0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd4503d40bcca56076f15d3a53b8b74cb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c89130>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca074fe38918f35019013d00702eaf4a8.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cdbaf0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc572ca137d0eceb345233e8e2667eaf97.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c790>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescda4064ce9a199ff4f40477043ae559d3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc53d0>
                 ^
 SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/rescc8f75fa8cc857441470cc973f72d173a.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7bc10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc47086dcfe98b5f68eb20ff3bd5d1623e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ada9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc852c9748a73d593c78cd4c04cd9ef270.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69e50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc628740d174fbb5cc383c3205cb331052.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad2730>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc7fab480835072019214a0a781771375e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c8c910>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc14072c34798baca44d50d20ddc6ebeb0.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cf370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc6480aeabaf144f1b7f89836fbbe66e67.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b7700>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf3002e70a8f79d25b8366914cf2370fb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d63c10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc164ac8c5d9d0123bae3e7eda566ad583.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a98ca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resccf16d97610f39f910beb3706fff7ca38.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dee0a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4549e75d3d8b859e8abbfbf35ee66b14.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4aa99d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4827afe291a18bdb0da5ffe75d8dba63.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e43249d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resceb8430a9cf1e0290b9d612ec2fba28c6.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b5370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc05bf7b1ba09825a4ae7d9284c71c6b36.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e431b670>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc31293f2f263cd68faa40cdf63da3e3b3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d81d30>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc95578633cb7415c2a8ba22883bc4950e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a55670>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resccf16d97610f39f910beb3706fff7ca38.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dee0a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4549e75d3d8b859e8abbfbf35ee66b14.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4aa99d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca932c9208aa6bfbb1a0d01bac1075208.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e42ca310>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc852c9748a73d593c78cd4c04cd9ef270.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69e50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc412e5c81b7429af16ec925cc579d20ac.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad26a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4827afe291a18bdb0da5ffe75d8dba63.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e43249d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescbcad23b8d46304f4d5343d71b49b845c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d3dca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc1144b9d4242f1a41742daac546bf5a80.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4acfbe0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc13b0560eb892cf9c521638ed9df2f96b.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40e0160>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescc8f75fa8cc857441470cc973f72d173a.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7bc10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc684093856e0526d68e3a2762c10e0172.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc5af0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc33dfe47ded2be7555c206b8c35287a0d.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c63e9880>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd1914d2879938658be770dd39dc61b85.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d29d60>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc7fab480835072019214a0a781771375e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c8c910>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc92e0ef957cdd5a7b89c68a7ddf2838b7.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c434b4f0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce92139be4650a1ffcaf2dc93d25099e2.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69550>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce631245d73fc7717d6cfc3df8106eeaa.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc05e14f5741f753940dae19996736503a.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4322dc0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc14072c34798baca44d50d20ddc6ebeb0.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cf370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc164ac8c5d9d0123bae3e7eda566ad583.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a98ca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescfeb86b8994613517774f77115b28b32c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4370be0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc703d0f23dcdb47c40ea51b3ef8dabcfd.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cab50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc952cd5d4cc748c3a98c5212cfb9b8642.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cd8160>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf3002e70a8f79d25b8366914cf2370fb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d63c10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc3587de377598d448285e28ec694d91ec.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7e100>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc572ca137d0eceb345233e8e2667eaf97.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c790>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd4503d40bcca56076f15d3a53b8b74cb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c89130>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca074fe38918f35019013d00702eaf4a8.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cdbaf0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescda4064ce9a199ff4f40477043ae559d3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc53d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc6480aeabaf144f1b7f89836fbbe66e67.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b7700>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf0fbbd47964b4ece913887955affece4.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4107bb0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd67d0fbdfb717a580e68e58b6028efa5.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e5a1f3a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc628740d174fbb5cc383c3205cb331052.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad2730>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc47086dcfe98b5f68eb20ff3bd5d1623e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ada9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc2bfe62ebfc30589bba7db6b6c9d5bbf1.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4366400>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc952cd5d4cc748c3a98c5212cfb9b8642.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cd8160>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc628740d174fbb5cc383c3205cb331052.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad2730>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc47086dcfe98b5f68eb20ff3bd5d1623e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ada9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc95578633cb7415c2a8ba22883bc4950e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a55670>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd1914d2879938658be770dd39dc61b85.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d29d60>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc703d0f23dcdb47c40ea51b3ef8dabcfd.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cab50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce631245d73fc7717d6cfc3df8106eeaa.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf0fbbd47964b4ece913887955affece4.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4107bb0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc3587de377598d448285e28ec694d91ec.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7e100>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescfeb86b8994613517774f77115b28b32c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4370be0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca932c9208aa6bfbb1a0d01bac1075208.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e42ca310>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc31293f2f263cd68faa40cdf63da3e3b3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d81d30>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc92e0ef957cdd5a7b89c68a7ddf2838b7.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c434b4f0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc05bf7b1ba09825a4ae7d9284c71c6b36.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e431b670>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc2bfe62ebfc30589bba7db6b6c9d5bbf1.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4366400>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc412e5c81b7429af16ec925cc579d20ac.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad26a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc572ca137d0eceb345233e8e2667eaf97.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c790>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc684093856e0526d68e3a2762c10e0172.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc5af0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc852c9748a73d593c78cd4c04cd9ef270.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69e50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescbcad23b8d46304f4d5343d71b49b845c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d3dca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf3002e70a8f79d25b8366914cf2370fb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d63c10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca074fe38918f35019013d00702eaf4a8.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cdbaf0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc14072c34798baca44d50d20ddc6ebeb0.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cf370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc7fab480835072019214a0a781771375e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c8c910>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc33dfe47ded2be7555c206b8c35287a0d.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c63e9880>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd4503d40bcca56076f15d3a53b8b74cb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c89130>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc6480aeabaf144f1b7f89836fbbe66e67.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b7700>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd67d0fbdfb717a580e68e58b6028efa5.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e5a1f3a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc13b0560eb892cf9c521638ed9df2f96b.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40e0160>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc05e14f5741f753940dae19996736503a.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4322dc0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescc8f75fa8cc857441470cc973f72d173a.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7bc10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4827afe291a18bdb0da5ffe75d8dba63.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e43249d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescda4064ce9a199ff4f40477043ae559d3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc53d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc164ac8c5d9d0123bae3e7eda566ad583.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a98ca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resceb8430a9cf1e0290b9d612ec2fba28c6.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b5370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc1144b9d4242f1a41742daac546bf5a80.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4acfbe0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4549e75d3d8b859e8abbfbf35ee66b14.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4aa99d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resccf16d97610f39f910beb3706fff7ca38.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dee0a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce92139be4650a1ffcaf2dc93d25099e2.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69550>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf3002e70a8f79d25b8366914cf2370fb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d63c10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd4503d40bcca56076f15d3a53b8b74cb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c89130>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd1914d2879938658be770dd39dc61b85.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d29d60>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc6480aeabaf144f1b7f89836fbbe66e67.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b7700>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescbcad23b8d46304f4d5343d71b49b845c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d3dca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce92139be4650a1ffcaf2dc93d25099e2.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69550>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc2bfe62ebfc30589bba7db6b6c9d5bbf1.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4366400>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescda4064ce9a199ff4f40477043ae559d3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc53d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc05e14f5741f753940dae19996736503a.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4322dc0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca074fe38918f35019013d00702eaf4a8.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cdbaf0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc3587de377598d448285e28ec694d91ec.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7e100>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescfeb86b8994613517774f77115b28b32c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4370be0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc13b0560eb892cf9c521638ed9df2f96b.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40e0160>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce631245d73fc7717d6cfc3df8106eeaa.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc572ca137d0eceb345233e8e2667eaf97.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c790>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescc8f75fa8cc857441470cc973f72d173a.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7bc10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc92e0ef957cdd5a7b89c68a7ddf2838b7.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c434b4f0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc95578633cb7415c2a8ba22883bc4950e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a55670>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc684093856e0526d68e3a2762c10e0172.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc5af0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc7fab480835072019214a0a781771375e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c8c910>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc47086dcfe98b5f68eb20ff3bd5d1623e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ada9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc412e5c81b7429af16ec925cc579d20ac.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad26a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc14072c34798baca44d50d20ddc6ebeb0.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cf370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc05bf7b1ba09825a4ae7d9284c71c6b36.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e431b670>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc952cd5d4cc748c3a98c5212cfb9b8642.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cd8160>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resccf16d97610f39f910beb3706fff7ca38.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dee0a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4827afe291a18bdb0da5ffe75d8dba63.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e43249d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf0fbbd47964b4ece913887955affece4.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4107bb0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc852c9748a73d593c78cd4c04cd9ef270.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69e50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc628740d174fbb5cc383c3205cb331052.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad2730>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4549e75d3d8b859e8abbfbf35ee66b14.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4aa99d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc164ac8c5d9d0123bae3e7eda566ad583.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a98ca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resceb8430a9cf1e0290b9d612ec2fba28c6.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b5370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc31293f2f263cd68faa40cdf63da3e3b3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d81d30>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc1144b9d4242f1a41742daac546bf5a80.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4acfbe0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc33dfe47ded2be7555c206b8c35287a0d.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c63e9880>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca932c9208aa6bfbb1a0d01bac1075208.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e42ca310>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc703d0f23dcdb47c40ea51b3ef8dabcfd.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cab50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd67d0fbdfb717a580e68e58b6028efa5.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e5a1f3a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc703d0f23dcdb47c40ea51b3ef8dabcfd.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cab50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc14072c34798baca44d50d20ddc6ebeb0.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40cf370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc852c9748a73d593c78cd4c04cd9ef270.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69e50>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd1914d2879938658be770dd39dc61b85.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d29d60>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce92139be4650a1ffcaf2dc93d25099e2.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d69550>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resccf16d97610f39f910beb3706fff7ca38.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dee0a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd4503d40bcca56076f15d3a53b8b74cb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c89130>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc05bf7b1ba09825a4ae7d9284c71c6b36.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e431b670>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc3587de377598d448285e28ec694d91ec.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7e100>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4549e75d3d8b859e8abbfbf35ee66b14.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4aa99d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc7fab480835072019214a0a781771375e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4c8c910>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc6480aeabaf144f1b7f89836fbbe66e67.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b7700>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc164ac8c5d9d0123bae3e7eda566ad583.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a98ca0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescc8f75fa8cc857441470cc973f72d173a.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d7bc10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescd67d0fbdfb717a580e68e58b6028efa5.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e5a1f3a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resce631245d73fc7717d6cfc3df8106eeaa.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc95578633cb7415c2a8ba22883bc4950e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4a55670>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc4827afe291a18bdb0da5ffe75d8dba63.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e43249d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc2bfe62ebfc30589bba7db6b6c9d5bbf1.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4366400>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc47086dcfe98b5f68eb20ff3bd5d1623e.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ada9d0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc412e5c81b7429af16ec925cc579d20ac.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad26a0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resceb8430a9cf1e0290b9d612ec2fba28c6.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40b5370>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf0fbbd47964b4ece913887955affece4.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4107bb0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc952cd5d4cc748c3a98c5212cfb9b8642.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cd8160>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca074fe38918f35019013d00702eaf4a8.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4cdbaf0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc33dfe47ded2be7555c206b8c35287a0d.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c63e9880>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc572ca137d0eceb345233e8e2667eaf97.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d1c790>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc13b0560eb892cf9c521638ed9df2f96b.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee40e0160>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resca932c9208aa6bfbb1a0d01bac1075208.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e42ca310>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc05e14f5741f753940dae19996736503a.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4322dc0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescf3002e70a8f79d25b8366914cf2370fb.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d63c10>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc684093856e0526d68e3a2762c10e0172.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7dc5af0>
                 ^
 SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/rescda4064ce9a199ff4f40477043ae559d3.py", line 98
@@ -186,7 +1054,23 @@ SyntaxError: invalid syntax
     resclog.ssh=<resc.ssh.SSH object at 0x7fd5e4d3dca0>
                 ^
 SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/rescfeb86b8994613517774f77115b28b32c.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c4370be0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc628740d174fbb5cc383c3205cb331052.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4ad2730>
+                ^
+SyntaxError: invalid syntax
   File "/home/tatsuya/.resc/rescs/resc92e0ef957cdd5a7b89c68a7ddf2838b7.py", line 98
     resclog.ssh=<resc.ssh.SSH object at 0x7f25c434b4f0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc1144b9d4242f1a41742daac546bf5a80.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f7ee4acfbe0>
+                ^
+SyntaxError: invalid syntax
+  File "/home/tatsuya/.resc/rescs/resc31293f2f263cd68faa40cdf63da3e3b3.py", line 98
+    resclog.ssh=<resc.ssh.SSH object at 0x7f25c7d81d30>
                 ^
 SyntaxError: invalid syntax

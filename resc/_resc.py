@@ -3,6 +3,7 @@ from .memory import MemoryDetect
 from .disk import DiskDetect
 from .cron import Cron, CronCommandError
 from .resclog.header import RescLogSFlag
+from .object import RescObject
 from .ssh import SSH
 from .rescerr import RescTypeError, RescKeyError, RescCronError, \
     RescValueError, RescServerError
@@ -338,7 +339,7 @@ class Resc:
                 )
 
                 # Register crontable from trigger
-                self._crons_get(trigger, compiled_filename)
+                totalline = self._crons_get(trigger, compiled_filename)
                 self._crons_register()
 
                 if self._call_first:
@@ -346,6 +347,7 @@ class Resc:
                 
                 return {
                     "compiled_file": compiled_filename,
+                    "crontab_line": totalline,
                 }
 
             return _wrapper
@@ -426,6 +428,7 @@ class Resc:
                         shell=True,
                     )
             self._crons.append(cron)
+            return totalline
         else:
             print(
                 (
