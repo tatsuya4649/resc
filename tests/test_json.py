@@ -99,3 +99,17 @@ def test_search_json_notfound(json):
         dump_filepath=_DUMP_FILEPATH,
     )
     assert result is None
+
+def test_iter__(json):
+    result = iter(json)
+    lists = [x for x in result]
+    assert result is not None
+    assert len(lists) == 1
+
+    for part in lists:
+        print(part)
+
+def test_jdelete(json):
+    assert json.length == 1
+    json.jdelete(json.hash)
+    assert json.length == 0

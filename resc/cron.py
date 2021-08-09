@@ -47,6 +47,15 @@ class Cron:
 
     _CRON_WHICH = "command which crontab"
 
+    def __new__(
+        cls,
+        command,
+        interval_str,
+        register_file=None,
+    ):
+        return super().__new__(
+            cls)
+
     def __init__(
         self,
         command,
@@ -74,7 +83,6 @@ class Cron:
             raise CronCommandError(
                 "not found crontab command. you must have crontab command."
             )
-        self._crontab_path = f"command {self._path}"
 
     @property
     def interval_str(self):
@@ -84,54 +92,11 @@ class Cron:
     def totalline(self):
         return self._totalline
 
-#    def _str_to_lists(self):
-#        self._intervals = list()
-#        template = self._CRON_RE
-#        results = re.finditer(template, self._interval_str)
-#        results = [i for i in results]
-#        if len(results) != 5:
-#            raise CronRegularExpressionError("invalid cron string")
-#        for res in results:
-#            # */10
-#            deleteblank = re.match(r"^\S+", res.group())
-#            if deleteblank is None:
-#                raise CronRegularExpressionError(
-#                    "invalid cron string"
-#                )
-#            # *
-#            before_slash = deleteblank.group().split('/')[0]
-#
-#            index = results.index(res)
-#            if len(before_slash.split('-')) > 1:
-#                self._intervals.append({
-#                    "interval": -1,
-#                    "scale": CronMode.SCHEDULE,
-#                    "mode": list(CronScale)[index],
-#                    "from": before_slash.split('-')[0],
-#                    "to": before_slash.split('-')[1],
-#                })
-#            else:
-#                self._intervals.append({
-#                    "interval": int(before_slash)
-#                    if before_slash != '*' else "*",
-#                    "scale": CronMode.SCHEDULE,
-#                    "mode": list(CronScale)[index],
-#                })
-#
-#            # 10
-#            if len(deleteblank.group().split('/')) > 1:
-#                after_slash = deleteblank.group().split('/')[1]
-#                self._intervals.append({
-#                    "interval": int(after_slash),
-#                    "scale": CronMode.INTERVAL,
-#                    "mode": list(CronScale)[index],
-#                })
-
     def _quote_replace(self):
         return self._command.replace('"', '\\"')
 
-    @property
-    def _list(self):
+    @staticmethod
+    def _listcommand():
         result = subprocess.Popen(
             "command crontab -l",
             encoding="utf-8",
@@ -146,6 +111,14 @@ class Cron:
             return None
         else:
             return stdout
+
+    @property
+    def _list(self):
+        return self._listcommand()
+
+    @staticmethod
+    def cronlist():
+        return Cron._listcommand()
 
     def _register_append(self):
         if self._register_file is not None:
@@ -166,7 +139,7 @@ class Cron:
                 cronlists.append(self._totalline)
             input = "".join(list(set(cronlists)))
         res = subprocess.run(
-            self._crontab_path,
+            self._crontab_path(),
             input=input,
             encoding='utf-8',
             shell=True,
@@ -202,14 +175,49 @@ class Cron:
                 cronlists.remove(self._totalline)
             if len(cronlists) == 0:
                 res = subprocess.run(
-                    f"{self._crontab_path} -r",
+                    f"{self._crontab_path()} -r",
                     shell=True
                 )
                 return res.returncode
             else:
                 input = "".join(list(set(cronlists)))
                 res = subprocess.run(
-                    self._crontab_path,
+                    self._crontab_path(),
+                    input=input,
+                    encoding='utf-8',
+                    shell=True
+                )
+                return res.returncode
+    
+    @staticmethod
+    def cronlist():
+        if Cron._listcommand() is None:
+            return
+        else:
+            iters = re.finditer(r'.*\n', Cron._listcommand())
+            cronlists = [x.group() for x in iters]
+            # delete duplication
+            cronlists = list(set(cronlists))
+            return cronlists
+
+    @staticmethod
+    def crondelete(totalline):
+        crons = Cron.cronlist()
+        if crons is None:
+            return
+        else:
+            if totalline in crons:
+                crons.remove(totalline)
+            if len(crons) == 0:
+                res = subprocess.run(
+                    f"{Cron._crontab_path()} -r",
+                    shell=True
+                )
+                return res.returncode
+            else:
+                input = "".join(list(set(crons)))
+                res = subprocess.run(
+                    Cron._crontab_path(),
                     input=input,
                     encoding='utf-8',
                     shell=True
@@ -229,10 +237,10 @@ class Cron:
         else:
             return False
 
-    @property
-    def _path(self):
+    @staticmethod
+    def _path():
         result = subprocess.Popen(
-            self._CRON_WHICH,
+            Cron._CRON_WHICH,
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -250,3 +258,7 @@ class Cron:
         delete_empty = re.sub(r'(\n|\s)+$', '', path)
 
         return delete_empty
+
+    @staticmethod
+    def _crontab_path():
+        return f"command {Cron._path()}"

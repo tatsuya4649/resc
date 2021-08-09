@@ -4,6 +4,8 @@ import tempfile
 import importlib
 import inspect
 from .json import RescJSON
+from .cron import Cron
+from .compile import RescCompile
 
 
 class RescObjectTypeError(TypeError):
@@ -22,30 +24,51 @@ class RescObjectAttributeError(ImportError):
     pass
 
 
-class RescObject:
+class RescObject(RescJSON):
     def __new__(
         cls,
-        jresc,
+        dump_filepath,
+        compiled_file,
+        crontab_line,
+        register_file,
+        function,
+        log_file=None,
     ):
         if not hasattr(cls, "_hashmodule"):
             cls._hashmodule = dict()
-        if not isinstance(jresc, RescJSON):
-            raise RescObjectTypeError(
-                "jresc must be RescJSON type."
-            )
-        self = super().__new__(cls)
-        if not hasattr(jresc, "hash"):
+        self = super().__new__(
+            cls,
+            dump_filepath=dump_filepath,
+            compiled_file=compiled_file,
+            crontab_line=crontab_line,
+            register_file=register_file,
+            function=function,
+            log_file=log_file,
+        )
+        if not hasattr(self, "hash"):
             raise RescObjectKeyError(
                 "jresc must have hash key."
             )
-        self._hash = jresc.hash
         return self
 
     def __init__(
         self,
-        jresc,
+        dump_filepath,
+        compiled_file,
+        crontab_line,
+        register_file,
+        function,
+        log_file=None,
     ):
-        self._jresc = jresc
+        super().__init__(
+            dump_filepath,
+            compiled_file,
+            crontab_line,
+            register_file,
+            function,
+            log_file=None,
+        )
+        self.import_module()
 
     def __enter__(
         self
@@ -69,10 +92,11 @@ class RescObject:
             delete=False,
         )
         self._tempfile_name = self._tempfp.name
-        self._tempfp.write(source.encode("utf-8"))
+        compiled_code = RescCompile.compile(source)
+        self._tempfp.write(compiled_code.encode("utf-8"))
         self._tempfp.seek(0)
-        RescObject._hashmodule[self._jresc.hash] = dict()
-        RescObject._hashmodule[self._jresc.hash]["module_path"] = \
+        RescObject._hashmodule[self.hash] = dict()
+        RescObject._hashmodule[self.hash]["module_path"] = \
             self._tempfile_name
 
     @property
@@ -83,7 +107,10 @@ class RescObject:
         return self._call
 
     def import_module(self):
-        self._create_module(self._jresc.func_source)
+        if hasattr(self, "_tempfp") and \
+                hasattr(self, "_call"):
+                return
+        self._create_module(self.func_source)
         self._syspath_append()
         __module_name = os.path.basename(
             self._tempfile_name
@@ -98,7 +125,7 @@ class RescObject:
         except ImportError as e:
             raise RescObjectImportError(e)
         try:
-            __func = getattr(__module, self._jresc.func_name)
+            __func = getattr(__module, self.func_name)
             if not callable(__func):
                 raise RescObjectTypeError(
                     "__func must be function type."
@@ -108,7 +135,7 @@ class RescObject:
 
         __syspath = os.path.dirname(self._tempfile_name)
 
-        RescObject._hashmodule[self._jresc.hash].update({
+        RescObject._hashmodule[self.hash].update({
             "module": __module,
             "module_name": __module_name,
             "syspath": __syspath,
@@ -132,7 +159,7 @@ class RescObject:
         del self._call
 
         self._syspath_remove()
-        self.__class__._delete_module(self._jresc.hash)
+        self.__class__._delete_module(self.hash)
 
     @property
     def hasmodule(self):
@@ -142,7 +169,7 @@ class RescObject:
             return False
 
     def create_module(self):
-        self._create_module(self._jresc.func_source)
+        self._create_module(self.func_source)
         return self._tempfile_name
 
     @staticmethod
@@ -154,6 +181,18 @@ class RescObject:
         os.remove(RescObject._hashmodule[hash_value]["module_path"])
         del RescObject._hashmodule[hash_value]
 
+    def delete(self):
+        """
+        delete from crontab and rescjson file.
+        """
+        if self.hash not in RescObject._hashmodule.keys():
+            raise RescObjectAttributeError(
+                f"RescObject not save data of hash({self.hash})."
+            )
+        self.jdelete(self.hash)
+        Cron.crondelete(self.crontab_line)
+        return self.crontab_line
+
     def _syspath_append(self):
         if not hasattr(self, "_tempfile_name"):
             raise RescObjectAttributeError(
@@ -164,16 +203,16 @@ class RescObject:
         )
 
     def _syspath_remove(self):
-        if self._hash not in RescObject._hashmodule.keys():
+        if self.hash not in RescObject._hashmodule.keys():
             raise RescObjectKeyError(
-                f"{self._hash} value not found in _hashmodule's key"
+                f"{self.hash} value not found in _hashmodule's key"
             )
-        if "syspath" not in RescObject._hashmodule[self._hash]:
+        if "syspath" not in RescObject._hashmodule[self.hash]:
             raise RescObjectKeyError(
-                f"RescObject's _hashmodule ({self._hash}) not have \"syspath\" key"
+                f"RescObject's _hashmodule ({self.hash}) not have \"syspath\" key"
             )
-        sys.path.remove(RescObject._hashmodule[self._hash]["syspath"])
+        sys.path.remove(RescObject._hashmodule[self.hash]["syspath"])
 
     @property
     def json(self):
-        return self._jresc
+        return super().__call__()

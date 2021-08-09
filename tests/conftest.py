@@ -229,10 +229,10 @@ _OUTPUT_FULL = os.path.join(
 
 @pytest.fixture(scope="function", autouse=False)
 def register_undo():
-    with _RegDir(Resc._REGIPATH_DEFAULT):
+    with _RegDir(Resc._REGIPATH):
         prereg = None
-        if os.path.isfile(Resc._REGIPATH_DEFAULT):
-            with open(Resc._REGIPATH_DEFAULT, "r") as f:
+        if os.path.isfile(Resc._REGIPATH):
+            with open(Resc._REGIPATH, "r") as f:
                 prereg = f.read()
         yield
         if (prereg is None or len(prereg) == 0) and \
@@ -259,7 +259,7 @@ def resc_undo():
                             path
                         )
                     )
-    
+
 @pytest.fixture(scope="function", autouse=False)
 def crontab_undo():
     process = _cronlist()

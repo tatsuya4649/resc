@@ -49,6 +49,7 @@ class RescJSON:
             compiled_file
         )
         return self
+
     def __init__(
         self,
         dump_filepath,
@@ -120,3 +121,29 @@ class RescJSON:
             if hash_value == json["hash"]:
                 return json["crontab_line"]
         return None
+
+    def __iter__(
+        self,
+    ):
+        try:
+            with open(self._dump_filepath) as f:
+                jsons = ndjson.load(f)
+        except Exception as e:
+            raise RescJSONError(e)
+        return iter(jsons)
+
+    @property
+    def length(self):
+        return len(list(iter(self)))
+
+    def jdelete(
+        self,
+        hash_value
+    ):
+        elements = [ x for x in self
+            if x["hash"] != hash_value ]
+        with open(self._dump_filepath, "w") as f:
+            writer = ndjson.writer(f)
+            for element in elements:
+                writer.writerow(element)
+
