@@ -54,6 +54,7 @@ def test_jinja2(
 
     analyze = analyzes[0]
     assert analyze["stdout_content"] == (_JOUT).encode("utf-8")
+    print(analyze["sour_content"])
 
 @_resc.register(
     trigger = "* */10 * * *",
@@ -71,6 +72,8 @@ def test_jinja2_raise(
     compiled_file = result.compiled_file
     print("RESC COMPILED FILE:")
     print(f"\t{compiled_file}")
+    with open(compiled_file, "r") as f:
+        print(f.read())
     process = subprocess.Popen(
         f"command python3 {compiled_file}",
         shell=True
@@ -81,6 +84,7 @@ def test_jinja2_raise(
     with open(_OUTPUT_FULL, "rb") as f:
         content = f.read()
     assert len(content) > 0
+    print(content)
 
     analyzes = RescLogAnalyze.analyze(content)
     assert analyzes is not None
@@ -89,3 +93,4 @@ def test_jinja2_raise(
 
     analyze = analyzes[0]
     assert analyze["stderr_content"] == _JOUT.encode("utf-8")
+    print(analyze["sour_content"])

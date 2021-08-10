@@ -23,7 +23,7 @@ pip install resc
 
 example Python code.
 
-```kkkkkkkkkkkkkkk
+```
 from resc import Resc
 
 resc = Resc(
@@ -49,7 +49,7 @@ hello()
 
 # How does that work?
 
-![overview](docs/assets/resc_overview.png)
+![overview](https://github.com/tatsuya4649/resc/tree/master/docs/assets/resc_overview.png)
 
 1. Register decorator is a decorator to prepare for resource check using given threshold of resources,host information,etc.
 2. Decorated function(above def hello()) is called function when resource threshold is exceeded.
@@ -174,13 +174,13 @@ INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 ```
 
-![loganalyzer](docs/assets/loganalyzer.png)
+![loganalyzer](https://github.com/tatsuya4649/resc/tree/master/docs/assets/loganalyzer.png)
 
 If you accessed this url with web browser, display like this image.
 
 Select log file, display result of analyzing.
 
-![logresult](docs/assets/logresult.png)
+![logresult](https://github.com/tatsuya4649/resc/tree/master/docs/assets/logresult.png)
 
 * Failure/Success: Whether a error has occured or not.
 * date: Logggine date. the date when the registered function was called.

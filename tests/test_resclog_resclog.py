@@ -68,7 +68,6 @@ def test_date_set(rescloger,datetime):
     "datetime",[
     (1),
     (2031.0),
-    ("2030"),
     ([datetime.datetime.now()]),
     ({"datetime": datetime.datetime.now()}),
     (None),

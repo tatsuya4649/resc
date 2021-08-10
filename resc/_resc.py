@@ -8,6 +8,7 @@ from .ssh import SSH
 from .rescerr import RescTypeError, RescKeyError, RescCronError, \
     RescValueError, RescServerError
 from .resclog import RescLog
+from .compile import RescCompile
 import resc
 import inspect
 import hashlib
@@ -239,6 +240,8 @@ class Resc:
 
     @property
     def quiet(self):
+        if not hasattr(self, "_quiet"):
+            return False
         return self._quiet
 
     @quiet.setter
@@ -457,36 +460,10 @@ class Resc:
         for cron in self._crons:
             cron.register()
 
-    def _source_write(self, filename, func, funcname, func_args, ssh=None):
+    def _source_write(self, filename, func_source, funcname, func_args, ssh=None):
         self._resclog.file = filename
-        iters = list()
-        # delete until def keyword
-        func = func[re.search(r'(?=.*)\s*def', func).start():]
-        for line in func.split('\n'):
-            if len(line) > 0:
-                iters.append(line)
-        first_tab = re.match(r'^\s+', iters[0])
-        matchs = list()
-        if first_tab is not None \
-                and len(first_tab.group()) > 0:
-            matchs = [
-                re.sub(
-                    f'^{first_tab.group()}',
-                    '',
-                    x
-                )
-                for x in iters
-            ]
-            matchs = [x + '\n' for x in matchs]
-        else:
-            matchs = [x for x in iters]
-            matchs = [x + '\n' for x in matchs]
-        matchs_str = "".join(matchs)
-        self._resclog.sour = matchs_str[
-            re.search(
-                r'(?=.*)def',
-                matchs_str
-            ).start():].encode("utf-8")
+        source = RescCompile.compile(func_source)
+        self._resclog.sour = source.encode("utf-8")
 
         args_str = str()
         if len(func_args["args"]) > 0:
@@ -513,27 +490,23 @@ class Resc:
             if not os.path.exists(sourcefile):
                 break
             i += 1
-        renparams = dict()
-        renparams["sourcefile"] = sourcefile
-        renparams["source"] = matchs_str[
-            re.search(r'(?=.*)def', matchs_str).start():
-        ]
-        renparams["sourcebyte"] = bytes(
-            matchs_str[re.search(r'(?=.*)def',
-                       matchs_str).start():].encode("utf-8")
-        )
-        renparams["rescsflag"] = inspect.getsource(RescLogSFlag)
-        renparams["syspath"] = self._par_resc
-        renparams["resc_cpu"] = self._cpu_dict
-        renparams["resc_mem"] = self._memory_dict
-        renparams["resc_disk"] = self._disk_dict
-        renparams["logfile"] = f"\"{self._resclog.pure_log}\"" \
-            if self._resclog.pure_log is not None else None
-        renparams["logformat"] = self._resclog.format_meta
-        renparams["logvars"] = self._resclog.define_resclog
-        renparams["ssh"] = ssh
-        renparams["func"] = f"{funcname}({args_str}{kwargs_str})"
-        renparams["defname"] = funcname
+        renparams = {
+            "sourcefile": sourcefile,
+            "source": source,
+            "sourcebyte": self._resclog.sour,
+            "syspath": sys.path,
+            "rescsflag": inspect.getsource(RescLogSFlag),
+            "resc_cpu": self._cpu_dict,
+            "resc_mem": self._memory_dict,
+            "resc_disk": self._disk_dict,
+            "logfile": f"\"{self._resclog.pure_log}\"" \
+            if self._resclog.pure_log is not None else None,
+            "logformat": self._resclog.format_meta,
+            "logvars": self._resclog.define_resclog,
+            "ssh": ssh,
+            "func": f"{funcname}({args_str}{kwargs_str})",
+            "defname": funcname,
+        }
         env = Environment(loader=FileSystemLoader(
             f'{self._package_path}/templates',
             encoding="utf-8")
@@ -647,9 +620,3 @@ class Resc:
 
     def _send_script(self, ssh, connect, script_path, resclog):
         return ssh.scpfile(connect, script_path, resclog)
-
-    @property
-    def _par_resc(self):
-        dir = os.path.dirname(__file__)
-        pardir = pathlib.Path(dir).resolve().parents[0]
-        return pardir
