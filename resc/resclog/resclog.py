@@ -73,55 +73,13 @@ class RescLog:
         else:
             return self._LOGFORMAT_DEFAULT
 
-#    @property
-#    def format_str(self):
-#        results = list()
-#        for f in self.format:
-#            if not isinstance(f, RescLogFormat):
-#                raise RescLogTypeError(
-#                    "format must be RescLogFormat(enum) type."
-#                )
-#            f_str = eval(f'self.format_{f.value}(self._{f.value})')
-#            results.append(str(f_str))
-#        return " ".join(results)
-#
-#    def format_date(self, date):
-#        date_str = str()
-#        date_str = str(date)
-#        return date_str
-#
-#    def format_over(self, over):
-#        over_str = str()
-#        over_str = str(over)
-#        return over_str
-#
-#    def format_func(self, func):
-#        func_str = str()
-#        func_str = str(func)
-#        return func_str
-#
-#    def format_remo(self, remo):
-#        remo_str = str()
-#        remo_str = str(remo)
-#        return remo_str
-#
-#    def format_file(self, file):
-#        file_str = str()
-#        file_str = str(file)
-#        return file_str
-#
-#    def format_sour(self, sour):
-#        sour_str = str()
-#        sour_str = str(sour)
-#        return sour_str
-
     @property
     def date(self):
         return str(self._date).encode("utf-8")
 
     @date.setter
     def date(self, date):
-        if not isinstance(date, datetime.datetime):
+        if not isinstance(date, (datetime.datetime, str)):
             raise RescLogTypeError(
                 f"date must be datetime or str.now {type(date)}"
             )
@@ -246,7 +204,8 @@ class RescLog:
         res = bytes()
         for f in RescLogFormat:
             if f in self.format:
-                res += eval(f'self.{f.value}')
+                if eval(f'self.{f.value}') is not None:
+                    res += eval(f'self.{f.value}')
         return res
 
     def header(self, sflag=0):
@@ -299,8 +258,8 @@ class RescLog:
         lists = list()
         for k, v in vars(self).items():
             value = v if not isinstance(v, str) else f'\"{v}\"'
-            if re.match('^_', k) is not None:
-                lists.append(f"resclog.{re.sub(r'^_', '', k)}={value}")
+            if re.match('^_', k) is not None and eval(f"self.{k}") is not None:
+                lists.append(f"resclog.{re.sub(r'^_', '', k)} = {value}")
         return lists
 
     @property

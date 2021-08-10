@@ -64,12 +64,12 @@ def main():
     parser.add_argument(
         "-s",
         "--log_server",
-        help="Analize log file on GUI.",
+        help="Analize log file on GUI.(Flag)",
         action="store_true"
     )
     parser.add_argument(
         "-q",
-        help="Quiet output",
+        help="Quiet output(Flag)",
         action="store_true"
     )
     parser.add_argument(
@@ -80,7 +80,7 @@ def main():
     parser.add_argument(
         "-r",
         "--delete_register",
-        help="Delete crontab of register script",
+        help="Delete crontab of register script(Flag)",
         action="store_true"
     )
 

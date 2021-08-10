@@ -8,7 +8,7 @@ from resc.object import *
 from resc.json import RescJSON
 from resc.cron import *
 from .test_json import _DUMP_FILEPATH, json, dump_file
-from .test_resc_register import setup_resc, temp_rescdir
+from .test_resc_register import setup_resc, _RESCDIR
 
 @pytest.fixture(scope="function", autouse=False)
 def rescob(dump_file):
@@ -181,14 +181,14 @@ def test_delete(rescob, cron_noempty):
 def test_register_obj(
     setup_resc,
     register_undos,
-    temp_rescdir,
 ):
     @setup_resc.register(
         trigger="* * * * *",
+        rescdir=_RESCDIR,
     )
-    def hello():
+    def object():
         ...
 
-    result = hello()
+    result = object()
     assert result is not None
     assert isinstance(result, RescObject)

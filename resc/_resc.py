@@ -23,20 +23,24 @@ class Resc:
     """
     """
     _RESCDIR_ENV = "RESCDIR"
-    _RESCDIR_DEFAULT = os.path.join(
+    _RESCDIR_PATH = os.path.join(
         os.path.expanduser("~"),
         ".resc"
      )
+    _RESCDIR_DEFAULT = os.path.join(
+        _RESCDIR_PATH,
+        "resc"
+    )
     _RESCSLOG_DEFAULT = os.path.join(
         os.path.expanduser("~"),
         ".resc/log"
      )
     _REGIPATH = os.path.join(
-            _RESCDIR_DEFAULT,
+            _RESCDIR_PATH,
             "register"
     )
     _RESCJSONPATH = os.path.join(
-            _RESCDIR_DEFAULT,
+            _RESCDIR_PATH,
             "resc.ndjson"
     )
     _RESCOUTPUT_ENV = "RESCOUTPUT"
@@ -233,11 +237,17 @@ class Resc:
             raise RescTypeError("timeout must by int type.")
         return timeout
 
-    def _relative_to_absolute(self, path):
-        repath = path
-        if not pathlib.Path(path).is_absolute():
-            repath = f"{pathlib.Path(path).resolve()}"
-        return repath
+    @property
+    def quiet(self):
+        return self._quiet
+
+    @quiet.setter
+    def quiet(self, value):
+        if not isinstance(value, bool):
+            raise RescTypeError(
+                "quiet must be bool type."
+            )
+        self._quiet = value
 
     def register(
         self,
@@ -252,7 +262,9 @@ class Resc:
         timeout=5,
         format=None,
         call_first=False,
+        quiet=False,
     ):
+        self.quiet = quiet
         if not Cron.available():
             raise CronCommandError(
                 "not found crontab command. you must have crontab command."
@@ -275,26 +287,18 @@ class Resc:
             raise RescTypeError("outputfile must be str type.")
 
         if os.getenv(self._RESCDIR_ENV) is None:
-            os.environ[self._RESCDIR_ENV] = os.path.join(
-                self._RESCDIR_DEFAULT,
-                "resc"
-            )
+            os.environ[self._RESCDIR_ENV] = self._RESCDIR_DEFAULT
         else:
             if rescdir is not None:
                 os.environ[self._RESCDIR_ENV] = os.path.join(
-                    self._RESCDIR_DEFAULT,
+                    self._RESCDIR_PATH,
                     rescdir
                 )
             else:
                 os.environ[self._RESCDIR_ENV] = os.path.join(
-                    self._RESCDIR_DEFAULT,
+                    self._RESCDIR_PATH,
                     os.environ[self._RESCDIR_ENV]
                 )
-        os.environ[self._RESCDIR_ENV] = \
-            self._relative_to_absolute(os.environ[self._RESCDIR_ENV])
-        if os.getenv(self._RESCOUTPUT_ENV) is not None:
-            os.environ[self._RESCOUTPUT_ENV] = \
-                self._relative_to_absolute(os.environ[self._RESCOUTPUT_ENV])
 
         if not isinstance(trigger, str):
             raise RescTypeError("trigger must be string type.")
@@ -401,6 +405,7 @@ class Resc:
         if os.getenv(self._RESCOUTPUT_ENV) is not None:
             output_path = f"{os.getenv(self._RESCOUTPUT_ENV)}"
             output = f' >>{output_path} 2>&1'
+            self._directory_make(os.path.dirname(output_path))
         else:
             output_path = str()
             output = str()
@@ -423,7 +428,7 @@ class Resc:
                 interval_str=trigger,
                 register_file=self._REGIPATH
             )
-            if self._call_first:
+            if self._call_first and len(output_path) > 0:
                 with open(output_path, "wb") as fp:
                     subprocess.run(
                         f"command python3 {triggerscript}",
@@ -460,10 +465,6 @@ class Resc:
         for line in func.split('\n'):
             if len(line) > 0:
                 iters.append(line)
-#            match = re.match(r'^(?!(\s*)@).*$', line)
-#            if match is not None:
-#                iters.append(match)
-#        first_tab = re.match(r'^\s+', iters[0].group())
         first_tab = re.match(r'^\s+', iters[0])
         matchs = list()
         if first_tab is not None \
@@ -542,12 +543,13 @@ class Resc:
 
         with open(filename, "w") as sf:
             sf.write(render)
-        print("Output of compile:\t %s" % (filename))
-        if self._resclog.log:
-            print("Output of log:\t %s" % (self._resclog.logfile))
-        print("Output of register:\t %s"
-              % (self._REGIPATH)
-              )
+        if not self.quiet:
+            print("Output of compile:\t %s" % (filename))
+            if self._resclog.log:
+                print("Output of log:\t %s" % (self._resclog.logfile))
+            print("Output of register:\t %s"
+                % (self._REGIPATH)
+                )
         return filename
 
     @property

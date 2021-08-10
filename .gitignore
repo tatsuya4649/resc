@@ -1,6 +1,7 @@
 .*.swp
 __pycache__
 node_modules
+package-lock.json
 rescs
 build
 dist
@@ -8,3 +9,5 @@ dist
 *.egg-info/
 .coverage
 coverage.xml
+test
+test/*
