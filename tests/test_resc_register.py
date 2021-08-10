@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import pytest
 from unittest import mock
@@ -26,28 +27,6 @@ def setup_resc():
     yield resc
 
 
-@pytest.fixture(scope="function", autouse=False)
-def temp_rescdir():
-    direxists = False
-    with tempfile.TemporaryDirectory(
-        prefix="tmp_test_resc_"
-    ) as dirpath:
-        if os.path.exists(_RESCDIR_FULL):
-            direxists = True
-            tmp_dir = shutil.move(_RESCDIR_FULL, dirpath)
-        yield
-        if os.path.exists(_RESCDIR_FULL):
-            for file in os.listdir(_RESCDIR_FULL):
-                os.remove(
-                    os.path.join(
-                        _RESCDIR_FULL,
-                        file
-                    )
-                )
-            os.rmdir(_RESCDIR_FULL)
-
-        if direxists:
-            shutil.move(tmp_dir, os.path.dirname(_RESCDIR_FULL))
 
 @pytest.mark.parametrize(
     "trigger",[
@@ -103,7 +82,7 @@ def test_register_rescdir_auto(setup_resc):
 def test_register_rescdir2_auto(setup_resc):
     os.environ.pop(setup_resc._RESCDIR_ENV,None)
     os.environ[setup_resc._RESCDIR_ENV] = \
-        "rescs"
+       _RESCDIR
     setup_resc.register(
         trigger="* * * * *",
     )
@@ -117,7 +96,7 @@ def test_register_rescdir3_auto(setup_resc):
     os.environ.pop(setup_resc._RESCDIR_ENV,None)
     setup_resc.register(
         trigger="* * * * *",
-        rescdir="rescs",
+        rescdir=_RESCDIR,
     )
     assert os.getenv(setup_resc._RESCDIR_ENV) is not None
     print(
@@ -163,10 +142,13 @@ def test_register_outputfile_env(setup_resc):
         f"\tRESCLOG LOGFILE: {setup_resc._resclog.logfile}"
     )
 
-def test_register_outputfile_env2(setup_resc):
+def test_register_outputfile_env2(
+    setup_resc,
+    register_undos,
+):
     os.environ.pop(setup_resc._RESCOUTPUT_ENV,None)
 
-    os.environ[setup_resc._RESCOUTPUT_ENV] = "output"
+    os.environ[setup_resc._RESCOUTPUT_ENV] = _OUTPUT
     setup_resc.register(
         trigger = "* * * * *",
     )
@@ -197,7 +179,6 @@ def test_register_remote_ssh(
     setup_resc,
     register_undos,
     register_env,
-    temp_rescdir,
 ):
     setup_resc.register(
         trigger = "* * * * *",
@@ -223,8 +204,6 @@ def test_register_remote_ssh(
             username="tatsuya",
             password="example",
         )(hello)()
-#    assert setup_resc._resclog.remo is not None
-#    assert setup_resc._resclog._ssh is not None
 
     with pytest.raises(
         RescSSHError
@@ -235,14 +214,11 @@ def test_register_remote_ssh(
             username="tatsuya",
             key_path="example",
         )(hello)()
-#    assert setup_resc._resclog.remo is not None
-#    assert setup_resc._resclog._ssh is not None
 
 def test_register_remote_ssh_type_failure(
     setup_resc,
     register_undos,
     register_env,
-    temp_rescdir,
 ):
     # IP Address Raise Error Test
     print(f"RESC SSH REMOTE TYPE ERROR")
@@ -314,30 +290,26 @@ def test_register_remote_ssh_type_failure(
 Register SOURCE Test
 
 """
-import re
-import tempfile
-import shutil
 def test_source_dir(
     setup_resc,
     register_undos,
-    temp_rescdir
 ):
     setup_resc.register(
         trigger = "* * * * *",
         rescdir = _RESCDIR,
     )(hello)()
     assert os.path.isdir(_RESCDIR_FULL)
-        
+
 
 def test_register_nonlog(
     setup_resc,
     register_undos,
-    temp_rescdir
 ):
     # Delete env variable of output path
     os.environ.pop(setup_resc._RESCOUTPUT_ENV,None)
     setup_resc.register(
         trigger = "* * * * *",
+        rescdir = _RESCDIR,
         outputfile=None,
     )(hello)()
 
@@ -345,7 +317,6 @@ def test_register_resc_command_not_found(
     setup_resc,
     mocker,
     register_undos,
-    temp_rescdir,
 ):
     resc_patch = mocker.patch(
         "resc._resc.Resc._which_resc"
@@ -358,6 +329,7 @@ def test_register_resc_command_not_found(
         setup_resc.register(
             trigger = "* * * * *",
             outputfile=None,
+            rescdir=_RESCDIR,
         )(hello)()
 
     print(f"RESC SYS EXIT: {raiseinfo.value}")
@@ -381,7 +353,6 @@ def test_register_crons_length_zero(
 
 def test_register(
     register_undos,
-    temp_rescdir,
 ):
     resc = Resc(
         cpu={"threshold":80,"interval":_INTERVAL},
@@ -398,6 +369,7 @@ def test_register(
 
     os.environ[Resc._RESCDIR_ENV] = _RESCDIR
     os.environ[Resc._RESCOUTPUT_ENV] = _OUTPUT
+
     @resc.register("*/1 * * * *")
     def world(a,b):
         import time
@@ -406,7 +378,6 @@ def test_register(
 
 def test_register_first_tab_test(
     register_undos,
-    temp_rescdir,
 ):
     resc = Resc(
         cpu={"threshold":80,"interval":_INTERVAL},

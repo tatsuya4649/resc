@@ -1,158 +1,311 @@
 try:
-	from ctypes import *
-	from enum import Enum
-	import io
-	import os
-	import datetime
+    from ctypes import LittleEndianStructure, \
+        c_char, c_uint32, c_int32
+    from enum import Enum
+    import io
+    import os
+    import datetime
 
-	sflag = int(0)
-	class RescFuncError(Exception):
-		pass
-	{% macro someop() %}{{rescsflag|indent}}{% endmacro %}
-	{{ someop()|indent }}
-	# For Emergency Log Header
-	class RescEmergLogHeader(LittleEndianStructure):
-		_fields_ = (
-		('identify',c_char*4),
-		('sflag',c_uint32),
-		('errlen',c_int32),
-		('datelen',c_int32),
-		)
-	def emergelog(header,err,date):
-		with open({{ logfile }},"ab") as ef:
-			ef.write(bytes(header),err.encode("utf-8"),date.encode("utf-8"))
-		sys.exit(1)
+    sflag = int(0)
 
-except Exception as e:
-	# Can't ready emergency log
-	import sys
-	sys.exit(1)
+    class RescFuncError(Exception):
+        pass
+
+    {{rescsflag|indent}}
+    # For Emergency Log Header
+    class RescEmergLogHeader(LittleEndianStructure):
+        _fields_ = (
+            ('identify', c_char * 4),
+            ('sflag', c_uint32),
+            ('errlen', c_int32),
+            ('datelen', c_int32),
+        )
+
+    # Source code file
+    source_file = None
+
+    def emergelog(header, err, date):
+        with open({{ logfile }}, "ab") as ef:
+            ef.write(
+                bytes(header),
+                err.encode("utf-8"),
+                date.encode("utf-8")
+            )
+        if source_file is not None:
+            os.remove(source_file)
+        sys.exit(1)
+except Exception:
+    # Can't ready emergency log
+    import sys
+    sys.exit(1)
 
 try:
-	import sys
-	from resc import Resc
-	from resc import SSH
-	import re
-	from resc import RescLog,RescLogFormat,RescLogOver
-	from resc import RescLogSFlag
+    import sys
+    from resc import Resc
+{%- if ssh is defined and ssh != None -%}
+    from resc import SSH
+{%- endif %}
+    from resc import RescLog, \
+        RescLogFormat, RescLogOver
+    from resc import RescLogSFlag
 except ModuleNotFoundError as e:
-	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.MNF.value["flag"])
-	date = str(datetime.datetime.now())
-	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)),datelen=len(date))
-	emergelog(header,str(e),date)
+    sflag |= (
+        RescLogSFlag.EME.value["flag"] |
+        RescLogSFlag.ERR.value["flag"] |
+        RescLogSFlag.LOC.value["flag"] |
+        RescLogSFlag.MNF.value["flag"]
+    )
+    date = str(datetime.datetime.now())
+    header = RescEmergLogHeader(
+        "resc",
+        sflag,
+        errlen=len(str(e)),
+        datelen=len(date),
+    )
+    emergelog(
+        header=header,
+        error=str(e),
+        date=date,
+    )
 except ImportError as e:
-	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.IMP.value["flag"])
-	date = str(datetime.datetime.now())
-	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)),datelen=len(date))
-	emergelog(header,str(e),date)
+    sflag |= (
+        RescLogSFlag.EME.value["flag"] |
+        RescLogSFlag.ERR.value["flag"] |
+        RescLogSFlag.LOC.value["flag"] |
+        RescLogSFlag.IMP.value["flag"]
+    )
+    date = str(datetime.datetime.now())
+    header = RescEmergLogHeader(
+        identify="resc",
+        sflag=sflag,
+        errlen=len(str(e)),
+        datelen=len(date)
+    )
+    emergelog(
+        header=header,
+        err=str(e),
+        date=date
+    )
 except Exception as e:
-	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"])
-	date = str(datetime.datetime.now())
-	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)),datelen=len(date))
-	emergelog(header,str(e),date)
+    sflag |= (
+        RescLogSFlag.EME.value["flag"] |
+        RescLogSFlag.ERR.value["flag"] |
+        RescLogSFlag.LOC.value["flag"]
+    )
+    date = str(datetime.datetime.now())
+    header = RescEmergLogHeader(
+        identify="resc",
+        sflag=sflag,
+        errlen=len(str(e)),
+        datelen=len(date)
+    )
+    emergelog(
+        header=header,
+        err=str(e),
+        date=date
+    )
 
 try:
-	resc=Resc(cpu={{ resc_cpu }},memory={{ resc_mem }},disk={{ resc_disk }})
+    resc = Resc(
+        cpu={{ resc_cpu }},
+        memory={{ resc_mem }},
+        disk={{ resc_disk }}
+    )
 except Exception as e:
-	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.DEF.value["flag"])
-	date = str(datetime.datetime.now())
-	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)),datelen=len(date))
-	emergelog(header,str(e),date)
+    sflag |= (
+        RescLogSFlag.EME.value["flag"] |
+        RescLogSFlag.ERR.value["flag"] |
+        RescLogSFlag.LOC.value["flag"] |
+        RescLogSFlag.DEF.value["flag"]
+    )
+    date = str(datetime.datetime.now())
+    header = RescEmergLogHeader(
+        identify="resc",
+        sflag=sflag,
+        errlen=len(str(e)),
+        datelen=len(date)
+    )
+    emergelog(
+        header=header,
+        err=str(e),
+        date=date
+    )
 
 try:
-	resclog=RescLog(
-		{%- if logfile is defined and logfile != None %}
-		logfile={{ logfile }},
-		{%- endif %}
-		{%- if logformat is defined and logformat != None %}
-		format={{ logformat }},
-		{%- endif %}
-	)
-	{% for var in logvars -%}
-	{{ var }}
-	{% endfor %}
+    resclog = RescLog(
+        {%- if logfile is defined and logfile != None %}
+        logfile={{ logfile }},
+        {%- endif %}
+        {%- if logformat is defined and logformat != None %}
+        format={{ logformat }},
+        {%- endif %}
+    )
+    {%- for var in logvars %}
+    {{ var }}
+    {%- endfor %}
 except Exception as e:
-	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.DEF.value["flag"])
-	date = str(datetime.datetime.now())
-	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)),datelen=len(date))
-	emergelog(header,str(e),date)
+    sflag |= (
+        RescLogSFlag.EME.value["flag"] |
+        RescLogSFlag.ERR.value["flag"] |
+        RescLogSFlag.LOC.value["flag"] |
+        RescLogSFlag.DEF.value["flag"]
+    )
+    date = str(datetime.datetime.now())
+    header = RescEmergLogHeader(
+        identify="resc",
+        sflag=sflag,
+        errlen=len(str(e)),
+        datelen=len(date)
+    )
+    emergelog(
+        header=header,
+        err=str(e),
+        date=date
+    )
 
 try:
-	with open("{{ sourcefile }}","wb") as sf:
-		sf.write({{sourcebyte}})
-	exec(f'from { os.path.basename("{{ sourcefile }}").split(".")[0] } import {{ defname }}')
+    with open("{{ sourcefile }}", "wb") as sf:
+        sf.write({{sourcebyte}})
+    import_str = (
+        'from ',
+        '%s ' %
+        (
+            os.
+            path.
+            basename(
+                "{{ sourcefile }}"
+            ).
+            split(".")[0]
+        ),
+        'import {{ defname }}'
+    )
+    exec(
+        "".join(import_str)
+    )
+    source_file = "{{ sourcefile }}"
 except IndentationError as e:
-	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.valul["flag"]|RescLogSFlag.IMP.value["flag"]|RescLogSFlag.FUN.value["flag"]|RescLogSFlag.IND.value["flag"])
-	date = str(datetime.datetime.now())
-	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)),datelen=len(date))
-	emergelog(header,str(e),date)
+    sflag |= (
+        RescLogSFlag.EME.value["flag"] |
+        RescLogSFlag.ERR.value["flag"] |
+        RescLogSFlag.LOC.valul["flag"] |
+        RescLogSFlag.IMP.value["flag"] |
+        RescLogSFlag.FUN.value["flag"] |
+        RescLogSFlag.IND.value["flag"]
+    )
+    date = str(datetime.datetime.now())
+    header = RescEmergLogHeader(
+        identify="resc",
+        sflag=sflag,
+        errlen=len(str(e)),
+        datelen=len(date)
+    )
+    emergelog(
+        header=header,
+        err=str(e),
+        date=date,
+    )
 except Exception as e:
-	sflag |= (RescLogSFlag.EME.value["flag"]|RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"]|RescLogSFlag.IMP.value["flag"]|RescLogSFlag.FUN.value["flag"])
-	date = str(datetime.datetime.now())
-	header = RescEmergLogHeader("resc",sflag,errlen=len(str(e)),datelen=len(date))
-	emergelog(header,str(e),date)
+    sflag |= (
+        RescLogSFlag.EME.value["flag"] |
+        RescLogSFlag.ERR.value["flag"] |
+        RescLogSFlag.LOC.value["flag"] |
+        RescLogSFlag.IMP.value["flag"] |
+        RescLogSFlag.FUN.value["flag"]
+    )
+    date = str(datetime.datetime.now())
+    header = RescEmergLogHeader(
+        identify="resc",
+        sflag=sflag,
+        errlen=len(str(e)),
+        datelen=len(date)
+    )
+    emergelog(
+        header=header,
+        err=str(e),
+        date=date,
+    )
 
 try:
 {% if ssh is defined and ssh != None %}
-	ssh = SSH(
-		ip="{{ ssh.ip }}",
-		username="{{ ssh.username }}",
+    ssh = SSH(
+        ip="{{ ssh.ip }}",
+        username="{{ ssh.username }}",
 {%- if ssh.key_filename is defined and ssh.key_filename != None %}
-		key_filename="{{ ssh.key_filename }}",
+        key_filename="{{ ssh.key_filename }}",
 {% else %}
-		password="{{ ssh.password }}",
+        password="{{ ssh.password }}",
 {%- endif %}
-		timeout={{ ssh.timeout }},
-		)
+        timeout={{ ssh.timeout }},
+        )
+{% else %}
+    ...
 {% endif %}
 except Exception as e:
-	sflag |= (RescLogSFlag.ERR.value["flag"]|RescLogSFlag.REM.value["flag"]|RescLogSFlag.SSH.value["flag"])
-	resclog.stderr = str(e).encode("utf-8")
-	resclog.write(RescLogOver.FALSE,sflag)
+    sflag |= (
+        RescLogSFlag.ERR.value["flag"] |
+        RescLogSFlag.REM.value["flag"] |
+        RescLogSFlag.SSH.value["flag"]
+    )
+    resclog.stderr = str(e).encode("utf-8")
+    resclog.write(
+        RescLogOver.FALSE,
+        sflag
+    )
 
-"""
-{{rescsflag}}
-"""
+
 def call_definedfunc(resclog):
-	err = 0
-	old_stdout = sys.stdout
-	old_stderr = sys.stderr
-	try:
-		func_stdout = io.StringIO
-		func_stderr = io.StringIO
-		sys.stdout = func_stdout
-		sys.stderr = func_stderr
-		{{ func }}
-		resclog.stdout = [sys.stdout.getvalue().encode("utf-8")]
-		resclog.stderr = [sys.stderr.getvalue().encode("utf-8")]
-	except RescFuncError as e:
-		resclog.stderr = str(e).encode("utf-8")
-		err |= RescLogSFlag.FUN.value["flag"]
-	finally:
-		sys.stdout = old_stdout
-		sys.stderr = old_stderr
-		return err
+    err = 0
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+    try:
+        func_stdout = io.StringIO
+        func_stderr = io.StringIO
+        sys.stdout = func_stdout
+        sys.stderr = func_stderr
+        {{ func }}
+        resclog.stdout = \
+            sys.stdout.getvalue().encode("utf-8")
+        resclog.stderr = \
+            sys.stderr.getvalue().encode("utf-8")
+    except RescFuncError as e:
+        resclog.stderr = str(e).encode("utf-8")
+        err |= RescLogSFlag.FUN.value["flag"]
+    finally:
+        sys.stdout = old_stdout
+        sys.stderr = old_stderr
+        return err
 
 {% if ssh is defined and ssh != None %}
 try:
-	if resc.over_one_ssh(ssh,resclog):
-		err = call_definedfunc(resclog)
-		resclog.write(RescLogOver.TRUE,sflag)
-	else:
-		resclog.write(RescLogOver.FALSE,sflag)
+    if resc.over_one_ssh(ssh, resclog):
+        err = call_definedfunc(resclog)
+        resclog.write(RescLogOver.TRUE, sflag)
+    else:
+        resclog.write(RescLogOver.FALSE, sflag)
 except Exception as e:
-	sflag |= (RescLogSFlag.ERR.value["flag"]|RescLogSFlag.REM.value["flag"])
-	resclog.stderr = str(e).encode("utf-8")
-	resclog.write(RescLogOver.FALSE,sflag)
+    sflag |= (
+        RescLogSFlag.ERR.value["flag"] |
+        RescLogSFlag.REM.value["flag"]
+    )
+    resclog.stderr = str(e).encode("utf-8")
+    resclog.write(RescLogOver.FALSE, sflag)
 {% else %}
 try:
-	if resc.over_one:
-		err = call_definedfunc(resclog)
-		resclog.write(RescLogOver.TRUE,sflag)
-	else:
-		resclog.write(RescLogOver.FALSE,sflag)
+    if resc.over_one:
+        err = call_definedfunc(resclog)
+        resclog.write(RescLogOver.TRUE, sflag)
+    else:
+        resclog.write(RescLogOver.FALSE, sflag)
 except Exception as e:
-	sflag |= (RescLogSFlag.ERR.value["flag"]|RescLogSFlag.LOC.value["flag"])
-	resclog.stderr = str(e).encode("utf-8")
-	resclog.write(RescLogOver.FALSE,sflag)
+    sflag |= (
+        RescLogSFlag.ERR.value["flag"] |
+        RescLogSFlag.LOC.value["flag"]
+    )
+    resclog.stderr = str(e).encode("utf-8")
+    resclog.write(RescLogOver.FALSE, sflag)
 {%- endif %}
+
+if source_file is not None:
+    os.remove(source_file)
+
+
