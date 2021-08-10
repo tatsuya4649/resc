@@ -281,7 +281,7 @@ def test_source_write(setup_resc):
     setup_resc._resclog = RescLog()
     filename = setup_resc._source_write(
         filename=_FILENAME,
-        func="def hello()\n    ...",
+        func_source="def hello():\n    ...",
         funcname="hello",
         func_args={
             "args": ["hello"],

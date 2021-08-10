@@ -24,12 +24,14 @@ try:
     # Source code file
     source_file = None
 
-    def emergelog(header, err, date):
+    def make_logdir():
         _logfile = {{ logfile }}
         os.makedirs(
             os.path.dirname(_logfile),
             exist_ok=True
         )
+
+    def emergelog(header, err, date):
         with open(_logfile, "ab") as ef:
             ef.write(
                 bytes(header),
@@ -259,6 +261,13 @@ except Exception as e:
 
 
 def call_definedfunc(resclog):
+    old_syspath = sys.path
+    sys.path = [
+{%- for path in syspath %}
+        "{{ path }}",
+{%- endfor %}
+    ]
+
     err = 0
     old_stdout = sys.stdout
     old_stderr = sys.stderr
@@ -281,6 +290,7 @@ def call_definedfunc(resclog):
     finally:
         sys.stdout = old_stdout
         sys.stderr = old_stderr
+        sys.path = old_syspath
         return err
 
 {% if ssh is defined and ssh != None %}
