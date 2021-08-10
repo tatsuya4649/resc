@@ -25,7 +25,12 @@ try:
     source_file = None
 
     def emergelog(header, err, date):
-        with open({{ logfile }}, "ab") as ef:
+        _logfile = {{ logfile }}
+        os.makedirs(
+            os.path.dirname(_logfile),
+            exist_ok=True
+        )
+        with open(_logfile, "ab") as ef:
             ef.write(
                 bytes(header),
                 err.encode("utf-8"),
@@ -258,8 +263,8 @@ def call_definedfunc(resclog):
     old_stdout = sys.stdout
     old_stderr = sys.stderr
     try:
-        func_stdout = io.StringIO
-        func_stderr = io.StringIO
+        func_stdout = io.StringIO()
+        func_stderr = io.StringIO()
         sys.stdout = func_stdout
         sys.stderr = func_stderr
         {{ func }}
@@ -268,6 +273,9 @@ def call_definedfunc(resclog):
         resclog.stderr = \
             sys.stderr.getvalue().encode("utf-8")
     except RescFuncError as e:
+        resclog.stderr = str(e).encode("utf-8")
+        err |= RescLogSFlag.FUN.value["flag"]
+    except Exception as e:
         resclog.stderr = str(e).encode("utf-8")
         err |= RescLogSFlag.FUN.value["flag"]
     finally:

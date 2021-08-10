@@ -158,7 +158,6 @@ class _RegDir:
             dire = "/".join(self._paths)
             if not os.path.isdir(dire) and \
             len(dire) > 0:
-                print(dire)
                 os.mkdir(dire)
                 self._makepaths.append(dire)
                 _RegDir._alldir.append(dire)
@@ -304,15 +303,35 @@ def log_undo(temp_logdir):
                 with open(_OUTPUT_FULL, "r") as f:
                     prelog = f.read()
             yield
-            if prelogs is not None:
+            if prelogs is not None or \
+                    os.path.isdir(logdir):
                 for path in os.listdir(logdir):
-                    if path not in prelogs:
-                        os.remove(
+                    if prelogs is None or \
+                            path not in prelogs:
+                        if os.path.isdir(
                             os.path.join(
                                 logdir,
                                 path
                             )
-                        )
+                        ):
+                            shutil.rmtree(
+                                os.path.join(
+                                    logdir,
+                                    path
+                                )
+                            )
+                        elif os.path.isfile(
+                            os.path.join(
+                                logdir,
+                                path
+                            )
+                        ):
+                            os.remove(
+                                os.path.join(
+                                    logdir,
+                                    path
+                                )
+                            )
             if (prelog is None or len(prelog) == 0) and \
                 os.path.isfile(_OUTPUT_FULL):
                 os.remove(_OUTPUT_FULL)
@@ -321,22 +340,42 @@ def log_undo(temp_logdir):
                     with open(_OUTPUT_FULL,"w") as f:
                         f.write(prelog)
 
-@pytest.fixture(scope="function", autouse=False)
+@pytest.fixture(scope="function", autouse=True)
 def resc_default_undo():
     with _RegDir(Resc._RESCDIR_DEFAULT):
         predfiles = None
         if os.path.isdir(Resc._RESCDIR_DEFAULT):
             predfiles = os.listdir(Resc._RESCDIR_DEFAULT)
         yield
-        if predfiles is not None:
+        if predfiles is not None or \
+                os.path.isdir(Resc._RESCDIR_DEFAULT):
             for path in os.listdir(Resc._RESCDIR_DEFAULT):
-                if path not in predfiles:
-                    os.remove(
+                if predfiles is None or \
+                        path not in predfiles:
+                    if os.path.isdir(
                         os.path.join(
                             Resc._RESCDIR_DEFAULT,
                             path
                         )
-                    )
+                    ):
+                        shutil.rmtree(
+                            os.path.join(
+                                Resc._RESCDIR_DEFAULT,
+                                path
+                            )
+                        )
+                    elif os.path.isfile(
+                        os.path.join(
+                            Resc._RESCDIR_DEFAULT,
+                            path
+                        )
+                    ):
+                        os.remove(
+                            os.path.join(
+                                Resc._RESCDIR_DEFAULT,
+                                path
+                            )
+                        )
 
 @pytest.fixture(scope="function", autouse=False)
 def temp_rescdir():
@@ -359,7 +398,10 @@ def temp_rescdir():
             os.rmdir(_RESCDIR_FULL)
 
         if direxists:
-            shutil.move(tmp_dir, os.path.dirname(_RESCDIR_FULL))
+            shutil.move(
+                tmp_dir,
+                os.path.dirname(_RESCDIR_FULL)
+            )
 
 @pytest.fixture(scope="function", autouse=False)
 def resc_undo(resc_default_undo, temp_rescdir):
@@ -368,15 +410,35 @@ def resc_undo(resc_default_undo, temp_rescdir):
         if os.path.isdir(_RESCDIR_FULL):
             prefiles = os.listdir(_RESCDIR_FULL)
         yield
-        if prefiles is not None:
-            for path in os.listdir(_RESCDIR_FULL):
-                if path not in prefiles:
-                    os.remove(
+        if prefiles is not None or \
+                    os.path.isdir(Resc._RESCDIR_DEFAULT):
+            for path in os.listdir(Resc._RESCDIR_DEFAULT):
+                if prefiles is None or \
+                        path not in prefiles:
+                    if os.path.isdir(
                         os.path.join(
                             _RESCDIR_FULL,
                             path
                         )
-                    )
+                    ):
+                        shutil.rmtree(
+                            os.path.join(
+                                _RESCDIR_FULL,
+                                path
+                            )
+                        )
+                    elif os.path.isfile(
+                        os.path.join(
+                            _RESCDIR_FULL,
+                            path
+                        )
+                    ):
+                        os.remove(
+                            os.path.join(
+                                _RESCDIR_FULL,
+                                path
+                            )
+                        )
 
 
 
@@ -393,7 +455,6 @@ def final_delete():
     yield
     length = len(_RegDir("")._alldir)
     i = 0
-    print(sorted(_RegDir("")._alldir, reverse=False))
     while True:
         for d in sorted(_RegDir("")._alldir, reverse=False):
             if os.path.isdir(d) and \
@@ -416,6 +477,13 @@ def register_undos(
     rescjson_undo,
 ):
     yield
+
+    try:
+        os.removedirs(
+            Resc._RESCDIR_PATH
+        )
+    except Exception as e:
+        print(e)
 
 @pytest.fixture(scope="function", autouse=False)
 def register_env():

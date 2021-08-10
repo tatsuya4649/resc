@@ -237,6 +237,18 @@ class Resc:
             raise RescTypeError("timeout must by int type.")
         return timeout
 
+    @property
+    def quiet(self):
+        return self._quiet
+
+    @quiet.setter
+    def quiet(self, value):
+        if not isinstance(value, bool):
+            raise RescTypeError(
+                "quiet must be bool type."
+            )
+        self._quiet = value
+
     def register(
         self,
         trigger,
@@ -250,7 +262,9 @@ class Resc:
         timeout=5,
         format=None,
         call_first=False,
+        quiet=False,
     ):
+        self.quiet = quiet
         if not Cron.available():
             raise CronCommandError(
                 "not found crontab command. you must have crontab command."
@@ -414,7 +428,7 @@ class Resc:
                 interval_str=trigger,
                 register_file=self._REGIPATH
             )
-            if self._call_first:
+            if self._call_first and len(output_path) > 0:
                 with open(output_path, "wb") as fp:
                     subprocess.run(
                         f"command python3 {triggerscript}",
@@ -529,12 +543,13 @@ class Resc:
 
         with open(filename, "w") as sf:
             sf.write(render)
-        print("Output of compile:\t %s" % (filename))
-        if self._resclog.log:
-            print("Output of log:\t %s" % (self._resclog.logfile))
-        print("Output of register:\t %s"
-              % (self._REGIPATH)
-              )
+        if not self.quiet:
+            print("Output of compile:\t %s" % (filename))
+            if self._resclog.log:
+                print("Output of log:\t %s" % (self._resclog.logfile))
+            print("Output of register:\t %s"
+                % (self._REGIPATH)
+                )
         return filename
 
     @property
