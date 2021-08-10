@@ -12,6 +12,10 @@ class RescObjectTypeError(TypeError):
     pass
 
 
+class RescObjectValueError(ValueError):
+    pass
+
+
 class RescObjectKeyError(KeyError):
     pass
 
@@ -32,6 +36,8 @@ class RescObject(RescJSON):
         crontab_line,
         register_file,
         function,
+        limit,
+        permanent,
         log_file=None,
     ):
         if not hasattr(cls, "_hashmodule"):
@@ -43,6 +49,8 @@ class RescObject(RescJSON):
             crontab_line=crontab_line,
             register_file=register_file,
             function=function,
+            limit=limit,
+            permanent=permanent,
             log_file=log_file,
         )
         if not hasattr(self, "hash"):
@@ -58,6 +66,8 @@ class RescObject(RescJSON):
         crontab_line,
         register_file,
         function,
+        limit,
+        permanent,
         log_file=None,
     ):
         super().__init__(
@@ -66,6 +76,8 @@ class RescObject(RescJSON):
             crontab_line,
             register_file,
             function,
+            limit,
+            permanent,
             log_file=None,
         )
         self.import_module()
@@ -189,9 +201,49 @@ class RescObject(RescJSON):
             raise RescObjectAttributeError(
                 f"RescObject not save data of hash({self.hash})."
             )
-        self.jdelete(self.hash)
+        self._jdelete(self.hash)
         Cron.crondelete(self.crontab_line)
         return self.crontab_line
+
+    @staticmethod 
+    def sdelete(hash_value, dump_filepath):
+        """
+        delete from crontab and rescjson file.
+        """
+        if hash_value not in RescObject._hashmodule.keys():
+            raise RescObjectAttributeError(
+                f"RescObject not save data of hash({hash_value})."
+            )
+        element = RescObject.jdelete(hah_value, _dump_filepath)
+        if element is None:
+            raise RescObjectValueError(
+                "not found crontab line with hash value."
+            )
+        Cron.crondelete(element["crontab_line"])
+        return element["crontab_line"]
+
+    @staticmethod
+    def jdelete(
+        hash_value,
+        dump_filepath,
+    ):
+        elements = list()
+        result = None
+        for element in RescJSON._iter(dump_filepath):
+            if element["hash"] != hash_value:
+                elements.append(element)
+            else:
+                result = element
+        RescJSON.jdump(dump_filepath,elements)
+        return result
+
+    def _jdelete(
+        self,
+        hash_value
+    ):
+        elements = [ x for x in self
+            if x["hash"] != hash_value ]
+        self.jdump(self._dump_filepath,elements)
 
     def _syspath_append(self):
         if not hasattr(self, "_tempfile_name"):
@@ -216,3 +268,25 @@ class RescObject(RescJSON):
     @property
     def json(self):
         return super().__call__()
+
+    @staticmethod
+    def limit_update(
+        hash_value,
+        dump_filepath,
+    ):
+        elements = RescJSON._iter(dump_filepath)
+        result = False
+        for ele in elements:
+            if ele["hash"] == hash_value:
+                ele["limit"] -= 1
+            if ele["limit"] == 0:
+                result = True
+                if ele["permanent"] is True:
+                    ele["limit"] = ele["limit_init"]
+                else:
+                    RescObject.sdelete(
+                        hash_value,
+                        dump_filepath,
+                    )
+        RescJSON.jdump(dump_filepath, elements)
+        return result

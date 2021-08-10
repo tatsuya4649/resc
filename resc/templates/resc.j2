@@ -48,7 +48,7 @@ except Exception:
 
 try:
     import sys
-    from resc import Resc
+    from resc import Resc, RescObject
 {%- if ssh is defined and ssh != None -%}
     from resc import SSH
 {%- endif %}
@@ -293,11 +293,28 @@ def call_definedfunc(resclog):
         sys.path = old_syspath
         return err
 
+
+def limit_update():
+    return RescObject.limit_update(
+        hash_value="{{ object_hash }}",
+        dump_filepath="{{ jfile }}",
+    )
+
+
 {% if ssh is defined and ssh != None %}
+
+{% if reverse == True %}
+sflag |= RescLogSFlag.RVS
+{% endif %}
 try:
+    {% if reverse == False -%}
     if resc.over_one_ssh(ssh, resclog):
-        err = call_definedfunc(resclog)
-        resclog.write(RescLogOver.TRUE, sflag)
+    {%- else -%}
+    if not resc.over_one_ssh(ssh, resclog):
+    {% endif %}
+        if limit_update():
+            err = call_definedfunc(resclog)
+            resclog.write(RescLogOver.TRUE, sflag)
     else:
         resclog.write(RescLogOver.FALSE, sflag)
 except Exception as e:
@@ -309,9 +326,14 @@ except Exception as e:
     resclog.write(RescLogOver.FALSE, sflag)
 {% else %}
 try:
+    {% if reverse == False -%}
     if resc.over_one:
-        err = call_definedfunc(resclog)
-        resclog.write(RescLogOver.TRUE, sflag)
+    {%- else -%}
+    if not resc.over_one:
+    {% endif %}
+        if limit_update():
+            err = call_definedfunc(resclog)
+            resclog.write(RescLogOver.TRUE, sflag)
     else:
         resclog.write(RescLogOver.FALSE, sflag)
 except Exception as e:

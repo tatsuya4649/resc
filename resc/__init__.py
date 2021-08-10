@@ -5,6 +5,8 @@ from .resclog import RescLogFlag, RescLogHeader, RescLogEmergeHeader, \
     RescLogSFlag, RescLog, RescLogFormat, RescLogOver, \
     RescLogAnalyze, RescLogPathError, RescLogTypeError, \
     RescLogKeyError, RescLogUnMatchError, start_server
+from .json import RescJSON
+from .object import RescObject
 
 
 __all__ = [
@@ -24,6 +26,8 @@ __all__ = [
     RescLogKeyError.__name__,
     RescLogUnMatchError.__name__,
     start_server.__name__,
+    RescJSON.__name__,
+    RescObject.__name__,
 ]
 
 __version__ = "0.1.0"
