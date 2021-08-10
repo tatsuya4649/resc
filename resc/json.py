@@ -28,6 +28,8 @@ class RescJSON:
         crontab_line,
         register_file,
         function,
+        limit,
+        permanent,
         log_file=None,
     ):
         cls._keys = [
@@ -36,6 +38,8 @@ class RescJSON:
             "register_file",
             "func_source",
             "func_name",
+            "limit",
+            "permanent",
             "log_file",
         ]
         self = super().__new__(cls)
@@ -57,6 +61,8 @@ class RescJSON:
         crontab_line,
         register_file,
         function,
+        limit,
+        permanent,
         log_file=None,
     ):
         _jdict = dict()
@@ -67,6 +73,9 @@ class RescJSON:
             function.__code__
         )
         _jdict["funcname"] = function.__name__
+        _jdict["limit"] = limit
+        _jdict["limit_init"] = limit
+        _jdict["permanent"] = permanent
         if log_file is not None:
             _jdict["log_file"] = log_file
         _jdict["hash"] = self._hash(compiled_file)
@@ -122,28 +131,31 @@ class RescJSON:
                 return json["crontab_line"]
         return None
 
-    def __iter__(
-        self,
-    ):
+    @staticmethod
+    def _iter(dump_filepath):
         try:
-            with open(self._dump_filepath) as f:
+            with open(dump_filepath) as f:
                 jsons = ndjson.load(f)
         except Exception as e:
             raise RescJSONError(e)
         return iter(jsons)
 
+    def __iter__(
+        self,
+    ):
+        return RescJSON._iter(self._dump_filepath)
+
     @property
     def length(self):
         return len(list(iter(self)))
 
-    def jdelete(
-        self,
-        hash_value
+
+    @staticmethod
+    def jdump(
+        dump_filepath,
+        elements
     ):
-        elements = [ x for x in self
-            if x["hash"] != hash_value ]
-        with open(self._dump_filepath, "w") as f:
+        with open(dump_filepath, "w") as f:
             writer = ndjson.writer(f)
             for element in elements:
                 writer.writerow(element)
-

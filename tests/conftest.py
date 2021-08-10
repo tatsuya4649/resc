@@ -340,7 +340,7 @@ def log_undo(temp_logdir):
                     with open(_OUTPUT_FULL,"w") as f:
                         f.write(prelog)
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope="function", autouse=False)
 def resc_default_undo():
     with _RegDir(Resc._RESCDIR_DEFAULT):
         predfiles = None

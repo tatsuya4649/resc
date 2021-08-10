@@ -252,6 +252,48 @@ class Resc:
             )
         self._quiet = value
 
+    @property
+    def limit(self):
+        if not hasattr(self, "_limit"):
+            return 1
+        return self._limit
+    
+    @limit.setter
+    def limit(self, value):
+        if not isinstance(value, int) or value <= 0:
+            raise RescTypeError(
+                "limit must be int type and greater than zero."
+            )
+        self._limit = value
+
+    @property
+    def permanent(self):
+        if not hasattr(self, "_permanent"):
+            return True
+        return self._permanent
+    
+    @permanent.setter
+    def permanent(self, value):
+        if not isinstance(value, bool):
+            raise RescTypeError(
+                "permanent must be bool type."
+            )
+        self._permanent = value
+
+    @property
+    def reverse(self):
+        if not hasattr(self, "_reverse"):
+                return False
+        return self._reverse
+    
+    @reverse.setter
+    def reverse(self, value):
+        if not isinstance(value, bool):
+            raise RescTypeError(
+                "reverse must be bool type."
+            )
+        self._reverse = value
+
     def register(
         self,
         trigger,
@@ -266,8 +308,15 @@ class Resc:
         format=None,
         call_first=False,
         quiet=False,
+        limit=1,
+        permanent=True,
+        reverse=False
     ):
         self.quiet = quiet
+        self.limit = limit
+        self.permanent = permanent
+        self.reverse = reverse
+
         if not Cron.available():
             raise CronCommandError(
                 "not found crontab command. you must have crontab command."
@@ -362,6 +411,8 @@ class Resc:
                     crontab_line=totalline,
                     register_file=self._REGIPATH,
                     function=func,
+                    limit=self.limit,
+                    permanent=self.permanent,
                     log_file=None,
                 )
 
@@ -500,12 +551,15 @@ class Resc:
             "resc_mem": self._memory_dict,
             "resc_disk": self._disk_dict,
             "logfile": f"\"{self._resclog.pure_log}\"" \
-            if self._resclog.pure_log is not None else None,
+                if self._resclog.pure_log is not None else None,
             "logformat": self._resclog.format_meta,
             "logvars": self._resclog.define_resclog,
             "ssh": ssh,
             "func": f"{funcname}({args_str}{kwargs_str})",
             "defname": funcname,
+            "object_hash": RescObject._hash(filename),
+            "jfile": self._RESCJSONPATH,
+            "reverse": self.reverse,
         }
         env = Environment(loader=FileSystemLoader(
             f'{self._package_path}/templates',
@@ -513,9 +567,10 @@ class Resc:
         )
         tmpl = env.get_template('resc.j2')
         render = tmpl.render(renparams)
-
+        
         with open(filename, "w") as sf:
             sf.write(render)
+
         if not self.quiet:
             print("Output of compile:\t %s" % (filename))
             if self._resclog.log:
