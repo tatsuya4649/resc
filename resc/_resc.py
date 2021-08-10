@@ -506,24 +506,7 @@ class Resc:
             "ssh": ssh,
             "func": f"{funcname}({args_str}{kwargs_str})",
             "defname": funcname,
-            "modules": list(sys.modules),
         }
-#        renparams = dict()
-#        renparams["sourcefile"] = sourcefile
-#        renparams["source"] = source
-#        renparams["sourcebyte"] = self._resclog.sour
-#        renparams["rescsflag"] = inspect.getsource(RescLogSFlag)
-#        renparams["syspath"] = self._par_resc
-#        renparams["resc_cpu"] = self._cpu_dict
-#        renparams["resc_mem"] = self._memory_dict
-#        renparams["resc_disk"] = self._disk_dict
-#        renparams["logfile"] = f"\"{self._resclog.pure_log}\"" \
-#            if self._resclog.pure_log is not None else None
-#        renparams["logformat"] = self._resclog.format_meta
-#        renparams["logvars"] = self._resclog.define_resclog
-#        renparams["ssh"] = ssh
-#        renparams["func"] = f"{funcname}({args_str}{kwargs_str})"
-#        renparams["defname"] = funcname
         env = Environment(loader=FileSystemLoader(
             f'{self._package_path}/templates',
             encoding="utf-8")
@@ -637,9 +620,3 @@ class Resc:
 
     def _send_script(self, ssh, connect, script_path, resclog):
         return ssh.scpfile(connect, script_path, resclog)
-
-    @property
-    def _par_resc(self):
-        dir = os.path.dirname(__file__)
-        pardir = pathlib.Path(dir).resolve().parents[0]
-        return pardir
