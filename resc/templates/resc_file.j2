@@ -1,0 +1,6 @@
+{% extends "resc.j2" %}
+{% block code %}
+    {% filter indent %}
+        {{ source }}
+    {% endfilter %}
+{% endblock %}
