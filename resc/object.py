@@ -12,6 +12,10 @@ class RescObjectTypeError(TypeError):
     pass
 
 
+class RescObjectValueError(ValueError):
+    pass
+
+
 class RescObjectKeyError(KeyError):
     pass
 
@@ -201,6 +205,38 @@ class RescObject(RescJSON):
         Cron.crondelete(self.crontab_line)
         return self.crontab_line
 
+    @staticmethod 
+    def sdelete(hash_value, dump_filepath):
+        """
+        delete from crontab and rescjson file.
+        """
+        if hash_value not in RescObject._hashmodule.keys():
+            raise RescObjectAttributeError(
+                f"RescObject not save data of hash({hash_value})."
+            )
+        element = RescObject.jdelete(hah_value, _dump_filepath)
+        if element is None:
+            raise RescObjectValueError(
+                "not found crontab line with hash value."
+            )
+        Cron.crondelete(element["crontab_line"])
+        return element["crontab_line"]
+
+    @staticmethod
+    def jdelete(
+        hash_value,
+        dump_filepath,
+    ):
+        elements = list()
+        result = None
+        for element in RescJSON._iter(dump_filepath):
+            if element["hash"] != hash_value:
+                elements.append(element)
+            else:
+                result = element
+        RescJSON.jdump(dump_filepath,elements)
+        return result
+
     def _jdelete(
         self,
         hash_value
@@ -247,5 +283,10 @@ class RescObject(RescJSON):
                 result = True
                 if ele["permanent"] is True:
                     ele["limit"] = ele["limit_init"]
+                else:
+                    RescObject.sdelete(
+                        hash_value,
+                        dump_filepath,
+                    )
         RescJSON.jdump(dump_filepath, elements)
         return result
