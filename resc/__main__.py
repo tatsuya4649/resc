@@ -73,6 +73,11 @@ def main():
         action="store_true"
     )
     parser.add_argument(
+        "--all",
+        help="All resouce exceeded mode(Flag)",
+        action="store_true"
+    )
+    parser.add_argument(
         "--not_found",
         help="for crontab. If not found script, write to log",
         type=str,
@@ -187,6 +192,8 @@ def main():
             memory=memory,
             disk=disk,
         )
+        if args.all:
+            resc.all = True
     except Exception as e:
         print(e)
         parser.print_help()

@@ -118,6 +118,9 @@ try:
         memory={{ resc_mem }},
         disk={{ resc_disk }}
     )
+    resc.all = {{ all }}
+    if resc.all:
+        sflag |= RescLogSFlag.ALL.value["flag"]
 except Exception as e:
     sflag |= (
         RescLogSFlag.EME.value["flag"] |

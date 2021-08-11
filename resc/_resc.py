@@ -63,6 +63,7 @@ def register(
     @limit      (=1): How many times a resource threshold is exceeded before executing decorated function.
     @permanent  (=True): If False, delete crontab line(registered in this) when a resource threshold once exceeded
     @reverse    (=False): If it doesn't exceed threshold, execute.
+    @all        (=False): All specified resources must exceed threshold.
 
     return:
         RescObject
@@ -113,6 +114,7 @@ def register_file(
     @permanent  (=True): If False, delete crontab line(registered in this) when a resource threshold once exceeded
     @reverse    (=False): If it doesn't exceed threshold, execute.
     @exist_ok   (=False): If there is a same file in registered crontab, raise error.
+    @all        (=False): All specified resources must exceed threshold.
 
     return:
         RescObject
@@ -403,7 +405,10 @@ class Resc:
 
     @property
     def over_one(self):
-        return False in [v for k, v in self.checks.items()]
+        if self.all:
+            return True not in [v for k, v in self.checks.items()]
+        else:
+            return False in [v for k, v in self.checks.items()]
 
     @property
     def overs(self):
@@ -516,6 +521,20 @@ class Resc:
             )
         self._reverse = value
     
+    @property
+    def all(self):
+        if not hasattr(self, "_all"):
+            return False
+        return self._all
+    
+    @all.setter
+    def all(self, value):
+        if not isinstance(value, bool):
+            raise RescTypeError(
+                "all must be bool type."
+            )
+        self._all = value
+    
     def _register(
         self,
         trigger,
@@ -526,12 +545,14 @@ class Resc:
         quiet=False,
         limit=1,
         permanent=True,
-        reverse=False
+        reverse=False,
+        all=False,
     ):
         self.quiet = quiet
         self.limit = limit
         self.permanent = permanent
         self.reverse = reverse
+        self.all = all
 
         if not Cron.available():
             raise CronCommandError(
@@ -628,6 +649,7 @@ class Resc:
         permanent=True,
         reverse=False,
         exist_ok=False,
+        all=False,
     ):
         self._register(
             trigger=trigger,
@@ -639,6 +661,7 @@ class Resc:
             limit=limit,
             permanent=permanent,
             reverse=reverse,
+            all=all,
         )
         ssh = self._remote_ssh(
             ip=ip,
@@ -684,7 +707,8 @@ class Resc:
         quiet=False,
         limit=1,
         permanent=True,
-        reverse=False
+        reverse=False,
+        all=False,
     ):
         self._register(
             trigger=trigger,
@@ -696,6 +720,7 @@ class Resc:
             limit=limit,
             permanent=permanent,
             reverse=reverse,
+            all=all,
         )
         def _register_func(func):
             def _wrapper(*args, **kwargs):
@@ -747,12 +772,7 @@ class Resc:
 
     def _sourcefile(
         self,
-        **kwargs
-#        filename=None
-#        funcname=None,
-#        func=None,
-#        func_args=None,
-#        ssh=None
+        **kwargs,
     ):
         if "filename" not in kwargs.keys() and "funcname" not in kwargs.keys():
             raise RescKeyError(
@@ -882,6 +902,7 @@ class Resc:
             "object_hash": RescObject._hash(resc_filename),
             "jfile": self._RESCJSONPATH,
             "reverse": self.reverse,
+            "all": self.all,
         }
         if funcname is not None:
             """
@@ -988,8 +1009,12 @@ class Resc:
         """
             Check Remote Host Resource using 'resc' command
         """
+        if self.all:
+            command = f"PATH=\"$PATH:~/.local/bin\" resc --all -q {self._resc_arg}"
+        else:
+            command = f"PATH=\"$PATH:~/.local/bin\" resc -q {self._resc_arg}"
         stdin, stdout, stderr = client.exec_command(
-            f"PATH=\"$PATH:~/.local/bin\" resc -q {self._resc_arg}"
+            command
         )
         stdin.close()
         status_code = int(stdout.channel.recv_exit_status())

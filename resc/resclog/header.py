@@ -46,6 +46,8 @@ class RescLogSFlag(Enum):
     NFS = {"flag": 1 << 11, "explain": "Not Found Script File Error."}
     # Reverse
     RVS = {"flag": 1 << 12, "explain": "Reverse Exceeded Flag."}
+    # All
+    ALL = {"flag": 1 << 13, "explain": "All resource must be exceeded Flag."}
 
 
 class RescLogEmergeHeader(LittleEndianStructure):
