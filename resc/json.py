@@ -24,72 +24,24 @@ class RescJSON:
     def __new__(
         cls,
         dump_filepath,
-        compiled_file,
-        crontab_line,
-        register_file,
-        function,
-        limit,
-        permanent,
-        log_file=None,
     ):
-        cls._keys = [
-            "compiled_file",
-            "crontab_line",
-            "register_file",
-            "func_source",
-            "func_name",
-            "limit",
-            "permanent",
-            "log_file",
-        ]
-        self = super().__new__(cls)
-        func_name = function.__name__
-        func_source = inspect.getsource(
-            function.__code__
-        )
-        for key in cls._keys:
-            exec(f"self.{key} = {key}")
-        self.hash = RescJSON._hash(
-            compiled_file
-        )
-        return self
+        return super().__new__(cls)
 
     def __init__(
         self,
         dump_filepath,
-        compiled_file,
-        crontab_line,
-        register_file,
-        function,
-        limit,
-        permanent,
-        log_file=None,
     ):
-        _jdict = dict()
-        _jdict["compiled_file"] = compiled_file
-        _jdict["crontab_line"] = crontab_line
-        _jdict["register_file"] = register_file
-        _jdict["func_source"] = inspect.getsource(
-            function.__code__
-        )
-        _jdict["funcname"] = function.__name__
-        _jdict["limit"] = limit
-        _jdict["limit_init"] = limit
-        _jdict["permanent"] = permanent
-        if log_file is not None:
-            _jdict["log_file"] = log_file
-        _jdict["hash"] = self._hash(compiled_file)
-        self._jdict = _jdict
-
         self._dump_filepath = dump_filepath
 
+    @staticmethod
+    def dump_row(dump_filepath,_jdict):
         try:
-            with open(self._dump_filepath, "a") as f:
+            with open(dump_filepath, "a") as f:
                 writer = ndjson.writer(f)
                 writer.writerow(_jdict)
         except Exception as e:
             raise RescJSONError(e)
-
+        
     @staticmethod
     def _hash(key):
         return hashlib.sha256(

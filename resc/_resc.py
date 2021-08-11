@@ -389,8 +389,8 @@ class Resc:
     
     def register_file(
         self,
-        trigger,
         exec_file,
+        trigger,
         rescdir=None,
         outputfile=None,
         ip=None,
@@ -426,7 +426,7 @@ class Resc:
             timeout=timeout,
         )
         compiled_filename = self._sourcefile(
-            filename=exc_file,
+            filename=exec_file,
             ssh=ssh,
         )
         # Register crontable from trigger
@@ -438,8 +438,8 @@ class Resc:
             compiled_file=compiled_filename,
             crontab_line=totalline,
             register_file=self._REGIPATH,
-            function=func,
             limit=self.limit,
+            exec_file=exec_file,
             permanent=self.permanent,
             log_file=None,
         )
