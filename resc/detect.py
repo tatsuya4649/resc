@@ -1,13 +1,32 @@
 class DetectBaseNotImplementedError(NotImplementedError):
     pass
 
+
+class DetectInheritenceError(Exception):
+    pass
+
+
+class DetectAttributeError(AttributeError):
+    pass
+
+
 class DetectMeta(type):
+    _MUSTATTRS=[
+        "resource",
+        "check",
+        "threshold",
+    ]
     def __new__(
         cls,
         name,
         bases,
         attributes
     ):
+        for attr in DetectMeta._MUSTATTRS:
+            if attr not in attributes.keys():
+                raise DetectAttributeError(
+                    f"{attr} must be defined."
+                )
         return super().__new__(
             cls,
             name,
@@ -16,6 +35,12 @@ class DetectMeta(type):
         )
 
 class DetectBase(metaclass=DetectMeta):
+
+    def __init__(self):
+        raise DetectInheritenceError(
+            f"{__class__.__name__} must be inherited."
+        )
+
     def _notimplestr(self, param):
         return (
             "resource detect must have "

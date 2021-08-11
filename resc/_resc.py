@@ -1,6 +1,7 @@
 from .cpu import CPUDetect
 from .memory import MemoryDetect
 from .disk import DiskDetect
+from .net import NetDetect
 from .cron import Cron, CronCommandError
 from .resclog.header import RescLogSFlag, RescLogFlag
 from .object import RescObject
@@ -26,10 +27,12 @@ def _resc_init(
     cpu = None if "cpu" not in kwargs.keys() else kwargs["cpu"]
     memory = None if "memory" not in kwargs.keys() else kwargs["memory"]
     disk = None if "disk" not in kwargs.keys() else kwargs["disk"]
+    net = None if "net" not in kwargs.keys() else kwargs["net"]
     return Resc(
         cpu=cpu,
         memory=memory,
         disk=disk,
+        net=net,
     )
 
 
@@ -161,13 +164,12 @@ class Resc:
         cpu=None,
         memory=None,
         disk=None,
+        net=None,
     ):
-        cpu = cpu if cpu else None
-        memory = memory if memory else None
-        disk = disk if disk else None
         self._cpu_dict = cpu
         self._memory_dict = memory
         self._disk_dict = disk
+        self._net_dict = net
         if cpu is not None and not isinstance(cpu, dict):
             raise RescTypeError("cpu must be None or dict.")
         elif cpu is not None:
@@ -228,6 +230,26 @@ class Resc:
                     f"unexpected keys ({unexpected_keys})."
                 )
 
+        if net is not None and not isinstance(net, dict):
+            raise RescTypeError("net must be None or dict.")
+        elif net is not None:
+            net_detect_keys = [
+                k for k, v in
+                inspect
+                .signature(NetDetect.__init__)
+                .parameters
+                .items()
+            ]
+            unexpected_keys = [
+                x for x in net.keys()
+                if x not in net_detect_keys
+            ]
+            if len(unexpected_keys) > 0:
+                raise RescKeyError(
+                    f"net must have only {net_detect_keys} key."
+                    f"unexpected keys ({unexpected_keys})."
+                )
+
         if cpu is not None:
             cpu_string = str()
             for x in cpu.keys():
@@ -261,10 +283,22 @@ class Resc:
         else:
             self._disk = None
 
+        if net is not None:
+            net_string = str()
+            for x in netj.keys():
+                if isinstance(net[x], str):
+                    net_string += f"{x}=\"{net[x]}\","
+                else:
+                    net_string += f"{x}={net[x]},"
+            self._net = eval(f'NetDetect({net_string})')
+        else:
+            self._net = None
+
         self._checkers = list()
         self._checkers.append(self._cpu)
         self._checkers.append(self._memory)
         self._checkers.append(self._disk)
+        self._checkers.append(self._net)
         self._checkers = [x for x in self._checkers if x is not None]
         self._crons = list()
         self._resclog = None
@@ -275,7 +309,6 @@ class Resc:
         for x in self._checkers:
             retdic[x.resource] = {
                 "threshold": x.threshold,
-                "mode": x.mode,
             }
         return retdic
 
