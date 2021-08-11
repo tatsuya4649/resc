@@ -226,7 +226,7 @@ _RESCDIR_FULL = os.path.join(
 # pass of resc log
 _OUTPUT = "test_output"
 _OUTPUT_FULL = os.path.join(
-    Resc._RESCSLOG_DEFAULT,
+    Resc._RESCLOG_PATH,
     _OUTPUT
 )
 
@@ -395,7 +395,7 @@ def temp_rescdir():
                         file
                     )
                 )
-            os.rmdir(_RESCDIR_FULL)
+            shutil.rmtree(_RESCDIR_FULL)
 
         if direxists:
             shutil.move(

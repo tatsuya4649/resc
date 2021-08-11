@@ -1,5 +1,5 @@
 from .rescerr import RescTypeError
-from ._resc import Resc
+from ._resc import Resc, register, register_file
 from .ssh import SSH
 from .resclog import RescLogFlag, RescLogHeader, RescLogEmergeHeader, \
     RescLogSFlag, RescLog, RescLogFormat, RescLogOver, \
@@ -7,7 +7,6 @@ from .resclog import RescLogFlag, RescLogHeader, RescLogEmergeHeader, \
     RescLogKeyError, RescLogUnMatchError, start_server
 from .json import RescJSON
 from .object import RescObject
-
 
 __all__ = [
     RescTypeError.__name__,
@@ -28,6 +27,8 @@ __all__ = [
     start_server.__name__,
     RescJSON.__name__,
     RescObject.__name__,
+    register.__name__,
+    register_file.__name__,
 ]
 
 __version__ = "0.1.0"

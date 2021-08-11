@@ -51,6 +51,7 @@ def test_jinja2(
     register_undos,
 ):
     result = jinja2_test()
+    print(type(result))
     compiled_file = result.compiled_file
     print("RESC COMPILED FILE:")
     print(f"\t{compiled_file}")

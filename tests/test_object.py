@@ -7,37 +7,48 @@ from resc import *
 from resc.object import *
 from resc.json import RescJSON
 from resc.cron import *
-from .test_json import _DUMP_FILEPATH, json, dump_file
+from .test_json import _DUMP_FILEPATH
 from .test_resc_register import setup_resc, _RESCDIR
 
 @pytest.fixture(scope="function", autouse=False)
-def rescob(dump_file):
+def delete_dump():
+    yield
+    os.remove(_DUMP_FILEPATH)
+
+@pytest.fixture(scope="function", autouse=False)
+def rescob(delete_dump):
     resc = RescObject(
         dump_filepath=_DUMP_FILEPATH,
         compiled_file="rescs31421",
         crontab_line="* * * * echo ''\n",
         register_file="register",
         function=hello,
+        limit=1,
+        permanent=False,
         log_file="output"
     )
     yield resc
 
-def test_init(json):
+def test_init():
     resc = RescObject(
         dump_filepath=_DUMP_FILEPATH,
         compiled_file="rescs31421",
         crontab_line="* * * * echo ''\n",
         register_file="register",
         function=hello,
+        limit=1,
+        permanent=False,
         log_file="output"
     )
 
-def test_enter(json):
+def test_enter():
     resc = RescObject(
         dump_filepath=_DUMP_FILEPATH,
         compiled_file="rescs1", crontab_line="* * * * echo ''\n",
         register_file="register",
         function=hello,
+        limit=1,
+        permanent=False,
         log_file="output"
     )
     with resc:
@@ -72,6 +83,8 @@ def test_call_result():
         crontab_line="* * * * echo ''\n",
         register_file="register",
         function=hello,
+        limit=1,
+        permanent=False,
         log_file="output"
     )
     with rescob:
@@ -115,6 +128,8 @@ def test_import_module_error():
                 compiled_file="rescs1",
                 crontab_line="* * * * echo ''\n",
                 register_file="register",
+                limit=1,
+                permanent=False,
                 function=hello,
                 log_file="output"
             )

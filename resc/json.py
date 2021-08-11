@@ -34,22 +34,22 @@ class RescJSON:
         self._dump_filepath = dump_filepath
 
     @staticmethod
-    def dump_row(dump_filepath,_jdict):
+    def dump_row(
+        dump_filepath,
+        _jdict
+    ):
         try:
             with open(dump_filepath, "a") as f:
                 writer = ndjson.writer(f)
                 writer.writerow(_jdict)
         except Exception as e:
             raise RescJSONError(e)
-        
+
     @staticmethod
     def _hash(key):
         return hashlib.sha256(
             key.encode("utf-8")
         ).hexdigest()
-
-    def __call__(self):
-        return self._jdict
 
     @property
     def dump_filepath(self):
@@ -66,11 +66,6 @@ class RescJSON:
             raise RescJSONTypeError(
                 "key must be str type."
             )
-        if key not in RescJSON._keys:
-            raise RescJSONKeyError(
-                f"invalid key ({key}). "
-                f"valid key ({RescJSON._keys})"
-            )
         if not os.path.isfile(dump_filepath):
             raise RescJSONFileNotFoundError(
                 "JSON file not found."
@@ -79,8 +74,8 @@ class RescJSON:
             _jsons = ndjson.load(f)
 
         for json in _jsons:
-            if hash_value == json["hash"]:
-                return json["crontab_line"]
+            if hash_value == json["hash"] and key in json.keys():
+                return json[key]
         return None
 
     @staticmethod
@@ -100,7 +95,6 @@ class RescJSON:
     @property
     def length(self):
         return len(list(iter(self)))
-
 
     @staticmethod
     def jdump(

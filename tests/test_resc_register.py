@@ -391,3 +391,69 @@ def test_register_first_tab_test(
     def first_tab():
         ...
     first_tab()
+
+"""
+register/register_file
+"""
+def test_register_global(
+    register_undos
+):
+    @register(
+        trigger="* * * * *",
+        rescdir=_RESCDIR
+    )
+    def first_tab():
+        ...
+
+    result = first_tab()
+
+    assert result is not None
+    assert isinstance(result, RescObject)
+def test_register_global_docs():
+    result = register.__doc__
+    assert result is not None
+    assert isinstance(result, str)
+
+def test_register_file_global(
+    register_undos
+):
+    result = register_file(
+        exec_file=os.path.join(
+            os.path.abspath(os.path.dirname(__file__)),
+            "test_data/test_resc_register_file.py"
+        ),
+        trigger="* * * * *",
+        rescdir=_RESCDIR
+    )
+    assert result is not None
+    assert isinstance(result, RescObject)
+
+def test_register_file_global_exist_error(
+    register_undos
+):
+    register_file(
+        exec_file=os.path.join(
+            os.path.abspath(os.path.dirname(__file__)),
+            "test_data/test_resc_register_file.py"
+        ),
+        trigger="* * * * *",
+        rescdir=_RESCDIR,
+        exist_ok=False
+    )
+    with pytest.raises(
+        RescExistError
+    ) as raiseinfo:
+        register_file(
+            exec_file=os.path.join(
+                os.path.abspath(os.path.dirname(__file__)),
+                "test_data/test_resc_register_file.py"
+            ),
+            trigger="* * * * *",
+            rescdir=_RESCDIR,
+            exist_ok=False,
+        )
+
+def test_register_file_global_docs():
+    result = register_file.__doc__
+    assert result is not None
+    assert isinstance(result, str)

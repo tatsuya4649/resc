@@ -117,7 +117,6 @@ class RescObject(RescJSON):
         self._jdict = _jdict
 
         self.dump_row(self._dump_filepath,_jdict)
-
         self.import_module()
 
 
@@ -155,7 +154,7 @@ class RescObject(RescJSON):
             raise RescObjectAttributeError(
                 "call must be used in 'with' statement.")
         return self._call
-    
+
     @property
     def func_or_not(self):
         if hasattr(self, "func_source"):
@@ -270,7 +269,7 @@ class RescObject(RescJSON):
         Cron.crondelete(self.crontab_line)
         return self.crontab_line
 
-    @staticmethod 
+    @staticmethod
     def sdelete(hash_value, dump_filepath):
         """
         delete from crontab and rescjson file.
@@ -330,9 +329,12 @@ class RescObject(RescJSON):
             )
         sys.path.remove(RescObject._hashmodule[self.hash]["syspath"])
 
+    def __call__(self):
+        return self._jdict
+
     @property
     def json(self):
-        return super().__call__()
+        return self.__call__()
 
     @staticmethod
     def limit_update(
@@ -355,3 +357,15 @@ class RescObject(RescJSON):
                     )
         RescJSON.jdump(dump_filepath, elements)
         return result
+
+    @staticmethod
+    def exist_samescript(
+        filepath,
+        dump_filepath
+    ):
+        if os.path.isfile(dump_filepath):
+            elements = RescJSON._iter(dump_filepath)
+            for ele in elements:
+                if "exec_file" in ele.keys() and ele["exec_file"] == filepath:
+                    return True
+        return False

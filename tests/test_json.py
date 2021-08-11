@@ -1,12 +1,23 @@
 import pytest
 from unittest import mock
 import os
-
+import ndjson
 from resc.json import *
 
-_DUMP_FILEPATH = "test.json"
+_DUMP_FILEPATH = os.path.join(
+    os.path.abspath(os.path.dirname(__file__)),
+    "test_data/test.ndjson"
+)
+_HASH_VALUE = "hash"
+_CRONTAB_LINE = "crontab_line"
 @pytest.fixture(scope="function", autouse=False)
 def dump_file():
+    with open(_DUMP_FILEPATH, "w") as f:
+        writer = ndjson.writer(f)
+        writer.writerow({
+            "hash": _HASH_VALUE,
+            _CRONTAB_LINE: "* * * * * echo",
+        })
     yield
     os.remove(_DUMP_FILEPATH)
 
@@ -17,70 +28,16 @@ def hello():
 def json(dump_file):
     resc = RescJSON(
         dump_filepath=_DUMP_FILEPATH,
-        compiled_file="rescs31421",
-        crontab_line="* * * * echo ''\n",
-        register_file="register",
-        function=hello,
-        log_file="output"
     )
     yield resc
 
 def test_init():
     resc = RescJSON(
-        dump_filepath="test.json",
-        compiled_file="rescs31421",
-        crontab_line="* * * * echo ''\n",
-        register_file="register",
-        function=hello,
-        log_file="output"
+        dump_filepath=_DUMP_FILEPATH,
     )
-
-def test_init_error():
-    def test(a):
-        return a
-    with mock.patch(
-        "ndjson.writer",
-        side_effect=Exception
-    ):
-        with pytest.raises(
-            RescJSONError
-        ):
-            RescJSON(
-                dump_filepath="test.json",
-                compiled_file="rescs31421",
-                crontab_line="* * * * echo ''\n",
-                register_file="register",
-                function=test,
-                log_file="output"
-            )
-
-
-def test_hash(json):
-    result = json.hash
-    assert result is not None
-    assert isinstance(result, str)
-    print(f"RESC JSON HASH(SHAR256): {result}")
-
-def test_call(json):
-    result = json()
-    assert result is not None
-    assert isinstance(result, dict)
-    print(f"RESC _JDICT: {result}")
 
 def test_totalline(json):
     ...
-
-def test_search_json_keyerror(json):
-    with pytest.raises(
-        RescJSONKeyError
-    ) as raiseinfo:
-        result = json.json_search(
-            hash_value="100",
-            key="crontab_lines",
-            dump_filepath=_DUMP_FILEPATH,
-        )
-        assert result is None
-    print(f"RESCJSON SEARCH JSON KEY ERROR:{raiseinfo.value}")
 
 def test_json_search_filenotfound_error(json):
     with pytest.raises(
@@ -100,6 +57,15 @@ def test_search_json_notfound(json):
     )
     assert result is None
 
+def test_search(json):
+    result = json.json_search(
+        hash_value=_HASH_VALUE,
+        key=_CRONTAB_LINE,
+        dump_filepath=_DUMP_FILEPATH,
+    )
+    assert result is not None
+    assert isinstance(result, str)
+
 def test_iter__(json):
     result = iter(json)
     lists = [x for x in result]
@@ -108,8 +74,3 @@ def test_iter__(json):
 
     for part in lists:
         print(part)
-
-def test_jdelete(json):
-    assert json.length == 1
-    json.jdelete(json.hash)
-    assert json.length == 0

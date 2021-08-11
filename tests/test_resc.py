@@ -280,7 +280,7 @@ def test_source_write(setup_resc):
     _FILENAME = "filename"
     setup_resc._resclog = RescLog()
     filename = setup_resc._source_write(
-        filename=_FILENAME,
+        resc_filename=_FILENAME,
         func_source="def hello():\n    ...",
         funcname="hello",
         func_args={

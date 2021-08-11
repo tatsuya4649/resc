@@ -2,11 +2,11 @@ from .cpu import CPUDetect
 from .memory import MemoryDetect
 from .disk import DiskDetect
 from .cron import Cron, CronCommandError
-from .resclog.header import RescLogSFlag
+from .resclog.header import RescLogSFlag, RescLogFlag
 from .object import RescObject
 from .ssh import SSH
 from .rescerr import RescTypeError, RescKeyError, RescCronError, \
-    RescValueError, RescServerError
+    RescValueError, RescServerError, RescExistError
 from .resclog import RescLog
 from .compile import RescCompile
 import resc
@@ -18,6 +18,115 @@ import re
 import sys
 import subprocess
 from jinja2 import Environment, FileSystemLoader
+
+
+def _resc_init(
+    **kwargs
+):
+    cpu = None if "cpu" not in kwargs.keys() else kwargs["cpu"]
+    memory = None if "memory" not in kwargs.keys() else kwargs["memory"]
+    disk = None if "disk" not in kwargs.keys() else kwargs["disk"]
+    return Resc(
+        cpu=cpu,
+        memory=memory,
+        disk=disk,
+    )
+
+
+def register(
+    trigger,
+    **kwargs,
+):
+    """
+    register decorated function to crontab and resource check script.
+    namespace of decorated function must be independent,
+    because it be executed in cron independently.
+
+    params:
+    @trigger           : Format of crontab. Specify interval of check resource.
+    @rescdir    (=None): Compiled file path to be placed. ("~/.resc/" + rescdir)
+    @outputfile (=None): Log file path to be placed. ("~/.resc/log" + outputfile)
+    @ip         (=None): IP Address of resources be checked.
+    @username   (=None): Username that of host of IP Address. (used in SSH)
+    @password   (=None): Password that of host of IP Address. (used in SSH)
+    @key_path   (=None): Key path file used for key authentication for SSH to communicate with host of IP Address.
+    @port       (=22): Port number used in SSH.
+    @timeout    (=5): Connection timeout used in SSH.
+    @format     (=None): Log format. (detail are shown in `RescLogFormat class`.)
+    @call_first (=False): Call now body of this function without resource check?
+    @quiet      (=False): Without output of path name of compiled, log.
+    @limit      (=1): How many times a resource threshold is exceeded before executing decorated function.
+    @permanent  (=True): If False, delete crontab line(registered in this) when a resource threshold once exceeded
+    @reverse    (=False): If it doesn't exceed threshold, execute.
+
+    return:
+        RescObject
+    
+    example:
+        from resc import register
+
+        @register(
+            trigger="* * * * *",
+        )
+        def test():
+            print("Hello World")
+        
+        result = test()
+        print(type(result))     # <class 'resc.object.RescObject'>
+    """
+    _resc = _resc_init(**kwargs)
+    return _resc.register(
+        trigger,
+        **kwargs
+    )
+
+
+def register_file(
+    exec_file,
+    trigger,
+    **kwargs,
+):
+    """
+    register .py script to crontab and resource check script.
+    your registered file(exec_file params) will be executed every specified trigger time(trigger params).
+
+    params:
+    @exec_file         : If a resource exceeded, @exec_file will be executed.
+    @trigger           : Format of crontab. Specify interval of check resource.
+    @rescdir    (=None): Compiled file path to be placed. ("~/.resc/" + rescdir)
+    @outputfile (=None): Log file path to be placed. ("~/.resc/log" + outputfile)
+    @ip         (=None): IP Address of resources be checked.
+    @username   (=None): Username that of host of IP Address. (used in SSH)
+    @password   (=None): Password that of host of IP Address. (used in SSH)
+    @key_path   (=None): Key path file used for key authentication for SSH to communicate with host of IP Address.
+    @port       (=22): Port number used in SSH.
+    @timeout    (=5): Connection timeout used in SSH.
+    @format     (=None): Log format. (detail are shown in `RescLogFormat class`.)
+    @call_first (=False): Call now body of this function without resource check?
+    @quiet      (=False): Without output of path name of compiled, log.
+    @limit      (=1): How many times a resource threshold is exceeded before executing decorated function.
+    @permanent  (=True): If False, delete crontab line(registered in this) when a resource threshold once exceeded
+    @reverse    (=False): If it doesn't exceed threshold, execute.
+    @exist_ok   (=False): If there is a same file in registered crontab, raise error.
+
+    return:
+        RescObject
+
+    example:
+        from resc import register_file
+
+        result = register_file(
+            exec_file="./exec.py"
+            trigger="* * * * *",
+        )
+        print(type(result))     # <class 'resc.object.RescObject'>
+    """
+    _resc = _resc_init(**kwargs)
+    return _resc.register_file(
+        exec_file,
+        trigger,
+        **kwargs
+    )
 
 
 class Resc:
@@ -32,7 +141,7 @@ class Resc:
         _RESCDIR_PATH,
         "resc"
     )
-    _RESCSLOG_DEFAULT = os.path.join(
+    _RESCLOG_PATH = os.path.join(
         os.path.expanduser("~"),
         ".resc/log"
      )
@@ -351,7 +460,7 @@ class Resc:
         self._resclog = RescLog(
             logfile=None if os.getenv(self._RESCOUTPUT_ENV) is None else \
                     os.path.join(
-                        self._RESCSLOG_DEFAULT,
+                        self._RESCLOG_PATH,
                         os.getenv(self._RESCOUTPUT_ENV)
             ),
             format=format,
@@ -404,7 +513,8 @@ class Resc:
         quiet=False,
         limit=1,
         permanent=True,
-        reverse=False
+        reverse=False,
+        exist_ok=False,
     ):
         self._register(
             trigger=trigger,
@@ -428,6 +538,7 @@ class Resc:
         compiled_filename = self._sourcefile(
             filename=exec_file,
             ssh=ssh,
+            exist_ok=exist_ok,
         )
         # Register crontable from trigger
         totalline = self._crons_get(trigger, compiled_filename)
@@ -439,7 +550,7 @@ class Resc:
             crontab_line=totalline,
             register_file=self._REGIPATH,
             limit=self.limit,
-            exec_file=exec_file,
+            exec_file=os.path.abspath(exec_file),
             permanent=self.permanent,
             log_file=None,
         )
@@ -539,6 +650,7 @@ class Resc:
         func_source = None if "func_source" not in kwargs.keys() else kwargs["func_source"]
         func_args = None if "func_args" not in kwargs.keys() else kwargs["func_args"]
         ssh = None if "ssh" not in kwargs.keys() else kwargs["ssh"]
+        exist_ok = None if "exist_ok" not in kwargs.keys() else kwargs["exist_ok"]
 
         resc_dir = os.getenv(self._RESCDIR_ENV)
         i = 0
@@ -561,6 +673,7 @@ class Resc:
                     funcname=funcname,
                     func_args=func_args,
                     ssh=ssh,
+                    exist_ok=exist_ok,
                 )
             i += 1
 
@@ -634,11 +747,11 @@ class Resc:
         resc_filename,
         **kwargs,
     ):
-        filename = kwargs["filename"]
-        funcname = kwargs["funcname"]
-        func_source = kwargs["func_source"]
-        func_args = kwargs["func_args"]
-        ssh = kwargs["ssh"]
+        filename = None if "filename" not in kwargs.keys() else kwargs["filename"]
+        funcname = None if "funcname" not in kwargs.keys() else kwargs["funcname"]
+        func_source = None if "func_source" not in kwargs.keys() else kwargs["func_source"]
+        func_args = None if "func_args" not in kwargs.keys() else kwargs["func_args"]
+        ssh = None if "ssh" not in kwargs.keys() else kwargs["ssh"]
         # compiled file name
         self._resclog.file = resc_filename
 
@@ -700,6 +813,15 @@ class Resc:
             """
             source file
             """
+            if not kwargs["exist_ok"]:
+                # don't allow to be same python sdcript in crontab
+                if RescObject.exist_samescript(
+                    os.path.abspath(filename),
+                    self._RESCJSONPATH
+                ):
+                    raise RescExistError(
+                        "already exec_file be registered in cron."
+                    )
             with open(filename, "r") as f:
                 source = f.read()
             self._resclog.sour = source.encode("utf-8")

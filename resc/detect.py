@@ -1,8 +1,21 @@
 class DetectBaseNotImplementedError(NotImplementedError):
     pass
 
+class DetectMeta(type):
+    def __new__(
+        cls,
+        name,
+        bases,
+        attributes
+    ):
+        return super().__new__(
+            cls,
+            name,
+            bases,
+            attributes
+        )
 
-class DetectBase:
+class DetectBase(metaclass=DetectMeta):
     def _notimplestr(self, param):
         return (
             "resource detect must have "

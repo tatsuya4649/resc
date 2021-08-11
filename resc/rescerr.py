@@ -48,3 +48,7 @@ class RescSSHConnectionError(Exception):
 
 class RescSSHTimeoutError(Exception):
     pass
+
+
+class RescExistError(FileExistsError):
+    pass
