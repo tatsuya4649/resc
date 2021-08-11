@@ -57,6 +57,44 @@ def main():
         type=str
     )
     parser.add_argument(
+        "-n",
+        "--net",
+        help="Network Connections threshold",
+        type=int,
+    )
+    parser.add_argument(
+        "--net_kind",
+        help="type of Network Connections",
+        type=str,
+    )
+    parser.add_argument(
+        "-s",
+        "--ps",
+        help="Process threshold value",
+        type=float,
+    )
+    parser.add_argument(
+        "--ps_mode",
+        help="Process mode.(percent or number)",
+        type=str,
+    )
+    parser.add_argument(
+        "--ps_limits",
+        help="Process Limits.(soft limits or hard limits.)",
+        type=str,
+    )
+    parser.add_argument(
+        "-f",
+        "--file",
+        help="File threshold value.",
+        type=float,
+    )
+    parser.add_argument(
+        "--file_mode",
+        help="File mode value.",
+        type=str,
+    )
+    parser.add_argument(
         "--log",
         help="Analize log file.receive path.",
         type=str
@@ -157,6 +195,9 @@ def main():
     cpu = dict()
     memory = dict()
     disk = dict()
+    net = dict()
+    ps = dict()
+    file = dict()
     if args.cpu_t is not None:
         cpu["threshold"] = args.cpu_t
         if args.cpu_mode is not None:
@@ -178,10 +219,28 @@ def main():
             disk["mode"] = args.disk_mode
     else:
         disk = None
+    if args.net is not None:
+        net["threshold"] = args.net
+        if args.net_kind is not None:
+            net["kind"] = args.net_kind
+    else:
+        net = None
+    if args.ps is not None:
+        ps["threshold"] = args.ps
+        if args.ps_mode is not None:
+            ps["mode"] = args.ps_mode
+        if args.ps_limits is not None:
+            ps["limits"] = args.ps_limits
+    if args.file is not None:
+        file["threshold"] = args.file
+        if args.file_mode is not None:
+            file["mode"] = args.file_mode
 
-    if cpu is None and memory is None and disk is None:
+    if cpu is None and memory is None \
+            and disk is None and net is None and ps is None \
+            and file is None:
         print(
-            "CPU or Memory or Disk must be not empty.",
+            "Resource must be not empty.",
             file=sys.stderr
         )
         parser.print_help()
@@ -191,6 +250,9 @@ def main():
             cpu=cpu,
             memory=memory,
             disk=disk,
+            net=net,
+            ps=ps,
+            file=file,
         )
         if args.all:
             resc.all = True
