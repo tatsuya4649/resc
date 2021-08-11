@@ -389,6 +389,13 @@ def temp_rescdir():
         yield
         if os.path.exists(_RESCDIR_FULL):
             for file in os.listdir(_RESCDIR_FULL):
+                if os.path.isdir(file):
+                    shutil.rmtree(
+                        os.path.join(
+                            _RESCDIR_FULL,
+                            file
+                        )
+                    )
                 os.remove(
                     os.path.join(
                         _RESCDIR_FULL,

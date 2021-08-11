@@ -2,6 +2,7 @@ from .cpu import CPUDetect
 from .memory import MemoryDetect
 from .disk import DiskDetect
 from .net import NetDetect
+from .ps import PSDetect
 from .cron import Cron, CronCommandError
 from .resclog.header import RescLogSFlag, RescLogFlag
 from .object import RescObject
@@ -159,17 +160,7 @@ class Resc:
     _RESCOUTPUT_ENV = "RESCOUTPUT"
     _SERVER_SCRIPT = "server.sh"
 
-    def __init__(
-        self,
-        cpu=None,
-        memory=None,
-        disk=None,
-        net=None,
-    ):
-        self._cpu_dict = cpu
-        self._memory_dict = memory
-        self._disk_dict = disk
-        self._net_dict = net
+    def _cpu_check(self, cpu):
         if cpu is not None and not isinstance(cpu, dict):
             raise RescTypeError("cpu must be None or dict.")
         elif cpu is not None:
@@ -190,6 +181,18 @@ class Resc:
                     f"unexpected keys ({unexpected_keys})."
                 )
 
+        if cpu is not None:
+            cpu_string = str()
+            for x in cpu.keys():
+                if isinstance(cpu[x], str):
+                    cpu_string += f"{x}=\"{cpu[x]}\","
+                else:
+                    cpu_string += f"{x}={cpu[x]},"
+            self._cpu = eval(f'CPUDetect({cpu_string})')
+        else:
+            self._cpu = None
+
+    def _memory_check(self, memory):
         if memory is not None and not isinstance(memory, dict):
             raise RescTypeError("memory must be None or dict.")
         elif memory is not None:
@@ -209,7 +212,18 @@ class Resc:
                     f"memory must have only {memory_detect_keys} key."
                     f"unexpected keys ({unexpected_keys})."
                 )
-
+        if memory is not None:
+            memory_string = str()
+            for x in memory.keys():
+                if isinstance(memory[x], str):
+                    memory_string += f"{x}=\"{memory[x]}\","
+                else:
+                    memory_string += f"{x}={memory[x]},"
+            self._memory = eval(f'MemoryDetect({memory_string})')
+        else:
+            self._memory = None
+    
+    def _disk_check(self, disk):
         if disk is not None and not isinstance(disk, dict):
             raise RescTypeError("disk must be None or dict.")
         elif disk is not None:
@@ -229,7 +243,19 @@ class Resc:
                     f"disk must have only {disk_detect_keys} key."
                     f"unexpected keys ({unexpected_keys})."
                 )
+        if disk is not None:
+            disk_string = str()
+            for x in disk.keys():
+                if isinstance(disk[x], str):
+                    disk_string += f"{x}=\"{disk[x]}\","
+                else:
+                    disk_string += f"{x}={disk[x]},"
+            self._disk = eval(f'DiskDetect({disk_string})')
+        else:
+            self._disk = None
 
+    
+    def _net_check(self, net):
         if net is not None and not isinstance(net, dict):
             raise RescTypeError("net must be None or dict.")
         elif net is not None:
@@ -249,43 +275,9 @@ class Resc:
                     f"net must have only {net_detect_keys} key."
                     f"unexpected keys ({unexpected_keys})."
                 )
-
-        if cpu is not None:
-            cpu_string = str()
-            for x in cpu.keys():
-                if isinstance(cpu[x], str):
-                    cpu_string += f"{x}=\"{cpu[x]}\","
-                else:
-                    cpu_string += f"{x}={cpu[x]},"
-            self._cpu = eval(f'CPUDetect({cpu_string})')
-        else:
-            self._cpu = None
-
-        if memory is not None:
-            memory_string = str()
-            for x in memory.keys():
-                if isinstance(memory[x], str):
-                    memory_string += f"{x}=\"{memory[x]}\","
-                else:
-                    memory_string += f"{x}={memory[x]},"
-            self._memory = eval(f'MemoryDetect({memory_string})')
-        else:
-            self._memory = None
-
-        if disk is not None:
-            disk_string = str()
-            for x in disk.keys():
-                if isinstance(disk[x], str):
-                    disk_string += f"{x}=\"{disk[x]}\","
-                else:
-                    disk_string += f"{x}={disk[x]},"
-            self._disk = eval(f'DiskDetect({disk_string})')
-        else:
-            self._disk = None
-
         if net is not None:
             net_string = str()
-            for x in netj.keys():
+            for x in net.keys():
                 if isinstance(net[x], str):
                     net_string += f"{x}=\"{net[x]}\","
                 else:
@@ -294,11 +286,64 @@ class Resc:
         else:
             self._net = None
 
+    
+    def _ps_check(self, ps):
+        if ps is not None and not isinstance(ps, dict):
+            raise RescTypeError("ps must be None or dict.")
+        elif ps is not None:
+            ps_detect_keys = [
+                k for k, v in
+                inspect
+                .signature(PSDetect.__init__)
+                .parameters
+                .items()
+            ]
+            unexpected_keys = [
+                x for x in ps.keys()
+                if x not in ps_detect_keys
+            ]
+            if len(unexpected_keys) > 0:
+                raise RescKeyError(
+                    f"ps must have only {ps_detect_keys} key."
+                    f"unexpected keys ({unexpected_keys})."
+                )
+        if ps is not None:
+            ps_string = str()
+            for x in ps.keys():
+                if isinstance(ps[x], str):
+                    ps_string += f"{x}=\"{ps[x]}\","
+                else:
+                    ps_string += f"{x}={ps[x]},"
+            self._ps = eval(f'PSDetect({pa_string})')
+        else:
+            self._ps = None
+
+    def __init__(
+        self,
+        cpu=None,
+        memory=None,
+        disk=None,
+        net=None,
+        ps=None,
+    ):
+        self._cpu_dict = cpu
+        self._memory_dict = memory
+        self._disk_dict = disk
+        self._net_dict = net
+        self._ps_dict = ps
+
+        self._cpu_check(cpu)
+        self._memory_check(memory)
+        self._disk_check(disk)
+        self._net_check(net)
+        self._ps_check(ps)
+
         self._checkers = list()
         self._checkers.append(self._cpu)
         self._checkers.append(self._memory)
         self._checkers.append(self._disk)
         self._checkers.append(self._net)
+        self._checkers.append(self._ps)
         self._checkers = [x for x in self._checkers if x is not None]
         self._crons = list()
         self._resclog = None

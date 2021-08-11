@@ -10,5 +10,6 @@ def setup_resc():
         memory={"threshold": 80},
         disk={"threshold": 80, "path":"/"},
         net={"threshold": 1000, "kind": "all"},
+        ps={"threshold": 90.0, "mode": "percent", "limits": "soft"},
     )
     yield resc
