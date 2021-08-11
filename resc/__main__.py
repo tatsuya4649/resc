@@ -230,10 +230,14 @@ def main():
             ps["mode"] = args.ps_mode
         if args.ps_limits is not None:
             ps["limits"] = args.ps_limits
+    else:
+        ps = None
     if args.file is not None:
         file["threshold"] = args.file
         if args.file_mode is not None:
             file["mode"] = args.file_mode
+    else:
+        file = None
 
     if cpu is None and memory is None \
             and disk is None and net is None and ps is None \
@@ -255,6 +259,8 @@ def main():
         )
         if args.all:
             resc.all = True
+        else:
+            resc.all = False
     except Exception as e:
         print(e)
         parser.print_help()
