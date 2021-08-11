@@ -396,12 +396,13 @@ def temp_rescdir():
                             file
                         )
                     )
-                os.remove(
-                    os.path.join(
-                        _RESCDIR_FULL,
-                        file
+                else:
+                    os.remove(
+                        os.path.join(
+                            _RESCDIR_FULL,
+                            file
+                        )
                     )
-                )
             shutil.rmtree(_RESCDIR_FULL)
 
         if direxists:
