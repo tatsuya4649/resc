@@ -100,7 +100,6 @@ def main():
         type=str
     )
     parser.add_argument(
-        "-s",
         "--log_server",
         help="Analize log file on GUI.(Flag)",
         action="store_true"
