@@ -3,6 +3,7 @@ from .memory import MemoryDetect
 from .disk import DiskDetect
 from .net import NetDetect
 from .ps import PSDetect
+from .file import FileDetect
 from .cron import Cron, CronCommandError
 from .resclog.header import RescLogSFlag, RescLogFlag
 from .object import RescObject
@@ -314,9 +315,40 @@ class Resc:
                     ps_string += f"{x}=\"{ps[x]}\","
                 else:
                     ps_string += f"{x}={ps[x]},"
-            self._ps = eval(f'PSDetect({pa_string})')
+            self._ps = eval(f'PSDetect({ps_string})')
         else:
             self._ps = None
+
+    def _file_check(self, file):
+        if file is not None and not isinstance(file, dict):
+            raise RescTypeError("file must be None or dict.")
+        elif file is not None:
+            file_detect_keys = [
+                k for k, v in
+                inspect
+                .signature(FileDetect.__init__)
+                .parameters
+                .items()
+            ]
+            unexpected_keys = [
+                x for x in file.keys()
+                if x not in file_detect_keys
+            ]
+            if len(unexpected_keys) > 0:
+                raise RescKeyError(
+                    f"file must have only {file_detect_keys} key."
+                    f"unexpected keys ({unexpected_keys})."
+                )
+        if file is not None:
+            file_string = str()
+            for x in file.keys():
+                if isinstance(file[x], str):
+                    file_string += f"{x}=\"{file[x]}\","
+                else:
+                    file_string += f"{x}={file[x]},"
+            self._file = eval(f'FileDetect({file_string})')
+        else:
+            self._file = None
 
     def __init__(
         self,
@@ -325,6 +357,7 @@ class Resc:
         disk=None,
         net=None,
         ps=None,
+        file=None,
     ):
         self._cpu_dict = cpu
         self._memory_dict = memory
@@ -337,6 +370,7 @@ class Resc:
         self._disk_check(disk)
         self._net_check(net)
         self._ps_check(ps)
+        self._file_check(file)
 
         self._checkers = list()
         self._checkers.append(self._cpu)
@@ -344,6 +378,7 @@ class Resc:
         self._checkers.append(self._disk)
         self._checkers.append(self._net)
         self._checkers.append(self._ps)
+        self._checkers.append(self._file)
         self._checkers = [x for x in self._checkers if x is not None]
         self._crons = list()
         self._resclog = None

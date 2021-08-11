@@ -11,5 +11,6 @@ def setup_resc():
         disk={"threshold": 80, "path":"/"},
         net={"threshold": 1000, "kind": "all"},
         ps={"threshold": 90.0, "mode": "percent", "limits": "soft"},
+        file={"threshold": 80.0, "mode": "percent"},
     )
     yield resc

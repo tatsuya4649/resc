@@ -91,9 +91,9 @@ class PSDetect(DetectBase):
     def percent(self):
         soft, hard = self.maxps
         if self.limits == PSDetectLimits.SOFT.value:
-            return float(self.number)/float(soft)
+            return 100*(float(self.number)/float(soft))
         else:
-            return float(self.number)/float(hard)
+            return 100*(float(self.number)/float(hard))
 
     @property
     def number(self):
