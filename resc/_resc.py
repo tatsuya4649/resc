@@ -293,18 +293,12 @@ class Resc:
                 "reverse must be bool type."
             )
         self._reverse = value
-
-    def register(
+    
+    def _register(
         self,
         trigger,
         rescdir=None,
         outputfile=None,
-        ip=None,
-        username=None,
-        password=None,
-        key_path=None,
-        port=22,
-        timeout=5,
         format=None,
         call_first=False,
         quiet=False,
@@ -365,34 +359,139 @@ class Resc:
         if self._resclog.logfile is not None:
             os.environ[self._RESCOUTPUT_ENV] = self._resclog.logfile
 
-        def _register(func):
+    def _remote_ssh(
+        self,
+        ip=None,
+        port=22,
+        username=None,
+        password=None,
+        key_path=None,
+        timeout=5,
+    ):
+        if ip is not None and \
+                username is not None and \
+                (key_path is not None or password is not None):
+            ssh = SSH(
+                self._ip_type(ip),
+                port=self._port_type(port),
+                username=self._username_type(username),
+                password=self._password_type(password),
+                key_filename=self._key_path_type(key_path),
+                timeout=self._timeout_type(timeout),
+            )
+            ssh.ssh_ping()
+        else:
+            ssh = None
+        self._resclog._ssh = ssh
+        if ip is not None:
+            self._resclog.remo = ip
+        return ssh
+    
+    def register_file(
+        self,
+        exec_file,
+        trigger,
+        rescdir=None,
+        outputfile=None,
+        ip=None,
+        username=None,
+        password=None,
+        key_path=None,
+        port=22,
+        timeout=5,
+        format=None,
+        call_first=False,
+        quiet=False,
+        limit=1,
+        permanent=True,
+        reverse=False
+    ):
+        self._register(
+            trigger=trigger,
+            rescdir=rescdir,
+            outputfile=outputfile,
+            format=format,
+            call_first=call_first,
+            quiet=quiet,
+            limit=limit,
+            permanent=permanent,
+            reverse=reverse,
+        )
+        ssh = self._remote_ssh(
+            ip=ip,
+            port=port,
+            username=username,
+            password=password,
+            key_path=key_path,
+            timeout=timeout,
+        )
+        compiled_filename = self._sourcefile(
+            filename=exec_file,
+            ssh=ssh,
+        )
+        # Register crontable from trigger
+        totalline = self._crons_get(trigger, compiled_filename)
+        self._crons_register()
+
+        return RescObject(
+            dump_filepath=self._RESCJSONPATH,
+            compiled_file=compiled_filename,
+            crontab_line=totalline,
+            register_file=self._REGIPATH,
+            limit=self.limit,
+            exec_file=exec_file,
+            permanent=self.permanent,
+            log_file=None,
+        )
+
+    def register(
+        self,
+        trigger,
+        rescdir=None,
+        outputfile=None,
+        ip=None,
+        username=None,
+        password=None,
+        key_path=None,
+        port=22,
+        timeout=5,
+        format=None,
+        call_first=False,
+        quiet=False,
+        limit=1,
+        permanent=True,
+        reverse=False
+    ):
+        self._register(
+            trigger=trigger,
+            rescdir=rescdir,
+            outputfile=outputfile,
+            format=format,
+            call_first=call_first,
+            quiet=quiet,
+            limit=limit,
+            permanent=permanent,
+            reverse=reverse,
+        )
+        def _register_func(func):
             def _wrapper(*args, **kwargs):
-                call_file = inspect.stack()[1].filename
                 call_code = inspect.getsource(func.__code__)
                 func_args = dict()
                 func_args["args"] = args
                 func_args["kwargs"] = kwargs
-                if ip is not None and \
-                        username is not None and \
-                        (key_path is not None or password is not None):
-                    ssh = SSH(
-                        self._ip_type(ip),
-                        port=self._port_type(port),
-                        username=self._username_type(username),
-                        password=self._password_type(password),
-                        key_filename=self._key_path_type(key_path),
-                        timeout=self._timeout_type(timeout),
-                    )
-                    ssh.ssh_ping()
-                else:
-                    ssh = None
-                self._resclog._ssh = ssh
+
+                ssh = self._remote_ssh(
+                    ip=ip,
+                    port=port,
+                    username=username,
+                    password=password,
+                    key_path=key_path,
+                    timeout=timeout
+                )
                 self._resclog.func = func.__name__
-                if ip is not None:
-                    self._resclog.remo = ip
+
                 compiled_filename = self._sourcefile(
-                    file=call_file,
-                    func=call_code,
+                    func_source=call_code,
                     funcname=func.__name__,
                     func_args=func_args,
                     ssh=ssh,
@@ -417,12 +516,30 @@ class Resc:
                 )
 
             return _wrapper
-        return _register
+        return _register_func
 
     def _directory_make(self, dirpath):
         os.makedirs(dirpath,exist_ok=True)
 
-    def _sourcefile(self, file, func, funcname, func_args, ssh=None):
+    def _sourcefile(
+        self,
+        **kwargs
+#        filename=None
+#        funcname=None,
+#        func=None,
+#        func_args=None,
+#        ssh=None
+    ):
+        if "filename" not in kwargs.keys() and "funcname" not in kwargs.keys():
+            raise RescKeyError(
+                "filename or function name must be passed."
+            )
+        filename = None if "filename" not in kwargs.keys() else kwargs["filename"]
+        funcname = None if "funcname" not in kwargs.keys() else kwargs["funcname"]
+        func_source = None if "func_source" not in kwargs.keys() else kwargs["func_source"]
+        func_args = None if "func_args" not in kwargs.keys() else kwargs["func_args"]
+        ssh = None if "ssh" not in kwargs.keys() else kwargs["ssh"]
+
         resc_dir = os.getenv(self._RESCDIR_ENV)
         i = 0
         self._directory_make(resc_dir)
@@ -432,17 +549,18 @@ class Resc:
                 f"resc{i}.py"
             )
             hash_value = hashlib.md5(resc_key.encode('utf-8')).hexdigest()
-            filename = os.path.join(
+            resc_filename = os.path.join(
                 resc_dir,
                 f"resc{hash_value}.py"
             )
-            if not os.path.exists(filename):
+            if not os.path.exists(resc_filename):
                 return self._source_write(
-                    filename,
-                    func,
-                    funcname,
-                    func_args,
-                    ssh
+                    resc_filename=resc_filename,
+                    filename=filename,
+                    func_source=func_source,
+                    funcname=funcname,
+                    func_args=func_args,
+                    ssh=ssh,
                 )
             i += 1
 
@@ -511,40 +629,20 @@ class Resc:
         for cron in self._crons:
             cron.register()
 
-    def _source_write(self, filename, func_source, funcname, func_args, ssh=None):
-        self._resclog.file = filename
-        source = RescCompile.compile(func_source)
-        self._resclog.sour = source.encode("utf-8")
+    def _source_write(
+        self,
+        resc_filename,
+        **kwargs,
+    ):
+        filename = kwargs["filename"]
+        funcname = kwargs["funcname"]
+        func_source = kwargs["func_source"]
+        func_args = kwargs["func_args"]
+        ssh = kwargs["ssh"]
+        # compiled file name
+        self._resclog.file = resc_filename
 
-        args_str = str()
-        if len(func_args["args"]) > 0:
-            args_str = ",".join(
-                [str(x) if not isinstance(x, str)
-                    else f"\"{x}\""
-                    for x in func_args["args"]]
-            )
-            args_str += ","
-        kwargs_str = str()
-        if len(func_args["kwargs"].items()) > 0:
-            for k, v in func_args["kwargs"].items():
-                if isinstance(v, str):
-                    func_args["kwargs"][k] = f'\"{v}\"'
-            kwargs_str = ",".join(
-                ["=".join([str(k), str(v)])
-                 for k, v in func_args["kwargs"].items()]
-            )
-        i = 0
-        while True:
-            resc_key = f"def{i}.py"
-            hash = hashlib.md5(resc_key.encode('utf-8')).hexdigest()
-            sourcefile = f"{os.path.dirname(filename)}/def_{hash}.py"
-            if not os.path.exists(sourcefile):
-                break
-            i += 1
         renparams = {
-            "sourcefile": sourcefile,
-            "source": source,
-            "sourcebyte": self._resclog.sour,
             "syspath": sys.path,
             "rescsflag": inspect.getsource(RescLogSFlag),
             "resc_cpu": self._cpu_dict,
@@ -555,30 +653,83 @@ class Resc:
             "logformat": self._resclog.format_meta,
             "logvars": self._resclog.define_resclog,
             "ssh": ssh,
-            "func": f"{funcname}({args_str}{kwargs_str})",
-            "defname": funcname,
-            "object_hash": RescObject._hash(filename),
+            "object_hash": RescObject._hash(resc_filename),
             "jfile": self._RESCJSONPATH,
             "reverse": self.reverse,
         }
-        env = Environment(loader=FileSystemLoader(
-            f'{self._package_path}/templates',
-            encoding="utf-8")
-        )
-        tmpl = env.get_template('resc.j2')
-        render = tmpl.render(renparams)
-        
-        with open(filename, "w") as sf:
-            sf.write(render)
+        if funcname is not None:
+            """
+            function
+            """
+            source = RescCompile.compile(func_source)
+            self._resclog.sour = source.encode("utf-8")
 
+            args_str = str()
+            if len(func_args["args"]) > 0:
+                args_str = ",".join(
+                    [str(x) if not isinstance(x, str)
+                        else f"\"{x}\""
+                        for x in func_args["args"]]
+                )
+                args_str += ","
+            kwargs_str = str()
+            if len(func_args["kwargs"].items()) > 0:
+                for k, v in func_args["kwargs"].items():
+                    if isinstance(v, str):
+                        func_args["kwargs"][k] = f'\"{v}\"'
+                kwargs_str = ",".join(
+                    ["=".join([str(k), str(v)])
+                    for k, v in func_args["kwargs"].items()]
+                )
+            i = 0
+            while True:
+                resc_key = f"def{i}.py"
+                hash = hashlib.md5(resc_key.encode('utf-8')).hexdigest()
+                sourcefile = f"{os.path.dirname(resc_filename)}/def_{hash}.py"
+                if not os.path.exists(sourcefile):
+                    break
+                i += 1
+            renparams.update({
+                "sourcefile": sourcefile,
+                "source": source,
+                "sourcebyte": self._resclog.sour,
+                "func": f"{funcname}({args_str}{kwargs_str})",
+                "defname": funcname,
+            })
+        else:
+            """
+            source file
+            """
+            with open(filename, "r") as f:
+                source = f.read()
+            self._resclog.sour = source.encode("utf-8")
+
+            renparams.update({
+                "source": source,
+                "sourcebyte": self._resclog.sour,
+            })
+        env = Environment(
+            loader=FileSystemLoader(
+                f'{self._package_path}/templates',
+                encoding="utf-8"
+            )
+        )
+        if funcname is not None:
+            tmpl = env.get_template('resc_func.j2')
+        else:
+            tmpl = env.get_template('resc_file.j2')
+        render = tmpl.render(renparams)
+            
+        with open(resc_filename, "w") as sf:
+            sf.write(render)
         if not self.quiet:
-            print("Output of compile:\t %s" % (filename))
+            print("Output of compile:\t %s" % (resc_filename))
             if self._resclog.log:
                 print("Output of log:\t %s" % (self._resclog.logfile))
             print("Output of register:\t %s"
                 % (self._REGIPATH)
                 )
-        return filename
+        return resc_filename
 
     @property
     def _package_path(self):

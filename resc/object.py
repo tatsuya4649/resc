@@ -28,6 +28,14 @@ class RescObjectAttributeError(ImportError):
     pass
 
 
+class RescObjectIndentationError(IndentationError):
+    pass
+
+
+class RescObjectSyntaxError(SyntaxError):
+    pass
+
+
 class RescObject(RescJSON):
     def __new__(
         cls,
@@ -35,23 +43,39 @@ class RescObject(RescJSON):
         compiled_file,
         crontab_line,
         register_file,
-        function,
         limit,
         permanent,
+        function=None,
+        exec_file=None,
         log_file=None,
     ):
         if not hasattr(cls, "_hashmodule"):
             cls._hashmodule = dict()
+        cls._keys = [
+            "compiled_file",
+            "crontab_line",
+            "register_file",
+            "func_source",
+            "func_name",
+            "exec_file",
+            "limit",
+            "permanent",
+            "log_file",
+        ]
         self = super().__new__(
             cls,
             dump_filepath=dump_filepath,
-            compiled_file=compiled_file,
-            crontab_line=crontab_line,
-            register_file=register_file,
-            function=function,
-            limit=limit,
-            permanent=permanent,
-            log_file=log_file,
+        )
+        if function is not None:
+            func_name = function.__name__
+            func_source = inspect.getsource(
+                function.__code__
+            )
+        for key in cls._keys:
+            if key in locals().keys():
+                exec(f"self.{key} = {key}")
+        self.hash = RescJSON._hash(
+            compiled_file
         )
         if not hasattr(self, "hash"):
             raise RescObjectKeyError(
@@ -65,22 +89,37 @@ class RescObject(RescJSON):
         compiled_file,
         crontab_line,
         register_file,
-        function,
         limit,
         permanent,
+        function=None,
+        exec_file=None,
         log_file=None,
     ):
         super().__init__(
             dump_filepath,
-            compiled_file,
-            crontab_line,
-            register_file,
-            function,
-            limit,
-            permanent,
-            log_file=None,
         )
+        _jdict = dict()
+        _jdict["compiled_file"] = compiled_file
+        _jdict["crontab_line"] = crontab_line
+        _jdict["register_file"] = register_file
+        _jdict["limit"] = limit
+        _jdict["limit_init"] = limit
+        _jdict["permanent"] = permanent
+        if function is not None:
+            _jdict["func_source"] = self.func_source
+            _jdict["func_name"] = self.func_name
+        else:
+            _jdict["exec_file"] = exec_file
+
+        if log_file is not None:
+            _jdict["log_file"] = log_file
+        _jdict["hash"] = self._hash(compiled_file)
+        self._jdict = _jdict
+
+        self.dump_row(self._dump_filepath,_jdict)
+
         self.import_module()
+
 
     def __enter__(
         self
@@ -107,7 +146,6 @@ class RescObject(RescJSON):
         compiled_code = RescCompile.compile(source)
         self._tempfp.write(compiled_code.encode("utf-8"))
         self._tempfp.seek(0)
-        RescObject._hashmodule[self.hash] = dict()
         RescObject._hashmodule[self.hash]["module_path"] = \
             self._tempfile_name
 
@@ -117,12 +155,20 @@ class RescObject(RescJSON):
             raise RescObjectAttributeError(
                 "call must be used in 'with' statement.")
         return self._call
+    
+    @property
+    def func_or_not(self):
+        if hasattr(self, "func_source"):
+            return True
+        else:
+            return False
 
     def import_module(self):
         if hasattr(self, "_tempfp") and \
-                hasattr(self, "_call"):
-                return
-        self._create_module(self.func_source)
+                hasattr(self, "_call") and self.func_or_not:
+            return
+        RescObject._hashmodule[self.hash] = dict()
+        self.create_module()
         self._syspath_append()
         __module_name = os.path.basename(
             self._tempfile_name
@@ -134,28 +180,42 @@ class RescObject(RescJSON):
             )
             __module = importlib.util.module_from_spec(__spec)
             __spec.loader.exec_module(__module)
+        except IndentationError as e:
+            raise RescObjectIndentationError(e)
         except ImportError as e:
             raise RescObjectImportError(e)
-        try:
-            __func = getattr(__module, self.func_name)
-            if not callable(__func):
-                raise RescObjectTypeError(
-                    "__func must be function type."
-                )
+        except SyntaxError as e:
+            raise RescObjectSyntaxError(e)
         except AttributeError as e:
             raise RescObjectAttributeError(e)
 
         __syspath = os.path.dirname(self._tempfile_name)
 
-        RescObject._hashmodule[self.hash].update({
-            "module": __module,
-            "module_name": __module_name,
-            "syspath": __syspath,
-            "func": __func,
-        })
         self._syspath = __syspath
         self._module = __module
-        self._call = __func
+        if self.func_or_not:
+            try:
+                __func = getattr(__module, self.func_name)
+                if not callable(__func):
+                    raise RescObjectTypeError(
+                        "__func must be function type."
+                    )
+            except AttributeError as e:
+                raise RescObjectAttributeError(e)
+            self._call = __func
+            RescObject._hashmodule[self.hash].update({
+                "module": __module,
+                "module_name": __module_name,
+                "syspath": __syspath,
+                "func": __func,
+            })
+        else:
+            self._call = self.import_module
+            RescObject._hashmodule[self.hash].update({
+                "module": __module,
+                "module_name": __module_name,
+                "syspath": __syspath,
+            })
 
     def close(self):
         if not hasattr(self, "_tempfp") or \
@@ -181,7 +241,12 @@ class RescObject(RescJSON):
             return False
 
     def create_module(self):
-        self._create_module(self.func_source)
+        if self.func_or_not:
+            self._create_module(self.func_source)
+        else:
+            self._tempfile_name = os.path.abspath(
+                self.exec_file
+            )
         return self._tempfile_name
 
     @staticmethod

@@ -170,67 +170,8 @@ except Exception as e:
         date=date
     )
 
-try:
-    with open("{{ sourcefile }}", "wb") as sf:
-        sf.write({{sourcebyte}})
-    import_str = (
-        'from ',
-        '%s ' %
-        (
-            os.
-            path.
-            basename(
-                "{{ sourcefile }}"
-            ).
-            split(".")[0]
-        ),
-        'import {{ defname }}'
-    )
-    exec(
-        "".join(import_str)
-    )
-    source_file = "{{ sourcefile }}"
-except IndentationError as e:
-    sflag |= (
-        RescLogSFlag.EME.value["flag"] |
-        RescLogSFlag.ERR.value["flag"] |
-        RescLogSFlag.LOC.valul["flag"] |
-        RescLogSFlag.IMP.value["flag"] |
-        RescLogSFlag.FUN.value["flag"] |
-        RescLogSFlag.IND.value["flag"]
-    )
-    date = str(datetime.datetime.now())
-    header = RescEmergLogHeader(
-        identify="resc",
-        sflag=sflag,
-        errlen=len(str(e)),
-        datelen=len(date)
-    )
-    emergelog(
-        header=header,
-        err=str(e),
-        date=date,
-    )
-except Exception as e:
-    sflag |= (
-        RescLogSFlag.EME.value["flag"] |
-        RescLogSFlag.ERR.value["flag"] |
-        RescLogSFlag.LOC.value["flag"] |
-        RescLogSFlag.IMP.value["flag"] |
-        RescLogSFlag.FUN.value["flag"]
-    )
-    date = str(datetime.datetime.now())
-    header = RescEmergLogHeader(
-        identify="resc",
-        sflag=sflag,
-        errlen=len(str(e)),
-        datelen=len(date)
-    )
-    emergelog(
-        header=header,
-        err=str(e),
-        date=date,
-    )
+{% block func_make %}
+{% endblock %}
 
 try:
 {% if ssh is defined and ssh != None %}
@@ -260,7 +201,7 @@ except Exception as e:
     )
 
 
-def call_definedfunc(resclog):
+def call_definedsource(resclog):
     old_syspath = sys.path
     sys.path = [
 {%- for path in syspath %}
@@ -276,7 +217,8 @@ def call_definedfunc(resclog):
         func_stderr = io.StringIO()
         sys.stdout = func_stdout
         sys.stderr = func_stderr
-        {{ func }}
+        {% block code %}
+        {% endblock %}
         resclog.stdout = \
             sys.stdout.getvalue().encode("utf-8")
         resclog.stderr = \
@@ -313,7 +255,7 @@ try:
     if not resc.over_one_ssh(ssh, resclog):
     {% endif %}
         if limit_update():
-            err = call_definedfunc(resclog)
+            err = call_definedsource(resclog)
             resclog.write(RescLogOver.TRUE, sflag)
     else:
         resclog.write(RescLogOver.FALSE, sflag)
@@ -332,7 +274,7 @@ try:
     if not resc.over_one:
     {% endif %}
         if limit_update():
-            err = call_definedfunc(resclog)
+            err = call_definedsource(resclog)
             resclog.write(RescLogOver.TRUE, sflag)
     else:
         resclog.write(RescLogOver.FALSE, sflag)
