@@ -152,13 +152,9 @@ class Resc:
         os.path.expanduser("~"),
         ".resc/log"
      )
-    _REGIPATH = os.path.join(
-            _RESCDIR_PATH,
-            "register"
-    )
     _RESCJSONPATH = os.path.join(
             _RESCDIR_PATH,
-            "resc.ndjson"
+            "resc.json"
     )
     _RESCOUTPUT_ENV = "RESCOUTPUT"
     _SERVER_SCRIPT = "server.sh"
@@ -684,7 +680,7 @@ class Resc:
             dump_filepath=self._RESCJSONPATH,
             compiled_file=compiled_filename,
             crontab_line=totalline,
-            register_file=self._REGIPATH,
+#            register_file=self._REGIPATH,
             limit=self.limit,
             exec_file=os.path.abspath(exec_file),
             permanent=self.permanent,
@@ -757,7 +753,7 @@ class Resc:
                     dump_filepath=self._RESCJSONPATH,
                     compiled_file=compiled_filename,
                     crontab_line=totalline,
-                    register_file=self._REGIPATH,
+#                    register_file=self._REGIPATH,
                     function=func,
                     limit=self.limit,
                     permanent=self.permanent,
@@ -844,7 +840,6 @@ class Resc:
             cron = Cron(
                 command=totalline,
                 interval_str=trigger,
-                register_file=self._REGIPATH
             )
             if self._call_first and len(output_path) > 0:
                 with open(output_path, "wb") as fp:
@@ -982,9 +977,6 @@ class Resc:
             print("Output of compile:\t %s" % (resc_filename))
             if self._resclog.log:
                 print("Output of log:\t %s" % (self._resclog.logfile))
-            print("Output of register:\t %s"
-                % (self._REGIPATH)
-                )
         return resc_filename
 
     @property

@@ -42,7 +42,6 @@ class RescObject(RescJSON):
         dump_filepath,
         compiled_file,
         crontab_line,
-        register_file,
         limit,
         permanent,
         function=None,
@@ -54,7 +53,6 @@ class RescObject(RescJSON):
         cls._keys = [
             "compiled_file",
             "crontab_line",
-            "register_file",
             "func_source",
             "func_name",
             "exec_file",
@@ -88,7 +86,6 @@ class RescObject(RescJSON):
         dump_filepath,
         compiled_file,
         crontab_line,
-        register_file,
         limit,
         permanent,
         function=None,
@@ -101,7 +98,6 @@ class RescObject(RescJSON):
         _jdict = dict()
         _jdict["compiled_file"] = compiled_file
         _jdict["crontab_line"] = crontab_line
-        _jdict["register_file"] = register_file
         _jdict["limit"] = limit
         _jdict["limit_init"] = limit
         _jdict["permanent"] = permanent
@@ -355,7 +351,7 @@ class RescObject(RescJSON):
                         hash_value,
                         dump_filepath,
                     )
-        RescJSON.jdump(dump_filepath, elements)
+        RescJSON.jdump(dump_filepath, list(elements))
         return result
 
     @staticmethod

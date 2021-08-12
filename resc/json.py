@@ -1,7 +1,8 @@
-import ndjson
+import json
 import os
 import hashlib
 import inspect
+import sys
 
 
 class RescJSONError(Exception):
@@ -39,9 +40,14 @@ class RescJSON:
         _jdict
     ):
         try:
-            with open(dump_filepath, "a") as f:
-                writer = ndjson.writer(f)
-                writer.writerow(_jdict)
+            if os.path.isfile(dump_filepath):
+                with open(dump_filepath) as f:
+                    _jsons = json.load(f)
+            else:
+                _jsons = list()
+            _jsons.append(_jdict)
+            with open(dump_filepath, "w") as f:
+                json.dump(_jsons, f)
         except Exception as e:
             raise RescJSONError(e)
 
@@ -71,18 +77,22 @@ class RescJSON:
                 "JSON file not found."
             )
         with open(dump_filepath) as f:
-            _jsons = ndjson.load(f)
+            _jsons = json.load(f)
 
-        for json in _jsons:
-            if hash_value == json["hash"] and key in json.keys():
-                return json[key]
+        for _json in _jsons:
+            if hash_value == _json["hash"] and key in _json.keys():
+                return _json[key]
         return None
 
     @staticmethod
     def _iter(dump_filepath):
+        with open(dump_filepath, "r") as f:
+            print(f.read())
         try:
             with open(dump_filepath) as f:
-                jsons = ndjson.load(f)
+                jsons = json.load(f)
+        except json.decoder.JSONDecodeError as e:
+            return iter([])
         except Exception as e:
             raise RescJSONError(e)
         return iter(jsons)
@@ -102,6 +112,15 @@ class RescJSON:
         elements
     ):
         with open(dump_filepath, "w") as f:
-            writer = ndjson.writer(f)
-            for element in elements:
-                writer.writerow(element)
+            json.dump(elements, f)
+
+    @staticmethod 
+    def display(
+        dump_filepath,
+    ):
+        try:
+            _jsons = RescJSON._iter(dump_filepath)
+        except RescJSONError as e:
+            print("Not found json path", file=sys.stderr)
+            sys.exit(1)
+        print(_jsons)
