@@ -175,47 +175,47 @@ class _RegDir:
                 if not os.path.isdir(dire):
                     _RegDir._alldir.remove(dire)
 
-@pytest.fixture(scope="function",autouse=False)
-def register_empty():
-    with _RegDir(Resc._REGIPATH):
-        prereg_em = None
-        if os.path.isfile(Resc._REGIPATH):
-            with open(Resc._REGIPATH,"r") as f:
-                prereg_em = f.read()
-            with open(Resc._REGIPATH,"w") as f:
-                f.truncate(0)
-        yield
+#@pytest.fixture(scope="function",autouse=False)
+#def register_empty():
+#    with _RegDir(Resc._REGIPATH):
+#        prereg_em = None
+#        if os.path.isfile(Resc._REGIPATH):
+#            with open(Resc._REGIPATH,"r") as f:
+#                prereg_em = f.read()
+#            with open(Resc._REGIPATH,"w") as f:
+#                f.truncate(0)
+#        yield
+#
+#        if (prereg_em is None or len(prereg_em) == 0) and \
+#            os.path.isfile(Resc._REGIPATH):
+#            os.remove(Resc._REGIPATH)
+#        else:
+#            if (prereg_em is not None and len(prereg_em) > 0):
+#                with open(Resc._REGIPATH,"w") as f:
+#                    f.write(prereg_em)
 
-        if (prereg_em is None or len(prereg_em) == 0) and \
-            os.path.isfile(Resc._REGIPATH):
-            os.remove(Resc._REGIPATH)
-        else:
-            if (prereg_em is not None and len(prereg_em) > 0):
-                with open(Resc._REGIPATH,"w") as f:
-                    f.write(prereg_em)
-
-@pytest.fixture(scope="function",autouse=False)
-def register_noempty():
-    with _RegDir(Resc._REGIPATH):
-        prereg_ne = None
-        if os.path.isfile(Resc._REGIPATH):
-            with open(Resc._REGIPATH,"r") as f:
-                prereg_ne = f.read()
-            with open(Resc._REGIPATH,"w") as f:
-                f.truncate(0)
-        with open(Resc._REGIPATH,"w") as f:
-            f.write(_EXREG)
-        yield
-        with open(Resc._REGIPATH,"w") as f:
-            f.truncate(0)
-
-        if (prereg_ne is None or len(prereg_ne) == 0) and \
-            os.path.isfile(Resc._REGIPATH):
-            os.remove(Resc._REGIPATH)
-        else:
-            if (prereg_ne is not None and len(prereg_ne) > 0):
-                with open(Resc._REGIPATH,"w") as f:
-                    f.write(prereg_ne)
+#@pytest.fixture(scope="function",autouse=False)
+#def register_noempty():
+#    with _RegDir(Resc._REGIPATH):
+#        prereg_ne = None
+#        if os.path.isfile(Resc._REGIPATH):
+#            with open(Resc._REGIPATH,"r") as f:
+#                prereg_ne = f.read()
+#            with open(Resc._REGIPATH,"w") as f:
+#                f.truncate(0)
+#        with open(Resc._REGIPATH,"w") as f:
+#            f.write(_EXREG)
+#        yield
+#        with open(Resc._REGIPATH,"w") as f:
+#            f.truncate(0)
+#
+#        if (prereg_ne is None or len(prereg_ne) == 0) and \
+#            os.path.isfile(Resc._REGIPATH):
+#            os.remove(Resc._REGIPATH)
+#        else:
+#            if (prereg_ne is not None and len(prereg_ne) > 0):
+#                with open(Resc._REGIPATH,"w") as f:
+#                    f.write(prereg_ne)
 
 # pass of resc dir
 _RESCDIR = "test/rescs"
@@ -246,21 +246,21 @@ def rescjson_undo():
                 with open(Resc._RESCJSONPATH,"w") as f:
                     f.write(prejson)
 
-@pytest.fixture(scope="function", autouse=False)
-def register_undo():
-    with _RegDir(Resc._REGIPATH):
-        preregu = None
-        if os.path.isfile(Resc._REGIPATH):
-            with open(Resc._REGIPATH, "r") as f:
-                preregu = f.read()
-        yield
-        if (preregu is None or len(preregu) == 0) and \
-            os.path.isfile(Resc._REGIPATH):
-            os.remove(Resc._REGIPATH)
-        else:
-            if (preregu is not None and len(preregu) > 0):
-                with open(Resc._REGIPATH,"w") as f:
-                    f.write(preregu)
+#@pytest.fixture(scope="function", autouse=False)
+#def register_undo():
+#    with _RegDir(Resc._REGIPATH):
+#        preregu = None
+#        if os.path.isfile(Resc._REGIPATH):
+#            with open(Resc._REGIPATH, "r") as f:
+#                preregu = f.read()
+#        yield
+#        if (preregu is None or len(preregu) == 0) and \
+#            os.path.isfile(Resc._REGIPATH):
+#            os.remove(Resc._REGIPATH)
+#        else:
+#            if (preregu is not None and len(preregu) > 0):
+#                with open(Resc._REGIPATH,"w") as f:
+#                    f.write(preregu)
 
 
 @pytest.fixture(scope="function", autouse=False)
@@ -474,7 +474,7 @@ def register_undos(
     crontab_undo,
     resc_undo,
     log_undo,
-    register_undo,
+#    register_undo,
     rescjson_undo,
 ):
     yield
@@ -491,37 +491,6 @@ def register_env():
     os.environ[Resc._RESCDIR_ENV] = _RESCDIR
     yield
     os.environ.pop(Resc._RESCDIR_ENV, None)
-
-@pytest.fixture(scope="function",autouse=False)
-def same_cron_register():
-    with _RegDir(Resc._REGIPATH):
-        # Register file only _EXREG
-        prereg_s = None
-        if os.path.isfile(Resc._REGIPATH):
-            with open(Resc._REGIPATH,"r") as f:
-                prereg_s = f.read()
-            with open(Resc._REGIPATH,"w") as f:
-                f.truncate(0)
-        with open(Resc._REGIPATH,"w") as f:
-            f.write(_EXREG)
-        # Crontab only _EXREG
-        process = _cronlist()
-        crontab_list = process.stdout.read()
-        _crondelete()
-        _cronregister(_EXREG)
-        yield
-        # Undo
-        _crondelete()
-        _cronregister(crontab_list)
-
-        with open(Resc._REGIPATH,"w") as f:
-            f.truncate(0)
-        if prereg_s is None or len(prereg_s) == 0 and \
-            os.path.isfile(Resc._REGIPATH):
-            os.remove(Resc._REGIPATH)
-        else:
-            with open(Resc._REGIPATH,"w") as f:
-                f.write(prereg_s)
 
 @pytest.fixture(scope="function",autouse=False)
 def logfile_empty():
