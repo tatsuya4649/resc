@@ -86,8 +86,6 @@ class RescJSON:
 
     @staticmethod
     def _iter(dump_filepath):
-        with open(dump_filepath, "r") as f:
-            print(f.read())
         try:
             with open(dump_filepath) as f:
                 jsons = json.load(f)
@@ -97,10 +95,19 @@ class RescJSON:
             raise RescJSONError(e)
         return iter(jsons)
 
+    @staticmethod
+    def _list(dump_filepath):
+        return list(RescJSON._iter(dump_filepath))
+
     def __iter__(
         self,
     ):
         return RescJSON._iter(self._dump_filepath)
+
+    def __len__(
+        self,
+    ):
+        return len(list(iter(self)))
 
     @property
     def length(self):
@@ -111,16 +118,33 @@ class RescJSON:
         dump_filepath,
         elements
     ):
-        with open(dump_filepath, "w") as f:
-            json.dump(elements, f)
+        if not isinstance(elements, list):
+            raise REscJSONTypeError(
+                "elements must be list type."
+            )
+        if len(elements) == 0:
+            if os.path.isfile(dump_filepath):
+                with open(dump_filepath, "w") as f:
+                    f.truncate(0)
+        else:
+            with open(dump_filepath, "w") as f:
+                json.dump(elements, f)
 
-    @staticmethod 
+    @staticmethod
     def display(
         dump_filepath,
     ):
         try:
-            _jsons = RescJSON._iter(dump_filepath)
+            _jsons = RescJSON._list(dump_filepath)
         except RescJSONError as e:
             print("Not found json path", file=sys.stderr)
             sys.exit(1)
-        print(_jsons)
+
+        i = 0
+        for element in sorted(_jsons, key=lambda x: x["register_date"]):
+            print(f"--------- \033[1m{element['hash'][:10]}\033[0m...({i}) ---------")
+            for k, v in element.items():
+                print("\033[1m{:<20s}\033[0m: {}".format(
+                    k,v
+                ))
+            i += 1

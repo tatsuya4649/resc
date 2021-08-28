@@ -3,6 +3,8 @@ from unittest import mock
 import os
 import json
 from resc.json import *
+from resc import *
+from .test_j2 import _EXEC_FILE
 
 _DUMP_FILEPATH = os.path.join(
     os.path.abspath(os.path.dirname(__file__)),
@@ -73,3 +75,13 @@ def test_iter__(rjson):
 
     for part in lists:
         print(part)
+
+def test_display_json(
+    register_undos,
+):
+    result = register_file(
+        exec_file=_EXEC_FILE,
+        trigger="* * * * *",
+    )
+    assert isinstance(result.json_path, str)
+    RescJSON.display(result.json_path)
