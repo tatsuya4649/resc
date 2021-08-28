@@ -77,6 +77,8 @@ class FileDetect(DetectBase):
                 total += process.num_fds()
             except psutil.AccessDenied as e:
                 pass
+            except psutil.NoSuchProcess as e:
+                pass
         return total
 
     @property

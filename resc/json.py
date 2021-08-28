@@ -1,7 +1,8 @@
-import ndjson
+import json
 import os
 import hashlib
 import inspect
+import sys
 
 
 class RescJSONError(Exception):
@@ -39,9 +40,14 @@ class RescJSON:
         _jdict
     ):
         try:
-            with open(dump_filepath, "a") as f:
-                writer = ndjson.writer(f)
-                writer.writerow(_jdict)
+            if os.path.isfile(dump_filepath):
+                with open(dump_filepath) as f:
+                    _jsons = json.load(f)
+            else:
+                _jsons = list()
+            _jsons.append(_jdict)
+            with open(dump_filepath, "w") as f:
+                json.dump(_jsons, f)
         except Exception as e:
             raise RescJSONError(e)
 
@@ -71,26 +77,37 @@ class RescJSON:
                 "JSON file not found."
             )
         with open(dump_filepath) as f:
-            _jsons = ndjson.load(f)
+            _jsons = json.load(f)
 
-        for json in _jsons:
-            if hash_value == json["hash"] and key in json.keys():
-                return json[key]
+        for _json in _jsons:
+            if hash_value == _json["hash"] and key in _json.keys():
+                return _json[key]
         return None
 
     @staticmethod
     def _iter(dump_filepath):
         try:
             with open(dump_filepath) as f:
-                jsons = ndjson.load(f)
+                jsons = json.load(f)
+        except json.decoder.JSONDecodeError as e:
+            return iter([])
         except Exception as e:
             raise RescJSONError(e)
         return iter(jsons)
+
+    @staticmethod
+    def _list(dump_filepath):
+        return list(RescJSON._iter(dump_filepath))
 
     def __iter__(
         self,
     ):
         return RescJSON._iter(self._dump_filepath)
+
+    def __len__(
+        self,
+    ):
+        return len(list(iter(self)))
 
     @property
     def length(self):
@@ -101,7 +118,33 @@ class RescJSON:
         dump_filepath,
         elements
     ):
-        with open(dump_filepath, "w") as f:
-            writer = ndjson.writer(f)
-            for element in elements:
-                writer.writerow(element)
+        if not isinstance(elements, list):
+            raise REscJSONTypeError(
+                "elements must be list type."
+            )
+        if len(elements) == 0:
+            if os.path.isfile(dump_filepath):
+                with open(dump_filepath, "w") as f:
+                    f.truncate(0)
+        else:
+            with open(dump_filepath, "w") as f:
+                json.dump(elements, f)
+
+    @staticmethod
+    def display(
+        dump_filepath,
+    ):
+        try:
+            _jsons = RescJSON._list(dump_filepath)
+        except RescJSONError as e:
+            print("Not found json path", file=sys.stderr)
+            sys.exit(1)
+
+        i = 0
+        for element in sorted(_jsons, key=lambda x: x["register_date"]):
+            print(f"--------- \033[1m{element['hash'][:10]}\033[0m...({i}) ---------")
+            for k, v in element.items():
+                print("\033[1m{:<20s}\033[0m: {}".format(
+                    k,v
+                ))
+            i += 1

@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.dirname(__file__))
 
 from resc import Resc, RescLog, RescLogAnalyze, \
-    start_server, RescLogPathError, RescLogUnMatchError
+    start_server, RescLogPathError, RescLogUnMatchError, RescJSON
 import argparse
 import re
 import subprocess
@@ -121,9 +121,9 @@ def main():
     )
     parser.add_argument(
         "-r",
-        "--delete_register",
-        help="Delete crontab of register script(Flag)",
-        action="store_true"
+        "--registered",
+        help="display list of now registered in Resc",
+        action="store_true",
     )
 
     args = parser.parse_args()
@@ -149,46 +149,8 @@ def main():
     elif args.not_found is not None:
         RescLog._not_found(args.not_found)
         sys.exit(0)
-    elif args.delete_register:
-        REGISTER_FILE = f"{os.path.expanduser('~')}/.resc/register"
-        if not os.path.isfile(REGISTER_FILE):
-            sys.exit(0)
-        result = subprocess.Popen(
-            "command crontab -l",
-            encoding="utf-8",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=True
-        )
-        comm = result.communicate()
-        errout = comm[1]
-        stdout = comm[0]
-        if re.match(r'^no crontab', errout) is not None:
-            sys.exit(0)
-        iter = re.finditer(r'.*\n', stdout)
-        cronlists = [x.group() for x in iter]
-        # delete duplication
-        cronlists = list(set(cronlists))
-        with open(REGISTER_FILE, "r") as rf:
-            for line in rf.readlines():
-                if line not in cronlists:
-                    continue
-                cronlists.remove(line)
-        if len(cronlists) == 0:
-            subprocess.run(
-                "command crontab -r",
-                shell=True,
-            )
-        else:
-            input = "".join(list(set(cronlists)))
-            subprocess.run(
-                "command crontab",
-                input=input,
-                encoding='utf-8',
-                shell=True
-            )
-        with open(REGISTER_FILE, "w") as rf:
-            rf.truncate(0)
+    elif args.registered:
+        RescJSON.display(Resc._RESCJSONPATH)
         sys.exit(0)
 
     cpu = dict()

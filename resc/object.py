@@ -2,6 +2,7 @@ import sys
 import os
 import tempfile
 import importlib
+import datetime
 import inspect
 from .json import RescJSON
 from .cron import Cron
@@ -42,7 +43,6 @@ class RescObject(RescJSON):
         dump_filepath,
         compiled_file,
         crontab_line,
-        register_file,
         limit,
         permanent,
         function=None,
@@ -53,8 +53,8 @@ class RescObject(RescJSON):
             cls._hashmodule = dict()
         cls._keys = [
             "compiled_file",
+            "register_date",
             "crontab_line",
-            "register_file",
             "func_source",
             "func_name",
             "exec_file",
@@ -88,7 +88,6 @@ class RescObject(RescJSON):
         dump_filepath,
         compiled_file,
         crontab_line,
-        register_file,
         limit,
         permanent,
         function=None,
@@ -99,9 +98,9 @@ class RescObject(RescJSON):
             dump_filepath,
         )
         _jdict = dict()
+        _jdict["register_date"] = self.date
         _jdict["compiled_file"] = compiled_file
         _jdict["crontab_line"] = crontab_line
-        _jdict["register_file"] = register_file
         _jdict["limit"] = limit
         _jdict["limit_init"] = limit
         _jdict["permanent"] = permanent
@@ -117,8 +116,6 @@ class RescObject(RescJSON):
         self._jdict = _jdict
 
         self.dump_row(self._dump_filepath,_jdict)
-        self.import_module()
-
 
     def __enter__(
         self
@@ -133,6 +130,10 @@ class RescObject(RescJSON):
         traceback
     ):
         self.close()
+    
+    @property
+    def date(self):
+        return datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 
     def _create_module(self, source):
         self._tempfp = tempfile.NamedTemporaryFile(
@@ -147,6 +148,10 @@ class RescObject(RescJSON):
         self._tempfp.seek(0)
         RescObject._hashmodule[self.hash]["module_path"] = \
             self._tempfile_name
+
+    @property
+    def json_path(self):
+        return self._dump_filepath
 
     @property
     def call(self):
@@ -355,7 +360,7 @@ class RescObject(RescJSON):
                         hash_value,
                         dump_filepath,
                     )
-        RescJSON.jdump(dump_filepath, elements)
+        RescJSON.jdump(dump_filepath, list(elements))
         return result
 
     @staticmethod

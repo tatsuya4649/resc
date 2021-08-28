@@ -51,7 +51,6 @@ class Cron:
         cls,
         command,
         interval_str,
-        register_file=None,
     ):
         return super().__new__(
             cls)
@@ -60,7 +59,6 @@ class Cron:
         self,
         command,
         interval_str,
-        register_file=None,
     ):
         if not isinstance(command, str):
             raise CronTypeError(
@@ -77,7 +75,6 @@ class Cron:
         self._interval_str = interval_str
 #        self._str_to_lists()
         self._totalline = f"{self._interval_str} {self._command}\n"
-        self._register_file = register_file
 
         if not Cron.available():
             raise CronCommandError(
@@ -120,22 +117,15 @@ class Cron:
     def cronlist():
         return Cron._listcommand()
 
-    def _register_append(self):
-        if self._register_file is not None:
-            with open(self._register_file, "a") as rf:
-                rf.write(self._totalline)
-
     def register(self):
         if self._list is None or len(self.list) == 0:
             input = self._totalline
-            self._register_append()
         else:
             iter = re.finditer(r'.*\n', self._list)
             cronlists = [x.group() for x in iter]
             # delete duplication
             cronlists = list(set(cronlists))
             if self._totalline not in cronlists:
-                self._register_append()
                 cronlists.append(self._totalline)
             input = "".join(list(set(cronlists)))
         res = subprocess.run(
